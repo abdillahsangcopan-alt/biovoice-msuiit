@@ -388,6 +388,10 @@
       if (winBase) return winBase + path;
       const savedBase = (localStorage.getItem("biovoice_api_base") || "").trim().replace(/\/+$/, "");
       if (savedBase) return savedBase + path;
+      const host = (window.location.hostname || "").toLowerCase();
+      if (host.endsWith("github.io") || host.endsWith("web.app") || host.endsWith("firebaseapp.com")) {
+        return "https://biovoiceiit.pythonanywhere.com" + path;
+      }
     } catch (_) {}
     return path;
   }
@@ -539,7 +543,7 @@
   // ==========================================================================
   async function loadPublicConfig() {
     try {
-      const res = await fetch(resolveApiUrl("/api/public-config", { cache: "no-store" });
+      const res = await fetch(resolveApiUrl("/api/public-config"), { cache: "no-store" });
       if (res.ok) {
         const cfg = await res.json();
         Object.assign(state.studyConfig, cfg);
@@ -580,7 +584,7 @@
     }
 
     try {
-      const res = await fetch(resolveApiUrl("/api/session", {
+      const res = await fetch(resolveApiUrl("/api/session"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: rawCode, pin: rawPin }),
@@ -684,7 +688,7 @@
 
     // Verify with backend if available
     try {
-      const res = await fetch(resolveApiUrl("/api/session/confirm-group", {
+      const res = await fetch(resolveApiUrl("/api/session/confirm-group"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -769,7 +773,7 @@
     }
 
     try {
-      const res = await fetch(resolveApiUrl("/api/researcher/login", {
+      const res = await fetch(resolveApiUrl("/api/researcher/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, roleTarget }),
@@ -2248,7 +2252,7 @@
     // 2. Query /api/chat (supports live LLM if configured + conversational Appendix H engine)
     let finalReplyObj = null;
     try {
-      const res = await fetch(resolveApiUrl("/api/chat", {
+      const res = await fetch(resolveApiUrl("/api/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -2332,7 +2336,7 @@
 
   async function recordAppendixILog(payload) {
     try {
-      const res = await fetch(resolveApiUrl("/api/logs", {
+      const res = await fetch(resolveApiUrl("/api/logs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -2358,7 +2362,7 @@
     if (checkBar) checkBar.hidden = true;
     if (!state.lastInteractionId) return;
     try {
-      await fetch(resolveApiUrl("/api/logs", {
+      await fetch(resolveApiUrl("/api/logs"), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -2518,7 +2522,7 @@
   // ==========================================================================
   async function loadResearcherDashboard() {
     try {
-      const res = await fetch(resolveApiUrl("/api/researcher/overview", {
+      const res = await fetch(resolveApiUrl("/api/researcher/overview"), {
         headers: { Authorization: `Bearer ${state.staffToken}` },
       });
       if (res.ok) {
@@ -2685,7 +2689,7 @@
         const notes = row.querySelector(".p-notes-inp").value;
 
         try {
-          const res = await fetch(resolveApiUrl("/api/researcher/participants", {
+          const res = await fetch(resolveApiUrl("/api/researcher/participants"), {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -3300,7 +3304,7 @@
           },
         };
         try {
-          const res = await fetch(resolveApiUrl("/api/researcher/study-config", {
+          const res = await fetch(resolveApiUrl("/api/researcher/study-config"), {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -3324,7 +3328,7 @@
     if ($("validate-codes-btn")) {
       $("validate-codes-btn").addEventListener("click", async () => {
         try {
-          const res = await fetch(resolveApiUrl("/api/researcher/validate-codes", {
+          const res = await fetch(resolveApiUrl("/api/researcher/validate-codes"), {
             method: "POST",
             headers: { Authorization: `Bearer ${state.staffToken}` },
           });
@@ -3353,7 +3357,7 @@
         const endNo = Number($("bulk-end-no").value);
         const status = $("bulk-status-select").value;
         try {
-          const res = await fetch(resolveApiUrl("/api/researcher/participants", {
+          const res = await fetch(resolveApiUrl("/api/researcher/participants"), {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -3395,7 +3399,7 @@
         const interactionId = $("review-log-id").value;
         const isSynthetic = $("toggle-synthetic-logs") && $("toggle-synthetic-logs").checked;
         try {
-          const res = await fetch(resolveApiUrl("/api/logs", {
+          const res = await fetch(resolveApiUrl("/api/logs"), {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -3430,7 +3434,7 @@
           })
         );
         try {
-          const res = await fetch(resolveApiUrl("/api/researcher/monitoring", {
+          const res = await fetch(resolveApiUrl("/api/researcher/monitoring"), {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
