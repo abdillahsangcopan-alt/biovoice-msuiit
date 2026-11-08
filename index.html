@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioVoice — MSU-IIT Interactive Photosynthesis Simulation &amp; AI Voice Learning Platform</title>
+  <meta
+    name="description"
+    content="Explore photosynthesis through interactive scientific investigation and AI-assisted learning. Developed at Mindanao State University – Iligan Institute of Technology (MSU-IIT)."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap"
+    rel="stylesheet"
+  />
+  <link rel="icon" type="image/png" href="msu-iit-logo.png" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+  <!-- ==================================================================== -->
+  <!-- SCREEN 1: WELCOME & 4-ROLE LOGIN SCREEN (FIRST PAGE SEEN ON LOAD)    -->
+  <!-- ==================================================================== -->
+  <section id="screen-welcome" class="welcome-screen" aria-label="Welcome and Role Login">
+    <!-- Subtle Animated Photosynthesis Background -->
+    <div class="welcome-bg-canvas" aria-hidden="true">
+      <span class="bg-bubble b1"></span>
+      <span class="bg-bubble b2"></span>
+      <span class="bg-bubble b3"></span>
+      <span class="bg-bubble b4"></span>
+      <span class="bg-bubble b5"></span>
+      <span class="bg-bubble b6"></span>
+      <span class="bg-bubble b7"></span>
+      <span class="bg-bubble b8"></span>
+      <div class="bg-light-ray"></div>
+    </div>
+
+    <!-- Welcome Top Bar with MSU-IIT Branding -->
+    <header class="welcome-header">
+      <div class="msuiit-brand">
+        <div class="msuiit-crest">
+          <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+        </div>
+        <div class="msuiit-brand-text">
+          <span class="msuiit-acronym">MSU-IIT</span>
+          <span class="msuiit-sub">BioVoice Research Platform</span>
+        </div>
+      </div>
+      <div class="welcome-header-actions">
+        <button id="welcome-about-btn" class="ghost-pill-btn" type="button">About BioVoice</button>
+        <button id="welcome-guide-btn" class="ghost-pill-btn" type="button">Activity Guide Preview</button>
+      </div>
+    </header>
+
+    <div class="welcome-container">
+      <!-- Hero Introduction -->
+      <div class="welcome-hero">
+        <div class="welcome-badge-row">
+          <span class="welcome-pill">Mindanao State University – Iligan Institute of Technology</span>
+          <span id="welcome-phase-pill" class="welcome-pill phase-pill">Active Session: Session 1</span>
+        </div>
+        <h1 class="welcome-title">Welcome to BioVoice</h1>
+        <p class="welcome-subtitle">
+          Explore photosynthesis through interactive scientific investigation and AI-assisted learning.
+        </p>
+      </div>
+
+      <!-- STEP 1A: 4-ROLE SELECTION CARDS -->
+      <div id="role-cards-grid" class="role-cards-grid">
+        <!-- ROLE A: Student / Research Participant -->
+        <article class="role-card role-card-student" data-role-card="student">
+          <div class="role-card-header">
+            <span class="role-icon student-icon" aria-hidden="true">🧪</span>
+            <div>
+              <span class="role-tag">Official Study Access</span>
+              <h2>Student / Research Participant</h2>
+            </div>
+          </div>
+          <p class="role-desc">
+            Enter your assigned official Participant Code (<strong>BV-001</strong> to <strong>BV-200</strong>) and your separate researcher-issued PIN.
+          </p>
+          <form id="student-login-form" class="role-form" autocomplete="off">
+            <label class="field-label">
+              <span>Participant Code</span>
+              <input
+                id="student-code-input"
+                type="text"
+                placeholder="e.g., BV-027"
+                maxlength="10"
+                required
+                aria-label="Participant Code"
+              />
+            </label>
+            <label class="field-label">
+              <span>Separate Participant PIN</span>
+              <input
+                id="student-pin-input"
+                type="password"
+                placeholder="Enter researcher-issued PIN"
+                maxlength="12"
+                required
+                aria-label="Separate Participant PIN"
+              />
+            </label>
+            <button id="student-login-btn" class="primary-btn full-width" type="submit">
+              Verify Participant Code
+            </button>
+            <div id="student-login-alert" class="login-alert" role="status" aria-live="polite" hidden></div>
+          </form>
+        </article>
+
+        <!-- ROLE B: Administrator / Researcher -->
+        <article class="role-card role-card-admin" data-role-card="admin">
+          <div class="role-card-header">
+            <span class="role-icon admin-icon" aria-hidden="true">🔬</span>
+            <div>
+              <span class="role-tag">Private Research Console</span>
+              <h2>Administrator / Researcher</h2>
+            </div>
+          </div>
+          <p class="role-desc">
+            Manage the 200-code register, group assignments, sessions, consent verification, interaction logs, review audits, and exports.
+          </p>
+          <form id="admin-login-form" class="role-form" autocomplete="off">
+            <label class="field-label">
+              <span>Researcher Username</span>
+              <input
+                id="admin-username-input"
+                type="text"
+                placeholder="Researcher username"
+                required
+                aria-label="Researcher Username"
+              />
+            </label>
+            <label class="field-label">
+              <span>Researcher Password</span>
+              <input
+                id="admin-password-input"
+                type="password"
+                placeholder="Researcher password"
+                required
+                aria-label="Researcher Password"
+              />
+            </label>
+            <button id="admin-login-btn" class="secondary-btn full-width" type="submit">
+              Open Researcher Dashboard
+            </button>
+            <div id="admin-login-alert" class="login-alert" role="status" aria-live="polite" hidden></div>
+          </form>
+        </article>
+
+        <!-- ROLE C: Teacher -->
+        <article class="role-card role-card-teacher" data-role-card="teacher">
+          <div class="role-card-header">
+            <span class="role-icon teacher-icon" aria-hidden="true">👩‍🏫</span>
+            <div>
+              <span class="role-tag">Classroom Facilitation</span>
+              <h2>Teacher</h2>
+            </div>
+          </div>
+          <p class="role-desc">
+            Access the activity guide and simulation, monitor classroom implementation status, and record Appendix J classroom observations.
+          </p>
+          <form id="teacher-login-form" class="role-form" autocomplete="off">
+            <label class="field-label">
+              <span>Teacher Username</span>
+              <input
+                id="teacher-username-input"
+                type="text"
+                placeholder="Teacher username"
+                required
+                aria-label="Teacher Username"
+              />
+            </label>
+            <label class="field-label">
+              <span>Teacher Password</span>
+              <input
+                id="teacher-password-input"
+                type="password"
+                placeholder="Teacher password"
+                required
+                aria-label="Teacher Password"
+              />
+            </label>
+            <button id="teacher-login-btn" class="secondary-btn full-width" type="submit">
+              Enter Teacher Portal
+            </button>
+            <div id="teacher-login-alert" class="login-alert" role="status" aria-live="polite" hidden></div>
+          </form>
+        </article>
+
+        <!-- ROLE D: Guest -->
+        <article class="role-card role-card-guest" data-role-card="guest">
+          <div class="role-card-header">
+            <span class="role-icon guest-icon" aria-hidden="true">🌱</span>
+            <div>
+              <span class="role-tag">Public Sandbox Exploration</span>
+              <h2>Guest</h2>
+            </div>
+          </div>
+          <p class="role-desc">
+            Explore the interactive photosynthesis simulation, compare aquatic plants, preview the activity guide, and try BioVoice in isolated demonstration mode.
+          </p>
+          <ul class="guest-feature-list">
+            <li>Interactive Photosynthesis Simulation (<em>Hydrilla</em>, <em>Elodea</em>, <em>Water Hyacinth</em>)</li>
+            <li>Activity Guide &amp; Scientific Background Preview</li>
+            <li>Isolated Sandbox BioVoice Demo (never counted as research data)</li>
+          </ul>
+          <div class="guest-action-footer">
+            <button id="guest-login-btn" class="primary-btn guest-btn full-width" type="button">
+              Explore as Guest
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <!-- STEP 1B: PARTICIPANT GROUP CONFIRMATION STEP (SHOWN AFTER VALID CODE + PIN) -->
+      <div id="group-confirm-panel" class="group-confirm-panel" hidden>
+        <div class="group-confirm-card">
+          <span class="eyebrow">Step 2 of 3 · Participant Group Verification</span>
+          <h2>Confirm Your Assigned Research Group</h2>
+          <p class="group-confirm-meta">
+            Authenticated Participant Code: <strong id="confirm-code-display">BV-001</strong> ·
+            Registered Status: <span id="confirm-status-display" class="status-pill assigned">Assigned</span> ·
+            Consent &amp; Assent (Appendix A): <span id="confirm-consent-display" class="status-pill verified">Verified</span>
+          </p>
+          <div class="registered-group-banner">
+            <span class="registered-group-label">Your assigned research group</span>
+            <strong id="registered-group-name" class="registered-group-value">INTERVENTION GROUP</strong>
+            <p id="registered-group-desc" class="registered-group-desc">
+              Your participant code is registered in the Intervention Group (Interactive Simulation + BioVoice AI Voice Companion).
+            </p>
+          </div>
+          <p class="group-confirm-instruction">
+            Please select your assigned group below to confirm and proceed to the session agreement:
+          </p>
+          <div class="group-confirm-buttons">
+            <button
+              id="confirm-intervention-btn"
+              class="group-select-btn intervention-select-btn"
+              type="button"
+              data-group-choice="Intervention"
+            >
+              <span class="group-btn-title">[ INTERVENTION GROUP ]</span>
+              <span class="group-btn-sub">Simulation + BioVoice AI Voice Support</span>
+            </button>
+            <button
+              id="confirm-comparison-btn"
+              class="group-select-btn comparison-select-btn"
+              type="button"
+              data-group-choice="Comparison"
+            >
+              <span class="group-btn-title">[ COMPARISON GROUP ]</span>
+              <span class="group-btn-sub">Simulation + Teacher-Led Investigation</span>
+            </button>
+          </div>
+          <div id="group-confirm-alert" class="login-alert" role="alert" aria-live="assertive" hidden></div>
+          <div class="group-confirm-footer">
+            <button id="group-confirm-cancel-btn" class="ghost-btn" type="button">
+              ← Back to Login Screen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SCREEN 2: MAIN INTEGRATED LEARNING ENVIRONMENT                       -->
+  <!-- ==================================================================== -->
+  <div id="screen-learning" class="learning-environment" hidden>
+    <!-- Top Navigation Bar (Part 4 & Additional UI Requirement) -->
+    <header class="learning-topbar">
+      <div class="topbar-left">
+        <div class="msuiit-brand compact">
+          <div class="msuiit-crest">
+            <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+          </div>
+          <div class="msuiit-brand-text">
+            <span class="msuiit-acronym">MSU-IIT</span>
+            <span class="msuiit-sub">BioVoice</span>
+          </div>
+        </div>
+        <span id="active-mode-banner-pill" class="mode-banner-pill">Participant Session</span>
+      </div>
+
+      <nav class="topbar-right" aria-label="Learning Environment Controls">
+        <button id="open-guide-modal-btn" class="topbar-link-btn" type="button">
+          📖 Activity Guide
+        </button>
+        <button id="open-about-modal-btn" class="topbar-link-btn" type="button">
+          ℹ️ About BioVoice
+        </button>
+        <button id="open-teacher-modal-btn" class="topbar-link-btn teacher-portal-btn" type="button" hidden>
+          📋 Classroom Monitor
+        </button>
+        <button id="return-dashboard-btn" class="topbar-link-btn admin-portal-btn" type="button" hidden>
+          🔬 Researcher Dashboard
+        </button>
+        <button
+          id="toggle-biovoice-panel-btn"
+          class="topbar-biovoice-toggle"
+          type="button"
+          aria-expanded="true"
+          aria-controls="biovoice-side-panel"
+        >
+          🎙️ <span id="toggle-biovoice-label">Hide BioVoice</span>
+        </button>
+        <div class="profile-logout-group">
+          <span id="profile-session-badge" class="profile-badge">BV-001 · Intervention</span>
+          <button id="logout-btn" class="logout-pill-btn" type="button" title="Log Out and Return to Welcome Screen">
+            Log Out
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Role / Group Context Banner -->
+    <div id="role-context-bar" class="role-context-bar">
+      <div class="role-context-left">
+        <strong id="role-context-title">Intervention Group Session</strong>
+        <span id="role-context-detail">
+          Interactive Photosynthesis Simulation + BioVoice AI Voice Companion (Appendix I logging enabled)
+        </span>
+      </div>
+      <div class="role-context-right">
+        <span id="official-species-badge" class="species-lock-badge">
+          Official Research Species: <em>Hydrilla verticillata</em>
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Split Workspace: Left = Vertically Stacked Simulation, Right = Hideable BioVoice Panel -->
+    <div id="learning-split-layout" class="learning-split-layout">
+      <!-- ================================================================ -->
+      <!-- PRIMARY WORKSPACE: PHOTOSYNTHESIS SIMULATION (VERTICALLY STACKED)-->
+      <!-- ================================================================ -->
+      <main id="simulation-main-column" class="simulation-main-column" aria-label="Photosynthesis Investigation Workspace">
+        <!-- 1. SIMULATION WORKSPACE CARD (PLANT SELECTOR + VISUAL APPARATUS) -->
+        <section class="sim-card sim-workspace-card" aria-labelledby="sim-workspace-heading">
+          <div class="sim-card-header">
+            <div>
+              <span class="eyebrow">Section 1 · Interactive Apparatus</span>
+              <h1 id="sim-workspace-heading">Photosynthesis Bubble-Counting Investigation</h1>
+            </div>
+            <!-- Aquatic Plant Selector (Part 7) -->
+            <div class="plant-selector-group" role="group" aria-label="Aquatic Plant Species">
+              <span class="plant-selector-label">Aquatic Plant:</span>
+              <div class="plant-selector-buttons">
+                <button
+                  type="button"
+                  class="plant-species-btn is-active"
+                  data-plant-species="Hydrilla"
+                >
+                  <em>Hydrilla</em> (Official)
+                </button>
+                <button
+                  type="button"
+                  class="plant-species-btn"
+                  data-plant-species="Elodea"
+                >
+                  <em>Elodea</em>
+                </button>
+                <button
+                  type="button"
+                  class="plant-species-btn"
+                  data-plant-species="Water Hyacinth"
+                >
+                  <em>Water Hyacinth</em>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plant Species Scientific Info & Research Standardization Notice -->
+          <div id="plant-species-notice" class="plant-species-notice">
+            <strong id="plant-species-title"><em>Hydrilla verticillata</em> (Submerged Aquatic Macrophyte — Official Research Standard):</strong>
+            <span id="plant-species-desc">
+              Submerged stems with whorled serrated leaves (4–8 per node). Oxygen produced during the light-dependent reactions nucleates at the cut stem and leaf nodes as countable rising bubbles.
+            </span>
+          </div>
+
+          <!-- Large Responsive SVG Simulation Canvas (Parts 7 & 8) -->
+          <div class="sim-canvas-wrapper">
+            <svg
+              id="sim-svg"
+              viewBox="0 0 820 390"
+              role="img"
+              aria-label="Interactive aquatic plant photosynthesis setup showing movable light source, optical bench ruler, submerged thermometer, sodium bicarbonate water bath, aquatic plant, and rising oxygen bubbles"
+            >
+              <defs>
+                <linearGradient id="labBgGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#071a19" />
+                  <stop offset="55%" stop-color="#0d2927" />
+                  <stop offset="100%" stop-color="#091d1c" />
+                </linearGradient>
+                <linearGradient id="lightBeamGrad" x1="0" y1="0.5" x2="1" y2="0.5">
+                  <stop offset="0%" stop-color="#fde047" stop-opacity="0.65" />
+                  <stop offset="55%" stop-color="#fef08a" stop-opacity="0.22" />
+                  <stop offset="100%" stop-color="#fef9c3" stop-opacity="0.02" />
+                </linearGradient>
+                <linearGradient id="waterColumnGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.28" />
+                  <stop offset="100%" stop-color="#0284c7" stop-opacity="0.52" />
+                </linearGradient>
+                <radialGradient id="lampHaloGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+                  <stop offset="45%" stop-color="#facc15" stop-opacity="0.45" />
+                  <stop offset="100%" stop-color="#facc15" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="o2BubbleGrad" cx="35%" cy="30%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                  <stop offset="55%" stop-color="#bae6fd" stop-opacity="0.75" />
+                  <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.4" />
+                </radialGradient>
+              </defs>
+
+              <!-- Lab Chamber Background -->
+              <rect id="sim-bg-rect" x="0" y="0" width="820" height="390" rx="18" fill="url(#labBgGrad)" />
+
+              <!-- Chamber Header Annotation -->
+              <text x="26" y="30" fill="#a7f3d0" font-size="12" font-weight="700" font-family="Plus Jakarta Sans, sans-serif">
+                OPTICAL BENCH &amp; AQUATIC PHOTOSYNTHESIS CHAMBER (0.2% NaHCO₃ BUFFERED WATER BATH)
+              </text>
+              <text id="svg-species-label" x="26" y="48" fill="#cbd5e1" font-size="11" font-family="Plus Jakarta Sans, sans-serif">
+                Specimen: Hydrilla verticillata (Submerged shoot) · Controlled Water Bath: 26.0 °C
+              </text>
+
+              <!-- Lab Bench Surface & Calibrated Ruler Track -->
+              <rect x="24" y="314" width="772" height="14" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+              <line x1="80" y1="304" x2="540" y2="304" stroke="#64748b" stroke-width="2" />
+
+              <!-- Distance Calibration Markers (10 cm, 20 cm, 30 cm, 40 cm from Beaker Center x=620) -->
+              <g font-family="JetBrains Mono, monospace" font-size="11" fill="#cbd5e1" text-anchor="middle">
+                <line x1="420" y1="297" x2="420" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <text x="420" y="344">10 cm</text>
+                <line x1="310" y1="297" x2="310" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <text x="310" y="344">20 cm</text>
+                <line x1="200" y1="297" x2="200" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <text x="200" y="344">30 cm</text>
+                <line x1="90" y1="297" x2="90" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <text x="90" y="344">40 cm</text>
+              </g>
+
+              <!-- Distance-Dependent Light Beam Cone -->
+              <polygon
+                id="sim-light-cone"
+                points="445,185 690,95 690,295"
+                fill="url(#lightBeamGrad)"
+              />
+
+              <!-- Subtle Visual Heat Shimmer Waves (Part 8 — Visually distinguished from water temperature) -->
+              <g id="sim-heat-waves" opacity="0.75">
+                <path
+                  id="heat-wave-1"
+                  d="M475,155 Q482,145 475,135 Q468,125 475,115"
+                  stroke="#fb923c"
+                  stroke-width="1.8"
+                  stroke-dasharray="3 2"
+                  fill="none"
+                />
+                <path
+                  id="heat-wave-2"
+                  d="M495,165 Q502,155 495,145 Q488,135 495,125"
+                  stroke="#fdba74"
+                  stroke-width="1.5"
+                  stroke-dasharray="3 2"
+                  fill="none"
+                />
+                <text x="486" y="106" fill="#fed7aa" font-size="9.5" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+                  Radiant lamp warmth (visual cue)
+                </text>
+              </g>
+
+              <!-- Movable Lamp Assembly -->
+              <g id="sim-lamp-group" transform="translate(420, 0)">
+                <circle id="sim-lamp-halo" cx="25" cy="185" r="56" fill="url(#lampHaloGrad)" />
+                <rect x="-18" y="298" width="48" height="16" rx="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+                <rect x="2" y="192" width="8" height="108" fill="#64748b" />
+                <path d="M-10,162 L24,150 L24,220 L-10,208 Z" fill="#334155" stroke="#94a3b8" stroke-width="1.5" />
+                <circle id="sim-lamp-bulb" cx="26" cy="185" r="14" fill="#fde047" />
+                <text id="sim-lamp-tag" x="6" y="140" fill="#fef08a" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                  10 cm (2,500 lx)
+                </text>
+              </g>
+
+              <!-- Glass Beaker & Controlled Water Bath (Centered around x=625) -->
+              <g id="sim-beaker-group">
+                <!-- Beaker Outer Glass -->
+                <rect
+                  x="545"
+                  y="78"
+                  width="165"
+                  height="236"
+                  rx="12"
+                  fill="rgba(255,255,255,0.04)"
+                  stroke="#94a3b8"
+                  stroke-width="2.5"
+                />
+                <!-- Beaker Lip -->
+                <line x1="538" y1="78" x2="717" y2="78" stroke="#cbd5e1" stroke-width="3.5" stroke-linecap="round" />
+
+                <!-- Buffered Water Column (Meniscus at y=130) -->
+                <rect x="548" y="130" width="159" height="181" rx="8" fill="url(#waterColumnGrad)" />
+                <path id="sim-water-meniscus" d="M548,130 Q627,134 707,130" stroke="#7dd3fc" stroke-width="2" fill="none" />
+
+                <!-- Beaker Volume Graduation Ticks -->
+                <g stroke="rgba(226,232,240,0.42)" stroke-width="1.2" font-family="JetBrains Mono, monospace" font-size="9" fill="#cbd5e1">
+                  <line x1="686" y1="155" x2="702" y2="155" />
+                  <text x="682" y="158" text-anchor="end">250mL</text>
+                  <line x1="686" y1="195" x2="702" y2="195" />
+                  <text x="682" y="198" text-anchor="end">200mL</text>
+                  <line x1="686" y1="235" x2="702" y2="235" />
+                  <text x="682" y="238" text-anchor="end">150mL</text>
+                  <line x1="686" y1="275" x2="702" y2="275" />
+                  <text x="682" y="278" text-anchor="end">100mL</text>
+                </g>
+
+                <!-- Submerged Thermometer (Constant Water Temperature Check) -->
+                <g id="sim-thermometer" transform="translate(560, 92)">
+                  <rect x="0" y="0" width="8" height="185" rx="4" fill="rgba(241,245,249,0.85)" stroke="#64748b" stroke-width="1" />
+                  <circle cx="4" cy="187" r="7" fill="#ef4444" stroke="#64748b" stroke-width="1" />
+                  <rect x="2.2" y="75" width="3.6" height="110" fill="#ef4444" />
+                  <rect x="-12" y="-18" width="54" height="15" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                  <text id="svg-temp-text" x="15" y="-7" fill="#7dd3fc" font-size="9.5" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                    26.0°C
+                  </text>
+                </g>
+
+                <!-- Gravel / Substrate Base at Bottom of Beaker -->
+                <ellipse cx="627" cy="303" rx="64" ry="8" fill="#334155" opacity="0.85" />
+                <circle cx="595" cy="303" r="4" fill="#475569" />
+                <circle cx="615" cy="305" r="5" fill="#64748b" />
+                <circle cx="642" cy="304" r="4.5" fill="#475569" />
+                <circle cx="660" cy="302" r="3.5" fill="#64748b" />
+
+                <!-- Inverted Glass Funnel Over Submerged Shoots -->
+                <path
+                  id="sim-glass-funnel"
+                  d="M582,298 L617,172 L637,172 L672,298"
+                  fill="rgba(255,255,255,0.05)"
+                  stroke="rgba(226,232,240,0.45)"
+                  stroke-width="1.5"
+                />
+                <rect
+                  id="sim-collection-tube"
+                  x="615"
+                  y="102"
+                  width="24"
+                  height="72"
+                  rx="10"
+                  fill="rgba(255,255,255,0.07)"
+                  stroke="rgba(226,232,240,0.55)"
+                  stroke-width="1.5"
+                />
+
+                <!-- ====================================================== -->
+                <!-- PLANT SPECIES 1: HYDRILLA VERTICILLATA (SUBMERGED)     -->
+                <!-- Slender stems, whorled serrated lance-shaped leaves    -->
+                <!-- ====================================================== -->
+                <g id="plant-visual-hydrilla" class="plant-species-group">
+                  <!-- Main Stem & Lateral Stems -->
+                  <path d="M627,302 Q623,245 627,175" stroke="#15803d" stroke-width="3.6" fill="none" stroke-linecap="round" />
+                  <path d="M625,275 Q604,245 606,204" stroke="#16a34a" stroke-width="2.6" fill="none" stroke-linecap="round" />
+                  <path d="M628,270 Q650,242 647,202" stroke="#16a34a" stroke-width="2.6" fill="none" stroke-linecap="round" />
+                  <!-- Whorled Serrated Leaves (Node 1..5) -->
+                  <g fill="#22c55e" stroke="#14532d" stroke-width="0.7">
+                    <!-- Whorl top -->
+                    <polygon points="627,184 606,174 614,187" />
+                    <polygon points="627,184 648,174 640,187" />
+                    <polygon points="627,184 612,167 623,181" />
+                    <polygon points="627,184 642,167 631,181" />
+                    <!-- Whorl upper-mid -->
+                    <polygon points="626,206 599,195 610,209" />
+                    <polygon points="626,206 653,195 642,209" />
+                    <polygon points="626,206 605,187 620,203" />
+                    <polygon points="626,206 647,187 632,203" />
+                    <!-- Whorl mid -->
+                    <polygon points="626,230 595,220 608,233" />
+                    <polygon points="626,230 657,220 644,233" />
+                    <polygon points="606,222 586,212 597,225" />
+                    <polygon points="647,220 667,210 656,223" />
+                    <!-- Whorl lower-mid -->
+                    <polygon points="626,254 596,244 610,257" />
+                    <polygon points="626,254 656,244 642,257" />
+                    <polygon points="610,246 588,238 601,250" />
+                    <polygon points="643,244 665,236 652,248" />
+                    <!-- Whorl base -->
+                    <polygon points="627,278 600,270 613,281" />
+                    <polygon points="627,278 654,270 641,281" />
+                  </g>
+                  <!-- Cut Stem Node (Primary O2 Bubble Nucleation Point) -->
+                  <circle cx="627" cy="174" r="3.2" fill="#86efac" stroke="#14532d" stroke-width="1" />
+                </g>
+
+                <!-- ====================================================== -->
+                <!-- PLANT SPECIES 2: ELODEA CANADENSIS (SUBMERGED)         -->
+                <!-- Thicker stem, dense broad smooth oval leaves in whorls -->
+                <!-- ====================================================== -->
+                <g id="plant-visual-elodea" class="plant-species-group" style="display: none;">
+                  <path d="M627,302 Q629,242 627,176" stroke="#047857" stroke-width="4.8" fill="none" stroke-linecap="round" />
+                  <path d="M626,272 Q608,238 612,196" stroke="#059669" stroke-width="3.6" fill="none" stroke-linecap="round" />
+                  <path d="M628,268 Q646,236 642,198" stroke="#059669" stroke-width="3.6" fill="none" stroke-linecap="round" />
+                  <g fill="#10b981" stroke="#064e3b" stroke-width="0.9">
+                    <ellipse cx="614" cy="184" rx="13" ry="5.2" transform="rotate(-24 614 184)" />
+                    <ellipse cx="640" cy="184" rx="13" ry="5.2" transform="rotate(24 640 184)" />
+                    <ellipse cx="627" cy="179" rx="10" ry="4.5" />
+                    <ellipse cx="611" cy="204" rx="15" ry="5.8" transform="rotate(-20 611 204)" />
+                    <ellipse cx="643" cy="204" rx="15" ry="5.8" transform="rotate(20 643 204)" />
+                    <ellipse cx="599" cy="214" rx="13" ry="5" transform="rotate(-28 599 214)" />
+                    <ellipse cx="654" cy="214" rx="13" ry="5" transform="rotate(28 654 214)" />
+                    <ellipse cx="612" cy="226" rx="16" ry="6" transform="rotate(-18 612 226)" />
+                    <ellipse cx="642" cy="226" rx="16" ry="6" transform="rotate(18 642 226)" />
+                    <ellipse cx="600" cy="238" rx="14" ry="5.4" transform="rotate(-25 600 238)" />
+                    <ellipse cx="653" cy="238" rx="14" ry="5.4" transform="rotate(25 653 238)" />
+                    <ellipse cx="613" cy="250" rx="16" ry="6" transform="rotate(-16 613 250)" />
+                    <ellipse cx="641" cy="250" rx="16" ry="6" transform="rotate(16 641 250)" />
+                    <ellipse cx="614" cy="272" rx="15" ry="5.6" transform="rotate(-14 614 272)" />
+                    <ellipse cx="640" cy="272" rx="15" ry="5.6" transform="rotate(14 640 272)" />
+                  </g>
+                  <circle cx="627" cy="175" r="3.5" fill="#6ee7b7" stroke="#064e3b" stroke-width="1" />
+                </g>
+
+                <!-- ====================================================== -->
+                <!-- PLANT SPECIES 3: WATER HYACINTH (EICHHORNIA CRASSIPES) -->
+                <!-- FLOATING at water surface (y=130) with bulbous spongy  -->
+                <!-- petioles, glossy rounded aerial blades above water,    -->
+                <!-- and dark feathery hanging submerged roots below!       -->
+                <!-- ====================================================== -->
+                <g id="plant-visual-hyacinth" class="plant-species-group" style="display: none;">
+                  <!-- Submerged Hanging Dark Feathery Fibrous Roots (Below y=132) -->
+                  <g stroke="#312e81" stroke-linecap="round" fill="none" opacity="0.88">
+                    <path d="M615,135 Q608,182 602,235 Q599,255 605,274" stroke-width="2.4" />
+                    <path d="M622,136 Q620,190 616,248 Q615,268 619,284" stroke-width="2.8" />
+                    <path d="M628,136 Q630,192 629,252 Q628,272 626,288" stroke-width="3.0" />
+                    <path d="M634,136 Q640,188 642,242 Q644,264 639,280" stroke-width="2.6" />
+                    <path d="M641,135 Q650,178 654,226 Q657,246 651,265" stroke-width="2.2" />
+                    <!-- Fine lateral root hairs -->
+                    <path d="M610,165 L596,176 M606,198 L592,209 M618,180 L607,192 M630,175 L643,186 M639,205 L653,216 M628,225 L616,238 M635,232 L648,244" stroke="#4338ca" stroke-width="1.3" />
+                  </g>
+                  <!-- Crown at Water Surface (y=130) -->
+                  <ellipse cx="628" cy="132" rx="22" ry="6" fill="#15803d" />
+                  <!-- Swollen Bulbous Spongy Petioles (Aerenchyma Floaters at Surface) -->
+                  <g fill="#4ade80" stroke="#166534" stroke-width="1.2">
+                    <ellipse cx="604" cy="122" rx="12" ry="8" transform="rotate(-22 604 122)" />
+                    <ellipse cx="619" cy="119" rx="10" ry="9" transform="rotate(-8 619 119)" />
+                    <ellipse cx="636" cy="119" rx="10" ry="9" transform="rotate(8 636 119)" />
+                    <ellipse cx="651" cy="122" rx="12" ry="8" transform="rotate(22 651 122)" />
+                  </g>
+                  <!-- Glossy Rounded Aerial Leaf Blades (Above Water Surface y=75..112) -->
+                  <g fill="#16a34a" stroke="#14532d" stroke-width="1.3">
+                    <path d="M594,116 C576,102 580,78 598,82 C612,85 612,106 602,116 Z" />
+                    <path d="M616,112 C604,92 612,68 627,70 C642,72 644,94 632,112 Z" />
+                    <path d="M658,116 C676,102 672,78 654,82 C640,85 640,106 650,116 Z" />
+                  </g>
+                  <!-- Lavender-Violet Eichhornia Flower Spike Accent -->
+                  <g transform="translate(627, 56)">
+                    <ellipse cx="0" cy="0" rx="8" ry="11" fill="#c084fc" stroke="#7e22ce" stroke-width="1" />
+                    <ellipse cx="0" cy="-3" rx="3.2" ry="4.5" fill="#facc15" />
+                  </g>
+                </g>
+
+                <!-- Dynamic Rising Oxygen Bubbles Group (Synchronized 1-to-1 with Counter) -->
+                <g id="sim-bubbles-layer"></g>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Environmental Readouts Strip -->
+          <div class="sim-env-strip">
+            <div class="env-pill">
+              <span class="env-label">Lamp Distance &amp; Illuminance</span>
+              <strong id="readout-light-condition">10 cm · 2,500 lx (High Light)</strong>
+            </div>
+            <div class="env-pill">
+              <span class="env-label">Measured Water Bath Temp</span>
+              <strong id="readout-water-temp">26.0 °C (Stabilized Buffer)</strong>
+            </div>
+            <div class="env-pill">
+              <span class="env-label">Dissolved CO₂ Source</span>
+              <strong>0.2% NaHCO₃ (Constant)</strong>
+            </div>
+            <div class="env-pill">
+              <span class="env-label">Active Specimen</span>
+              <strong id="readout-plant-species"><em>Hydrilla verticillata</em> (Submerged)</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. EXPERIMENTAL CONTROL PANEL (PART 5) -->
+        <section class="sim-card sim-controls-card" aria-labelledby="sim-controls-heading">
+          <div class="sim-card-header">
+            <div>
+              <span class="eyebrow">Section 2 · Experimental Control Panel</span>
+              <h2 id="sim-controls-heading">Select Light Condition &amp; Run 60-Second Observation</h2>
+            </div>
+            <div class="timer-pace-control">
+              <label for="sim-pace-select">Timer Mode:</label>
+              <select id="sim-pace-select" aria-label="Observation Timer Mode">
+                <option value="realtime">Standard 60-Second Observation (1× Real-Time)</option>
+                <option value="accelerated" selected>Classroom Lab Timer (60 Seconds Scaled · 6s)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 5 Light Condition Buttons -->
+          <div class="distance-buttons-row" role="group" aria-label="Lamp Distance and Light Conditions">
+            <button type="button" class="distance-btn is-active" data-distance="10">
+              <span class="dist-main">10 cm</span>
+              <span class="dist-sub">High · 2,500 lx</span>
+            </button>
+            <button type="button" class="distance-btn" data-distance="20">
+              <span class="dist-main">20 cm</span>
+              <span class="dist-sub">Med-High · 1,100 lx</span>
+            </button>
+            <button type="button" class="distance-btn" data-distance="30">
+              <span class="dist-main">30 cm</span>
+              <span class="dist-sub">Medium · 550 lx</span>
+            </button>
+            <button type="button" class="distance-btn" data-distance="40">
+              <span class="dist-main">40 cm</span>
+              <span class="dist-sub">Low · 280 lx</span>
+            </button>
+            <button type="button" class="distance-btn" data-distance="dark">
+              <span class="dist-main">Dark Control</span>
+              <span class="dist-sub">Lamp Off · 0 lx</span>
+            </button>
+          </div>
+
+          <!-- Start / Pause / Resume / Reset Controls -->
+          <div class="trial-action-row">
+            <button id="sim-start-btn" class="primary-btn" type="button">
+              ▶ Start 60-Second Observation
+            </button>
+            <button id="sim-pause-btn" class="secondary-btn" type="button" disabled>
+              ⏸ Pause
+            </button>
+            <button id="sim-resume-btn" class="secondary-btn" type="button" hidden>
+              ▶ Resume
+            </button>
+            <button id="sim-reset-btn" class="ghost-btn" type="button">
+              ↺ Reset Current Run
+            </button>
+            <button id="sim-clear-table-btn" class="ghost-btn danger-text" type="button">
+              Clear Recorded Table
+            </button>
+          </div>
+        </section>
+
+        <!-- 3. BUBBLE-COUNT INDICATOR & CLEAR SECONDS TIMER (PART 6) -->
+        <section class="sim-card sim-timer-card" aria-labelledby="sim-timer-heading">
+          <div class="timer-grid">
+            <div class="timer-metric-box">
+              <span id="sim-timer-heading" class="metric-label">Observation time: 60 seconds (1 minute = 60 seconds)</span>
+              <div class="seconds-countdown-row">
+                <strong id="sim-seconds-display" class="metric-big-value">60 seconds</strong>
+                <span id="sim-timer-state-badge" class="timer-state-badge">Ready to start 60-second run</span>
+              </div>
+              <div class="timer-progress-track" aria-hidden="true">
+                <div id="sim-timer-progress-bar" class="timer-progress-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="timer-metric-box bubble-counter-box">
+              <span class="metric-label">Oxygen Bubbles Counted (Synchronized Live Count)</span>
+              <div class="seconds-countdown-row">
+                <strong id="sim-live-bubbles" class="metric-big-value accent-emerald">0</strong>
+                <span class="bubble-unit-label">bubbles counted</span>
+              </div>
+              <p id="sim-completion-banner" class="sim-completion-banner" role="status" aria-live="polite">
+                Click "Start 60-Second Observation" to count rising oxygen bubbles and record a trial.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. COMPACT 1-AT-A-TIME SEQUENTIAL ACTIVITY STEPPER (PART 5) -->
+        <section class="sim-card sim-stepper-card" aria-labelledby="stepper-current-title">
+          <div class="stepper-top-row">
+            <div class="stepper-meta">
+              <span id="stepper-counter-badge" class="step-counter-badge">Step 1 of 6</span>
+              <span id="stepper-sp-badge" class="step-sp-badge">Support Point SP1 · LC 1 &amp; LC 2</span>
+            </div>
+            <!-- Step Progress Dots 1..6 -->
+            <div class="stepper-dots" role="tablist" aria-label="Activity Steps 1 to 6">
+              <button type="button" class="step-dot is-active" data-step-index="0" title="Step 1: Part 1 Predict (SP1)">1</button>
+              <button type="button" class="step-dot" data-step-index="1" title="Step 2: Part 2 Plan (SP2)">2</button>
+              <button type="button" class="step-dot" data-step-index="2" title="Step 3: Part 3 Investigate (SP3)">3</button>
+              <button type="button" class="step-dot" data-step-index="3" title="Step 4: Part 4 Explain (SP4)">4</button>
+              <button type="button" class="step-dot" data-step-index="4" title="Step 5: Part 5a Connect (SP5)">5</button>
+              <button type="button" class="step-dot" data-step-index="5" title="Step 6: Part 5b Revise (SP6)">6</button>
+            </div>
+          </div>
+
+          <div class="stepper-body">
+            <h2 id="stepper-current-title" class="stepper-title">Part 1: Predict — Support Point SP1</h2>
+            <p id="stepper-current-prompt" class="stepper-prompt">
+              Before running the trials: Which light condition (10 cm, 20 cm, 30 cm, 40 cm, or Dark) do you predict will produce the most bubbles in 60 seconds, and what gas is inside those bubbles?
+            </p>
+            <div class="stepper-input-group">
+              <label for="stepper-response-input" id="stepper-input-label" class="field-label-inline">
+                Your Worksheet Note / Scientific Response for this Step:
+              </label>
+              <textarea
+                id="stepper-response-input"
+                rows="2"
+                placeholder="Write your prediction or observation notes here (and on your printed Appendix F worksheet)..."
+              ></textarea>
+            </div>
+            <div id="stepper-validation-msg" class="stepper-validation-msg" role="status" aria-live="polite" hidden></div>
+          </div>
+
+          <div class="stepper-footer">
+            <button id="stepper-prev-btn" class="ghost-btn" type="button" disabled>
+              ← Previous Step
+            </button>
+            <div class="stepper-center-actions">
+              <button id="stepper-complete-btn" class="secondary-btn" type="button">
+                ✓ Mark Step 1 Complete
+              </button>
+              <button id="stepper-ask-biovoice-btn" class="ghost-pill-btn accent-pill" type="button">
+                🎙️ Ask BioVoice about SP1
+              </button>
+            </div>
+            <button id="stepper-next-btn" class="primary-btn" type="button">
+              Next Step →
+            </button>
+          </div>
+        </section>
+
+        <!-- 5. DATA TABLE BELOW SIMULATION (PARTS 5 & 9 — INITIALLY EMPTY, ACTION-DEPENDENT) -->
+        <section class="sim-card sim-table-card" aria-labelledby="sim-table-heading">
+          <div class="sim-card-header">
+            <div>
+              <span class="eyebrow">Section 5 · Experimental Data Table (Below Simulation)</span>
+              <h2 id="sim-table-heading">Recorded Oxygen Bubble Counts (Bubbles per 60 Seconds)</h2>
+            </div>
+            <div class="dataset-mode-tabs" role="tablist" aria-label="Dataset Source Mode">
+              <button
+                type="button"
+                id="tab-simulated-data"
+                class="dataset-tab-btn is-active"
+                data-table-mode="simulated"
+              >
+                Simulated Trial Data (Action-Recorded)
+              </button>
+              <button
+                type="button"
+                id="tab-physical-data"
+                class="dataset-tab-btn"
+                data-table-mode="physical"
+              >
+                Physical Classroom Setup (Manual Entry)
+              </button>
+            </div>
+          </div>
+
+          <p id="table-mode-instruction" class="table-instruction">
+            <strong>Action-Dependent Recording Rule:</strong> This table begins empty (<em>Not yet performed</em>). Select a lamp distance above and run a full 60-second observation to record Trial 1, Trial 2, and Trial 3.
+          </p>
+
+          <!-- Simulated Action-Recorded Table -->
+          <div id="simulated-table-container" class="table-scroll">
+            <table class="data-table" aria-label="Simulated Photosynthesis Bubble Count Data Table">
+              <thead>
+                <tr>
+                  <th>Light Condition / Lamp Distance</th>
+                  <th>Illuminance (lx)</th>
+                  <th>Trial 1 (60 s)</th>
+                  <th>Trial 2 (60 s)</th>
+                  <th>Trial 3 (60 s)</th>
+                  <th>Mean (Bubbles / 60 s)</th>
+                  <th>Observation Status</th>
+                </tr>
+              </thead>
+              <tbody id="sim-data-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Physical Classroom Manual Entry Table (Kept Strictly Separate) -->
+          <div id="physical-table-container" class="table-scroll" hidden>
+            <table class="data-table" aria-label="Physical Classroom Hydrilla Manual Data Table">
+              <thead>
+                <tr>
+                  <th>Light Condition / Lamp Distance</th>
+                  <th>Physical Trial 1 (60 s)</th>
+                  <th>Physical Trial 2 (60 s)</th>
+                  <th>Physical Trial 3 (60 s)</th>
+                  <th>Physical Mean (Bubbles / 60 s)</th>
+                  <th>Water Temp (°C)</th>
+                </tr>
+              </thead>
+              <tbody id="physical-data-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 6. GRAPH BELOW DATA TABLE (PART 5 — NEVER SIDE-BY-SIDE) -->
+        <section class="sim-card sim-graph-card" aria-labelledby="sim-graph-heading">
+          <div class="sim-card-header">
+            <div>
+              <span class="eyebrow">Section 6 · Data Visualization (Below Data Table)</span>
+              <h2 id="sim-graph-heading">Mean Bubble Production Rate vs. Light Condition</h2>
+            </div>
+            <span id="graph-status-badge" class="graph-status-badge">
+              Complete a 60-second trial to plot data points
+            </span>
+          </div>
+
+          <div class="graph-canvas-container">
+            <svg
+              id="sim-graph-svg"
+              viewBox="0 0 760 280"
+              role="img"
+              aria-label="Line and bar chart of mean oxygen bubble rate per 60 seconds across 10 cm, 20 cm, 30 cm, 40 cm, and Dark conditions"
+            ></svg>
+          </div>
+        </section>
+      </main>
+
+      <!-- ================================================================ -->
+      <!-- HIDEABLE BIOVOICE AI VOICE COMPANION PANEL (RIGHT SIDE / DRAWER) -->
+      <!-- ================================================================ -->
+      <aside
+        id="biovoice-side-panel"
+        class="biovoice-side-panel"
+        aria-label="BioVoice AI Voice Learning Companion"
+      >
+        <div class="biovoice-panel-inner">
+          <!-- Panel Header with Hide Toggle -->
+          <header class="bv-panel-header">
+            <div class="bv-header-title-group">
+              <span class="bv-orb-indicator" id="bv-orb-indicator" aria-hidden="true"></span>
+              <div>
+                <h2 class="bv-title">BioVoice AI Companion</h2>
+                <span id="bv-logging-badge" class="bv-logging-badge">
+                  Intervention Mode · Appendix I Logging Active
+                </span>
+              </div>
+            </div>
+            <button
+              id="close-biovoice-panel-btn"
+              class="bv-hide-btn"
+              type="button"
+              title="Hide BioVoice Panel (Expand Simulation)"
+            >
+              Hide ✕
+            </button>
+          </header>
+
+          <!-- Compact Language & Support Controls (Part 11) -->
+          <div class="bv-controls-strip">
+            <div class="bv-control-row">
+              <label class="bv-compact-field">
+                <span>Language</span>
+                <select id="language-select" aria-label="BioVoice Language Mode">
+                  <option value="auto" selected>Auto Detect (EN / FIL / CEB)</option>
+                  <option value="en-PH">English</option>
+                  <option value="fil-PH">Filipino</option>
+                  <option value="ceb-PH">Cebuano (Bisaya)</option>
+                </select>
+              </label>
+              <label class="bv-compact-field">
+                <span>Activity Step</span>
+                <select id="support-point-select" aria-label="Activity Support Point">
+                  <option value="sp1">Part 1: Predict — SP1</option>
+                  <option value="sp2">Part 2: Plan — SP2</option>
+                  <option value="sp3">Part 3: Investigate — SP3</option>
+                  <option value="sp4">Part 4: Explain — SP4</option>
+                  <option value="sp5">Part 5a: Connect — SP5</option>
+                  <option value="sp6">Part 5b: Revise — SP6</option>
+                </select>
+              </label>
+            </div>
+
+            <!-- Support Type Selector (Hint First R1 Default) -->
+            <div class="bv-support-type-row" role="group" aria-label="Support Level">
+              <button type="button" class="support-type-pill is-active" data-support-type="hint">
+                💡 Hint First (H)
+              </button>
+              <button type="button" class="support-type-pill" data-support-type="clarification">
+                🔍 Clarification (C)
+              </button>
+              <button type="button" class="support-type-pill" data-support-type="explanation">
+                📘 Explanation (E)
+              </button>
+            </div>
+
+            <!-- Voice Playback & Speed Controls (Part 10) -->
+            <div class="bv-voice-bar">
+              <span id="detected-language-badge" class="detected-lang-pill">
+                Auto Detect Ready
+              </span>
+              <div class="bv-voice-buttons">
+                <button id="voice-mute-btn" class="voice-ctrl-btn" type="button" title="Mute or Unmute Spoken Output">
+                  🔊 Voice On
+                </button>
+                <button id="voice-replay-btn" class="voice-ctrl-btn" type="button" title="Replay Last BioVoice Spoken Response">
+                  ↺ Replay
+                </button>
+                <button id="voice-stop-btn" class="voice-ctrl-btn" type="button" title="Stop Speaking Immediately">
+                  ■ Stop
+                </button>
+                <select id="voice-speed-select" class="voice-speed-select" aria-label="Voice Playback Speed" title="Voice Playback Speed">
+                  <option value="0.85">0.85×</option>
+                  <option value="0.95">0.95×</option>
+                  <option value="1.0" selected>1.0×</option>
+                  <option value="1.1">1.1×</option>
+                  <option value="1.2">1.2×</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversational Multi-Turn Chat Stream -->
+          <div id="chat-messages" class="bv-chat-stream" role="log" aria-live="polite"></div>
+
+          <!-- Contextual Follow-Up & Prompt Chips -->
+          <div class="bv-suggestions-strip">
+            <div id="prompt-chips" class="bv-chips-scroll"></div>
+          </div>
+
+          <!-- Student Worksheet / Teacher Check Confirmation Bar -->
+          <div id="student-check-bar" class="bv-check-bar" hidden>
+            <span>Did you compare this explanation with your worksheet or teacher?</span>
+            <div class="bv-check-actions">
+              <button id="mark-checked-sheet-btn" class="mini-btn" type="button">
+                ✓ Checked with Sheet
+              </button>
+              <button id="mark-checked-teacher-btn" class="mini-btn" type="button">
+                ✓ Checked with Teacher
+              </button>
+            </div>
+          </div>
+
+          <!-- Voice & Text Input Composer -->
+          <form id="chat-form" class="bv-composer" autocomplete="off">
+            <div class="bv-composer-top">
+              <button
+                id="mic-btn"
+                class="bv-mic-btn"
+                type="button"
+                aria-label="Speak your question to BioVoice"
+              >
+                🎙️ <span id="mic-btn-label">Tap to Speak</span>
+              </button>
+              <span id="speech-status-text" class="bv-speech-status">
+                Speak or type in English, Filipino, or Cebuano
+              </span>
+            </div>
+            <div class="bv-composer-input-row">
+              <textarea
+                id="question-input"
+                rows="2"
+                placeholder="Ask a photosynthesis question or follow-up (e.g., 'Why does 10 cm make more bubbles?', 'Ngano man nga adunay bubbles ang Hydrilla?')..."
+                required
+              ></textarea>
+              <button id="send-btn" class="primary-btn bv-send-btn" type="submit">
+                Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- SCREEN 3: PRIVATE RESEARCHER DASHBOARD (ADMIN / RESEARCHER)          -->
+  <!-- ==================================================================== -->
+  <section id="screen-dashboard" class="dashboard-screen" aria-label="Private Researcher Dashboard" hidden>
+    <header class="dashboard-topbar">
+      <div class="msuiit-brand compact">
+        <div class="msuiit-crest">
+          <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+        </div>
+        <div class="msuiit-brand-text">
+          <span class="msuiit-acronym">MSU-IIT</span>
+          <span class="msuiit-sub">Private Researcher Dashboard</span>
+        </div>
+      </div>
+
+      <div class="dashboard-topbar-actions">
+        <span id="dashboard-user-badge" class="profile-badge">researcher_admin · Researcher/Admin</span>
+        <button id="dashboard-preview-sim-btn" class="secondary-btn" type="button">
+          🧪 Open Simulation &amp; BioVoice Workspace
+        </button>
+        <button id="dashboard-refresh-btn" class="ghost-btn" type="button">
+          ↻ Refresh Data
+        </button>
+        <button id="dashboard-logout-btn" class="logout-pill-btn" type="button">
+          Log Out
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Summary Metrics Cards -->
+      <div class="dash-metrics-grid">
+        <article class="dash-metric-card">
+          <span class="metric-label">Official Code Register</span>
+          <strong id="metric-total-codes">200</strong>
+          <small>BV-001 through BV-200 verified</small>
+        </article>
+        <article class="dash-metric-card">
+          <span class="metric-label">Assigned Participants</span>
+          <strong id="metric-assigned-codes">109</strong>
+          <small id="metric-group-breakdown">Intervention: 54 | Comparison: 55</small>
+        </article>
+        <article class="dash-metric-card">
+          <span class="metric-label">Consent &amp; Assent Verified</span>
+          <strong id="metric-consent-verified">109</strong>
+          <small>Appendix A verified on file</small>
+        </article>
+        <article class="dash-metric-card">
+          <span class="metric-label">Real BioVoice Logs</span>
+          <strong id="metric-real-logs">0</strong>
+          <small id="metric-active-users">0 active Intervention codes</small>
+        </article>
+        <article class="dash-metric-card">
+          <span class="metric-label">Pending Researcher Review</span>
+          <strong id="metric-pending-review">0</strong>
+          <small>Appendix I accuracy &amp; scope check</small>
+        </article>
+      </div>
+
+      <!-- Study Configuration & Teacher Permission Controls -->
+      <section class="dash-panel">
+        <div class="dash-panel-header">
+          <div>
+            <span class="eyebrow">Session &amp; Protocol Governance</span>
+            <h2>Study Phase, Standardized Plant Species, Security &amp; Teacher Permissions</h2>
+          </div>
+          <button id="save-study-config-btn" class="primary-btn" type="button">
+            Save Study Configuration
+          </button>
+        </div>
+
+        <div class="config-grid">
+          <label class="field-label">
+            <span>Study Phase (Assessment Lock)</span>
+            <select id="cfg-study-phase">
+              <option value="Implementation">Implementation (BioVoice Active for Intervention)</option>
+              <option value="Pretest">Pretest — Form A (BioVoice Locked)</option>
+              <option value="Posttest">Posttest — Form B (BioVoice Locked)</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Active Session Label</span>
+            <select id="cfg-active-session">
+              <option value="Session 1">Session 1</option>
+              <option value="Session 2">Session 2</option>
+              <option value="Makeup Session">Makeup Session</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Official Standardized Plant Species</span>
+            <select id="cfg-official-plant">
+              <option value="Hydrilla">Hydrilla verticillata (Standard Submerged)</option>
+              <option value="Elodea">Elodea canadensis (Submerged)</option>
+              <option value="Water Hyacinth">Water Hyacinth (Floating Comparison)</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Session Classroom PIN</span>
+            <input id="cfg-class-pin" type="text" value="2026" maxlength="12" />
+          </label>
+        </div>
+
+        <div class="config-checkbox-row">
+          <label class="check-label">
+            <input id="cfg-require-pin" type="checkbox" checked />
+            <span>Require Separate Participant PIN at Student Login</span>
+          </label>
+          <label class="check-label">
+            <input id="cfg-strict-assigned" type="checkbox" checked />
+            <span>Reject Unassigned Participant Codes at Login</span>
+          </label>
+          <label class="check-label">
+            <input id="cfg-require-consent" type="checkbox" checked />
+            <span>Require Verified Parental Consent &amp; Student Assent (Appendix A)</span>
+          </label>
+        </div>
+
+        <!-- Configurable Teacher Permissions -->
+        <div class="teacher-perms-box">
+          <h3>Configurable Teacher Role Permissions</h3>
+          <div class="config-checkbox-row">
+            <label class="check-label">
+              <input id="perm-teacher-guide" type="checkbox" checked />
+              <span>View Activity &amp; Guide</span>
+            </label>
+            <label class="check-label">
+              <input id="perm-teacher-sim" type="checkbox" checked />
+              <span>Access Simulation</span>
+            </label>
+            <label class="check-label">
+              <input id="perm-teacher-monitor" type="checkbox" checked />
+              <span>Monitor Classroom Session Status</span>
+            </label>
+            <label class="check-label">
+              <input id="perm-teacher-obs" type="checkbox" checked />
+              <span>Record Classroom Observations (Appendix J)</span>
+            </label>
+            <label class="check-label">
+              <input id="perm-teacher-fidelity" type="checkbox" checked />
+              <span>Review Implementation Fidelity</span>
+            </label>
+            <label class="check-label">
+              <input id="perm-teacher-logs" type="checkbox" />
+              <span>View Anonymized Interaction Logs</span>
+            </label>
+          </div>
+        </div>
+        <div id="study-config-status" class="status-banner" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <!-- Official 200-Code Register Management -->
+      <section class="dash-panel">
+        <div class="dash-panel-header">
+          <div>
+            <span class="eyebrow">Official Register (BV-001 to BV-200)</span>
+            <h2>Participant Code Registration, PINs, Group Assignment &amp; Consent Verification</h2>
+          </div>
+          <div class="dash-header-btns">
+            <button id="validate-codes-btn" class="secondary-btn" type="button">
+              ✓ Validate 200-Code Register Integrity
+            </button>
+            <button id="export-participants-csv-btn" class="ghost-btn" type="button">
+              Export Register (.csv)
+            </button>
+          </div>
+        </div>
+
+        <div id="code-validation-banner" class="status-banner" hidden></div>
+
+        <!-- Filter & Bulk Update Bar -->
+        <div class="register-toolbar">
+          <input
+            id="participant-search-input"
+            type="search"
+            placeholder="Search code (e.g., BV-027) or notes..."
+            aria-label="Search participant code"
+          />
+          <select id="participant-group-filter" aria-label="Filter by Group">
+            <option value="ALL">All Groups</option>
+            <option value="Intervention">Intervention</option>
+            <option value="Comparison">Comparison</option>
+            <option value="Reserve">Reserve</option>
+          </select>
+          <select id="participant-status-filter" aria-label="Filter by Status">
+            <option value="ALL">All Statuses</option>
+            <option value="Assigned">Assigned</option>
+            <option value="Unassigned">Unassigned</option>
+            <option value="Withdrawn">Withdrawn</option>
+            <option value="Not eligible">Not eligible</option>
+          </select>
+
+          <div class="bulk-assign-inline">
+            <span>Bulk Range (#1–200):</span>
+            <input id="bulk-start-no" type="number" min="1" max="200" value="1" aria-label="Bulk start number" />
+            <span>to</span>
+            <input id="bulk-end-no" type="number" min="1" max="200" value="54" aria-label="Bulk end number" />
+            <select id="bulk-status-select" aria-label="Bulk target status">
+              <option value="Assigned">Set Assigned + Consent Verified</option>
+              <option value="Unassigned">Set Unassigned</option>
+            </select>
+            <button id="bulk-apply-btn" class="secondary-btn" type="button">Apply Bulk</button>
+          </div>
+        </div>
+
+        <div class="table-scroll max-h-360">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Code</th>
+                <th>Individual PIN</th>
+                <th>Assigned Group</th>
+                <th>Status</th>
+                <th>Consent &amp; Assent</th>
+                <th>Interactions</th>
+                <th>Notes</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="participants-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Automated Appendix I Interaction Logs & Researcher Review -->
+      <section class="dash-panel">
+        <div class="dash-panel-header">
+          <div>
+            <span class="eyebrow">Appendix I · BioVoice Use &amp; Prompt Log</span>
+            <h2>Interaction Records, Researcher Review &amp; Data Exports</h2>
+          </div>
+          <div class="dash-header-btns">
+            <label class="check-label">
+              <input id="toggle-synthetic-logs" type="checkbox" />
+              <span>Preview Synthetic Demo Dataset (Isolated from Real Study Data)</span>
+            </label>
+            <button id="export-logs-csv-btn" class="secondary-btn" type="button">
+              Export Appendix I CSV
+            </button>
+            <button id="export-excel-workbook-btn" class="primary-btn" type="button">
+              Export Complete Research Workbook (.xls)
+            </button>
+          </div>
+        </div>
+
+        <!-- Log Filters -->
+        <div class="register-toolbar">
+          <input
+            id="log-search-input"
+            type="search"
+            placeholder="Search participant code, question, response, or Idea Code..."
+          />
+          <select id="log-sp-filter" aria-label="Filter by Support Point">
+            <option value="ALL">All Support Points (SP1–SP6)</option>
+            <option value="SP1">SP1 (Predict)</option>
+            <option value="SP2">SP2 (Plan)</option>
+            <option value="SP3">SP3 (Investigate)</option>
+            <option value="SP4">SP4 (Explain)</option>
+            <option value="SP5">SP5 (Connect)</option>
+            <option value="SP6">SP6 (Revise)</option>
+          </select>
+          <select id="log-type-filter" aria-label="Filter by Request Type">
+            <option value="ALL">All Types (H / C / E)</option>
+            <option value="H">Hint (H)</option>
+            <option value="C">Clarification (C)</option>
+            <option value="E">Explanation (E)</option>
+          </select>
+          <select id="log-idea-filter" aria-label="Filter by Idea Code">
+            <option value="ALL">All Idea Codes (I1–I9)</option>
+            <option value="I1">I1 · Need for light</option>
+            <option value="I2">I2 · Bubble count as rate</option>
+            <option value="I3">I3 · Lamp distance &amp; light</option>
+            <option value="I4">I4 · Dark setup comparison</option>
+            <option value="I5">I5 · High-light leveling off</option>
+            <option value="I6">I6 · Repeated trials &amp; mean</option>
+            <option value="I7">I7 · Constant variables</option>
+            <option value="I8">I8 · Light energy to glucose</option>
+            <option value="I9">I9 · Value of photosynthesis</option>
+          </select>
+        </div>
+
+        <div class="table-scroll max-h-360">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Code</th>
+                <th>Date / Time</th>
+                <th>Step (SP)</th>
+                <th>Type</th>
+                <th>Idea</th>
+                <th>Mode / Lang</th>
+                <th>Student Request &amp; BioVoice Summary</th>
+                <th>Hint First</th>
+                <th>Sheet/Teacher Check</th>
+                <th>Accuracy &amp; Scope</th>
+                <th>Review</th>
+              </tr>
+            </thead>
+            <tbody id="logs-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Analytics Breakdown (SP1-SP6, H/C/E, I1-I9) -->
+      <section class="dash-panel">
+        <div class="dash-panel-header">
+          <div>
+            <span class="eyebrow">Thesis Chapter 3 &amp; 4 Analytics</span>
+            <h2>Descriptive Distributions (Support Points, Request Types, Idea Codes)</h2>
+          </div>
+          <button id="export-summary-csv-btn" class="ghost-btn" type="button">
+            Export Participant Summary (.csv)
+          </button>
+        </div>
+        <div id="analytics-breakdown-grid" class="analytics-breakdown-grid"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 1: TERMS & CONDITIONS POP-UP ("BEFORE YOU BEGIN" — PART 3)     -->
+  <!-- ==================================================================== -->
+  <div id="terms-dialog" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title" hidden>
+    <div class="modal-window terms-modal-window">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">MSU-IIT Research Session Orientation</span>
+          <h2 id="terms-modal-title">Before You Begin</h2>
+        </div>
+      </header>
+      <div class="modal-body">
+        <p class="terms-intro">
+          Welcome to the <strong>BioVoice</strong> learning session at <strong>Iligan City National High School</strong>. Please read these 10 important points before starting your activity:
+        </p>
+        <ol class="terms-list">
+          <li>
+            <strong>Purpose of the Platform:</strong> BioVoice is an educational learning platform designed to help Grade 11 Biology 1 students investigate photosynthesis and build conceptual understanding.
+          </li>
+          <li>
+            <strong>How the Photosynthesis Simulation Works:</strong> You will test how lamp distance and light condition (<code>10 cm</code>, <code>20 cm</code>, <code>30 cm</code>, <code>40 cm</code>, and <code>Dark</code>) affect oxygen bubble production over a <strong>60-second observation time</strong>.
+          </li>
+          <li>
+            <strong>Research Interaction Logging:</strong> When BioVoice AI voice support is enabled for your session, your interactions with BioVoice are automatically logged for educational research analysis (Appendix I).
+          </li>
+          <li>
+            <strong>Participant Code Privacy:</strong> Official participant codes (<code>BV-001</code> through <code>BV-200</code>) are used instead of student names inside this web application to protect your privacy.
+          </li>
+          <li>
+            <strong>Voice and Typed Questions:</strong> For students in the <strong>Intervention Group</strong>, spoken or typed questions asked to BioVoice and BioVoice's responses are recorded as anonymized research interaction data.
+          </li>
+          <li>
+            <strong>Hints, Clarifications, and Explanations Only:</strong> BioVoice provides hints first, followed by clarifications and explanations to guide your thinking—it will never give out test answers or write final worksheet answers for you.
+          </li>
+          <li>
+            <strong>Verify with Your Activity Sheet and Teacher:</strong> Always compare BioVoice explanations and simulation observations with your printed Student Activity Sheet (Appendix F) and your Biology teacher's guidance.
+          </li>
+          <li>
+            <strong>School and Research Conduct:</strong> Your participation follows Iligan City National High School classroom rules and MSU-IIT ethical research standards.
+          </li>
+          <li>
+            <strong>Questions or Concerns:</strong> You may raise your hand and ask your Biology teacher or the MSU-IIT research team at any time if you have questions or concerns.
+          </li>
+          <li>
+            <strong>Session Confirmation:</strong> Clicking <strong>"I Agree and Continue"</strong> below confirms that you understand how the BioVoice platform works for today's learning session.
+          </li>
+        </ol>
+        <div class="terms-ethics-note">
+          <strong>Ethical Safeguard Notice:</strong> This on-screen orientation does not replace signed Parental Consent and Student Assent (Appendix A). Active research data logging is enabled only for participant codes whose signed consent and assent have been verified by the research team.
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button id="terms-decline-btn" class="ghost-btn" type="button">
+          Decline and Log Out
+        </button>
+        <button id="terms-agree-btn" class="primary-btn" type="button">
+          I Agree and Continue
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 2: ACTIVITY GUIDE POP-UP WINDOW (ADDITIONAL UI REQUIREMENT)    -->
+  <!-- ==================================================================== -->
+  <div id="guide-dialog" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="guide-modal-title" hidden>
+    <div class="modal-window content-modal-window">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">Appendix F &amp; DepEd Strengthened SHS Biology 1</span>
+          <h2 id="guide-modal-title">Student Activity Guide: Investigating Photosynthesis</h2>
+        </div>
+        <button id="close-guide-modal-btn" class="modal-close-btn" type="button" aria-label="Close Activity Guide">
+          ✕ Close
+        </button>
+      </header>
+      <div class="modal-body structured-guide-body">
+        <section class="guide-section">
+          <h3>1. Activity Title &amp; Learning Objectives</h3>
+          <p>
+            <strong>Title:</strong> <em>Investigating How Light Intensity Affects the Rate of Photosynthesis in Aquatic Plants</em>
+          </p>
+          <p>Aligned with the <strong>DepEd Strengthened Senior High School Curriculum — Biology 1 (Grade 11, SY 2026–2027)</strong>:</p>
+          <ul>
+            <li><strong>LC 1:</strong> Describe how photosynthetic organisms capture light energy and convert it into chemical energy.</li>
+            <li><strong>LC 2:</strong> Identify the raw materials (carbon dioxide and water) and products (glucose and oxygen) of photosynthesis.</li>
+            <li><strong>LC 3:</strong> Investigate how environmental factors such as light intensity (lamp distance) affect the rate of oxygen bubble production.</li>
+            <li><strong>LC 4:</strong> Distinguish between the light-dependent reactions in the thylakoid membranes and the Calvin cycle in the stroma, and explain limiting factors at high light intensity.</li>
+            <li><strong>LC 5:</strong> Explain the biological and ecological importance of photosynthesis in sustaining food webs and atmospheric oxygen.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h3>2. Scientific Background on Photosynthesis</h3>
+          <p>
+            Photosynthesis is the process by which photoautotrophs capture light energy using chlorophyll inside chloroplasts to synthesize glucose from carbon dioxide ($\text{CO}_2$) and water ($\text{H}_2\text{O}$), releasing oxygen gas ($\text{O}_2$) as a by-product:
+          </p>
+          <p class="equation-box">
+            $6\text{CO}_2 + 6\text{H}_2\text{O} + \text{Light Energy} \xrightarrow{\text{Chlorophyll}} \text{C}_6\text{H}_{12}\text{O}_6 + 6\text{O}_2\uparrow$
+          </p>
+          <p>
+            In submerged aquatic plants like <em>Hydrilla verticillata</em> and <em>Elodea canadensis</em>, oxygen gas generated during the photolysis of water in the thylakoids emerges from the cut stem and leaf nodes as visible bubbles. Counting these bubbles over <strong>60 seconds</strong> provides an observable measure of the relative rate of photosynthesis.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>3. Experimental Setup &amp; Simulated Components</h3>
+          <ul>
+            <li><strong>Aquatic Plant Specimen:</strong> Fresh submerged shoot of <em>Hydrilla verticillata</em> (official standardized specimen), with optional exploratory comparison to <em>Elodea canadensis</em> (submerged) and <em>Water Hyacinth</em> (<em>Eichhornia crassipes</em>, surface-floating).</li>
+            <li><strong>Sodium Bicarbonate Solution (0.2% $\text{NaHCO}_3$):</strong> Supplies a constant dissolved carbon dioxide source in the water bath.</li>
+            <li><strong>Calibrated Optical Bench &amp; Lamp:</strong> Tested at <code>10 cm</code> (2,500 lx), <code>20 cm</code> (1,100 lx), <code>30 cm</code> (550 lx), <code>40 cm</code> (280 lx), and <code>Dark Control</code> (0 lx).</li>
+            <li><strong>Submerged Thermometer &amp; Heat Filter:</strong> Keeps the measured water bath temperature constant at <code>26.0 °C</code> so light intensity is the only manipulated variable.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h3>4. Step-by-Step Activity Instructions (SP1 to SP6)</h3>
+          <ol class="guide-steps-list">
+            <li><strong>Step 1 — Part 1: Predict (SP1):</strong> Record which lamp distance you predict will produce the most bubbles in 60 seconds and identify the gas released.</li>
+            <li><strong>Step 2 — Part 2: Plan (SP2):</strong> Identify the independent variable (lamp distance/light condition), dependent variable (bubbles counted per 60 seconds), and constant variables (plant shoot, 0.2% $\text{NaHCO}_3$, 26.0 °C water bath, 60-second counting time). Explain why 3 repeated trials per condition are needed.</li>
+            <li><strong>Step 3 — Part 3: Investigate (SP3):</strong> Run 60-second observations for <code>10 cm</code>, <code>20 cm</code>, <code>30 cm</code>, <code>40 cm</code>, and <code>Dark</code>. Count bubbles carefully from start to finish (<code>60 seconds</code> down to <code>0 seconds</code>).</li>
+            <li><strong>Step 4 — Part 4: Explain (SP4):</strong> Compare your mean bubble counts across distances and the Dark control. Explain why high light intensity eventually levels off (light saturation) when $\text{CO}_2$ concentration or Calvin cycle enzymes become limiting.</li>
+            <li><strong>Step 5 — Part 5a: Connect (SP5):</strong> Trace how ATP and NADPH from the light-dependent reactions power glucose synthesis in the Calvin cycle and explain why photosynthesis matters to ecosystems.</li>
+            <li><strong>Step 6 — Part 5b: Revise (SP6):</strong> Review and refine your scientific explanation in your own words using evidence from your data table and graph.</li>
+          </ol>
+        </section>
+
+        <section class="guide-section">
+          <h3>5. Data Recording, Graph Interpretation &amp; Verification</h3>
+          <p>
+            Record each completed 60-second trial in the Data Table and compute the <strong>Mean</strong> ($\text{Trial 1 + Trial 2 + Trial 3} \div 3$). Inspect the graph below the table to see how bubble rate decreases with distance and drops near zero in the Dark control.
+          </p>
+          <p class="guide-reminder-box">
+            <strong>Important Reminder:</strong> Always compare your simulation results and any BioVoice explanations with your printed Student Activity Sheet (Appendix F) and your Biology teacher's instructions.
+          </p>
+        </section>
+      </div>
+      <footer class="modal-footer">
+        <button id="guide-modal-done-btn" class="primary-btn" type="button">
+          Return to Activity Workspace
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 3: ABOUT BIOVOICE POP-UP WINDOW (ADDITIONAL UI REQUIREMENT)    -->
+  <!-- ==================================================================== -->
+  <div id="about-dialog" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" hidden>
+    <div class="modal-window content-modal-window">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">MSU-IIT Educational Technology &amp; Biology Research</span>
+          <h2 id="about-modal-title">About BioVoice</h2>
+        </div>
+        <button id="close-about-modal-btn" class="modal-close-btn" type="button" aria-label="Close About BioVoice">
+          ✕ Close
+        </button>
+      </header>
+      <div class="modal-body structured-guide-body">
+        <section class="guide-section">
+          <h3>1. Overview &amp; Purpose of BioVoice</h3>
+          <p>
+            <strong>BioVoice</strong> (<em>Embedding an AI-Assisted Voice Interaction Tool in a Biology Activity to Improve Senior High School Students’ Conceptual Understanding</em>) is an integrated educational platform that combines an interactive photosynthesis laboratory simulation with a guardrailed, multilingual AI voice learning companion.
+          </p>
+          <p>
+            The platform helps Grade 11 Biology 1 students connect observable experimental evidence (oxygen bubble production across light conditions) with underlying cellular processes (light-dependent reactions, photolysis of water, Calvin cycle, and limiting factors).
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>2. How the Simulation and AI Assistant Work Together</h3>
+          <p>
+            Students conduct 60-second photosynthesis trials at multiple lamp distances and in a dark control. At six structured support points (<strong>SP1 Predict</strong> through <strong>SP6 Revise</strong>), students in the Intervention group can speak or type questions in <strong>English</strong>, <strong>Filipino</strong>, or <strong>Cebuano (Bisaya)</strong>. BioVoice automatically detects the student's language and responds using a <strong>Hint-First</strong> pedagogical scaffold (Hint → Clarification → Explanation) while keeping scientific terminology accurate and never giving away test answers.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>3. Research Identity &amp; Institutional Attribution</h3>
+          <div class="about-meta-grid">
+            <div>
+              <strong>Institution:</strong><br />
+              Mindanao State University – Iligan Institute of Technology (MSU-IIT)
+            </div>
+            <div>
+              <strong>College &amp; Degree Program:</strong><br />
+              College of Education — Bachelor of Secondary Education, Major in Biology
+            </div>
+            <div>
+              <strong>Researchers:</strong><br />
+              Abdillah G. Sangcopan &amp; Karen M. Villa
+            </div>
+            <div>
+              <strong>Thesis Adviser:</strong><br />
+              Prof. Vanjoreeh Madale
+            </div>
+            <div>
+              <strong>Partner Research Site:</strong><br />
+              Iligan City National High School, Iligan City, Philippines (Grade 11 Biology 1, SY 2026–2027)
+            </div>
+            <div>
+              <strong>Curriculum Basis:</strong><br />
+              DepEd Strengthened Senior High School Curriculum — Biology 1 (DM 12, s. 2026)
+            </div>
+          </div>
+        </section>
+
+        <section class="guide-section">
+          <h3>4. Privacy &amp; Ethical Research Safeguards</h3>
+          <p>
+            To protect student privacy in compliance with the Philippine Data Privacy Act of 2012 (RA 10173), no student names, emails, or personal identifiers are entered into the web platform. Participation uses pseudonymous codes (<code>BV-001</code> to <code>BV-200</code>), requires verified Parental Consent and Student Assent (Appendix A), and stores only structured interaction summaries (Appendix I) rather than raw biometric audio recordings.
+          </p>
+        </section>
+      </div>
+      <footer class="modal-footer">
+        <button id="about-modal-done-btn" class="primary-btn" type="button">
+          Close Window
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 4: TEACHER CLASSROOM MONITOR & APPENDIX J OBSERVATION MODAL    -->
+  <!-- ==================================================================== -->
+  <div id="teacher-dialog" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="teacher-modal-title" hidden>
+    <div class="modal-window content-modal-window">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">Teacher Classroom Portal · Appendix J</span>
+          <h2 id="teacher-modal-title">Classroom Session Status &amp; Implementation Monitoring</h2>
+        </div>
+        <button id="close-teacher-modal-btn" class="modal-close-btn" type="button" aria-label="Close Classroom Monitor">
+          ✕ Close
+        </button>
+      </header>
+      <div class="modal-body structured-guide-body">
+        <div class="dash-metrics-grid compact-metrics">
+          <div class="dash-metric-card">
+            <span class="metric-label">Current Study Phase</span>
+            <strong id="teacher-phase-readout">Implementation</strong>
+          </div>
+          <div class="dash-metric-card">
+            <span class="metric-label">Active Session</span>
+            <strong id="teacher-session-readout">Session 1</strong>
+          </div>
+          <div class="dash-metric-card">
+            <span class="metric-label">Assigned Intervention / Comparison</span>
+            <strong id="teacher-assigned-readout">54 / 55</strong>
+          </div>
+        </div>
+
+        <form id="monitoring-form" class="monitoring-form">
+          <h3>Record Classroom Observation &amp; Implementation Fidelity (Appendix J)</h3>
+          <div class="config-grid">
+            <label class="field-label">
+              <span>Session Number</span>
+              <select id="mon-session-no">
+                <option value="Session 1">Session 1</option>
+                <option value="Session 2">Session 2</option>
+              </select>
+            </label>
+            <label class="field-label">
+              <span>Class Section / Group</span>
+              <select id="mon-group-condition">
+                <option value="Intervention">Intervention Class (With BioVoice)</option>
+                <option value="Comparison">Comparison Class (Teacher-Led Only)</option>
+              </select>
+            </label>
+            <label class="field-label">
+              <span>Students Present</span>
+              <input id="mon-students-present" type="number" min="1" max="70" value="48" />
+            </label>
+            <label class="field-label">
+              <span>Teacher / Facilitator Name</span>
+              <input id="mon-teacher-name" type="text" placeholder="e.g., Grade 11 Biology Teacher" />
+            </label>
+          </div>
+
+          <div id="fidelity-checklist-container" class="fidelity-checklist"></div>
+
+          <label class="field-label">
+            <span>Classroom Observation Notes &amp; Technical Adjustments</span>
+            <textarea
+              id="mon-issues-notes"
+              rows="2"
+              placeholder="Note student engagement, physical Hydrilla station pacing, or audio/network observations..."
+            ></textarea>
+          </label>
+
+          <div class="modal-footer-inline">
+            <button type="submit" class="primary-btn">Save Appendix J Classroom Record</button>
+            <span id="monitoring-save-status" class="status-inline"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 5: RESEARCHER LOG REVIEW DIALOG (AUDIT TRAIL)                  -->
+  <!-- ==================================================================== -->
+  <div id="review-dialog" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="review-modal-title" hidden>
+    <div class="modal-window">
+      <header class="modal-header">
+        <div>
+          <span class="eyebrow">Appendix I Verification &amp; Audit Trail</span>
+          <h2 id="review-modal-title">Review Interaction Record</h2>
+        </div>
+        <button id="close-review-modal-btn" class="modal-close-btn" type="button">✕ Close</button>
+      </header>
+      <form id="review-log-form" class="modal-body">
+        <input id="review-log-id" type="hidden" />
+        <p id="review-exchange-preview" class="equation-box"></p>
+        <div class="config-grid">
+          <label class="field-label">
+            <span>Verified Support Point</span>
+            <select id="review-sp-select">
+              <option value="SP1">SP1 · Predict</option>
+              <option value="SP2">SP2 · Plan</option>
+              <option value="SP3">SP3 · Investigate</option>
+              <option value="SP4">SP4 · Explain</option>
+              <option value="SP5">SP5 · Connect</option>
+              <option value="SP6">SP6 · Revise</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Verified Request Type</span>
+            <select id="review-type-select">
+              <option value="H">H · Hint</option>
+              <option value="C">C · Clarification</option>
+              <option value="E">E · Explanation</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Verified Idea Code (I1–I9)</span>
+            <select id="review-idea-select">
+              <option value="I1">I1 · Need for light in photosynthesis</option>
+              <option value="I2">I2 · Bubble count as sign of rate</option>
+              <option value="I3">I3 · Lamp distance and light strength</option>
+              <option value="I4">I4 · Dark setup as comparison</option>
+              <option value="I5">I5 · High-light leveling off</option>
+              <option value="I6">I6 · Repeated trials and mean</option>
+              <option value="I7">I7 · Constant variables / fair test</option>
+              <option value="I8">I8 · Light energy to chemical energy</option>
+              <option value="I9">I9 · Value of photosynthesis to organisms</option>
+            </select>
+          </label>
+          <label class="field-label">
+            <span>Accuracy &amp; Scope Rating</span>
+            <select id="review-accuracy-select">
+              <option value="Pending researcher review">Pending researcher review</option>
+              <option value="Accurate and within scope">Accurate and within scope</option>
+              <option value="Minor wording issue">Minor wording issue</option>
+              <option value="Out of scope / Needs teacher follow-up">Out of scope / Needs teacher follow-up</option>
+            </select>
+          </label>
+        </div>
+        <label class="field-label">
+          <span>Researcher Remarks / Audit Reason</span>
+          <input id="review-remarks-input" type="text" placeholder="Enter verification remarks..." />
+        </label>
+        <div class="modal-footer">
+          <button type="submit" class="primary-btn">Save Audited Verification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,4215 @@
+{
+  "sourceFile": "BioVoice_Participant_Codes_BV001-BV200.xlsx",
+  "totalCodes": 200,
+  "validatedAt": "2026-11-07T22:15:00+08:00",
+  "codes": [
+    {
+      "no": 1,
+      "code": "BV-001",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4396",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 2,
+      "code": "BV-002",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4197",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 3,
+      "code": "BV-003",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6560",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 4,
+      "code": "BV-004",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2504",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 5,
+      "code": "BV-005",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5440",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 6,
+      "code": "BV-006",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4328",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 7,
+      "code": "BV-007",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7402",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 8,
+      "code": "BV-008",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1750",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 9,
+      "code": "BV-009",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6810",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 10,
+      "code": "BV-010",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2944",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 11,
+      "code": "BV-011",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3749",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 12,
+      "code": "BV-012",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9007",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 13,
+      "code": "BV-013",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3446",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 14,
+      "code": "BV-014",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9107",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 15,
+      "code": "BV-015",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1838",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 16,
+      "code": "BV-016",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4514",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 17,
+      "code": "BV-017",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "8658",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 18,
+      "code": "BV-018",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "8544",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 19,
+      "code": "BV-019",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6420",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 20,
+      "code": "BV-020",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5685",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 21,
+      "code": "BV-021",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4677",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 22,
+      "code": "BV-022",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7687",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 23,
+      "code": "BV-023",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9909",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 24,
+      "code": "BV-024",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3193",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 25,
+      "code": "BV-025",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7267",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 26,
+      "code": "BV-026",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6133",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 27,
+      "code": "BV-027",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1777",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 28,
+      "code": "BV-028",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5446",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 29,
+      "code": "BV-029",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6589",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 30,
+      "code": "BV-030",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9069",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 31,
+      "code": "BV-031",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6257",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 32,
+      "code": "BV-032",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2207",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 33,
+      "code": "BV-033",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2837",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 34,
+      "code": "BV-034",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5858",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 35,
+      "code": "BV-035",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6050",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 36,
+      "code": "BV-036",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3527",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 37,
+      "code": "BV-037",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1380",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 38,
+      "code": "BV-038",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6155",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 39,
+      "code": "BV-039",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4867",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 40,
+      "code": "BV-040",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7198",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 41,
+      "code": "BV-041",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3025",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 42,
+      "code": "BV-042",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1440",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 43,
+      "code": "BV-043",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5893",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 44,
+      "code": "BV-044",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1577",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 45,
+      "code": "BV-045",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6683",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 46,
+      "code": "BV-046",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3485",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 47,
+      "code": "BV-047",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1339",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 48,
+      "code": "BV-048",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9242",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 49,
+      "code": "BV-049",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6251",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 50,
+      "code": "BV-050",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9652",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 51,
+      "code": "BV-051",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7729",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 52,
+      "code": "BV-052",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4871",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 53,
+      "code": "BV-053",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6227",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 54,
+      "code": "BV-054",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "8338",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 55,
+      "code": "BV-055",
+      "status": "Assigned",
+      "group": "Intervention",
+      "notes": "Pending signed parental consent form (Appendix A)",
+      "accessPin": "5535",
+      "assignedAt": "2026-11-08T09:35:56+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        },
+        {
+          "timestamp": "2026-11-08T09:35:56+08:00",
+          "action": "Status: Assigned -> Assigned | Group: Intervention -> Intervention | Consent: True",
+          "status": "Assigned",
+          "group": "Intervention",
+          "reason": "Updated by researcher",
+          "by": "researcher_admin"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 56,
+      "code": "BV-056",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5007",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 57,
+      "code": "BV-057",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1250",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 58,
+      "code": "BV-058",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7030",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 59,
+      "code": "BV-059",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3160",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 60,
+      "code": "BV-060",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4129",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 61,
+      "code": "BV-061",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6573",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 62,
+      "code": "BV-062",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7509",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 63,
+      "code": "BV-063",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4324",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 64,
+      "code": "BV-064",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1450",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 65,
+      "code": "BV-065",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "8275",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 66,
+      "code": "BV-066",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5673",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 67,
+      "code": "BV-067",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5168",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 68,
+      "code": "BV-068",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3272",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 69,
+      "code": "BV-069",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6681",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 70,
+      "code": "BV-070",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2931",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 71,
+      "code": "BV-071",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1225",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 72,
+      "code": "BV-072",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6396",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 73,
+      "code": "BV-073",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9614",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 74,
+      "code": "BV-074",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3725",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 75,
+      "code": "BV-075",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3848",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 76,
+      "code": "BV-076",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9297",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 77,
+      "code": "BV-077",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "2331",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 78,
+      "code": "BV-078",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1217",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 79,
+      "code": "BV-079",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "5956",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 80,
+      "code": "BV-080",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7164",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 81,
+      "code": "BV-081",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3936",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 82,
+      "code": "BV-082",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9047",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 83,
+      "code": "BV-083",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1739",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 84,
+      "code": "BV-084",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "8417",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 85,
+      "code": "BV-085",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4203",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 86,
+      "code": "BV-086",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7474",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 87,
+      "code": "BV-087",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1141",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 88,
+      "code": "BV-088",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6563",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 89,
+      "code": "BV-089",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7508",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 90,
+      "code": "BV-090",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3699",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 91,
+      "code": "BV-091",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "4225",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 92,
+      "code": "BV-092",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "9843",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 93,
+      "code": "BV-093",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7527",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 94,
+      "code": "BV-094",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "1160",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 95,
+      "code": "BV-095",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6768",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 96,
+      "code": "BV-096",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "3430",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 97,
+      "code": "BV-097",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7943",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 98,
+      "code": "BV-098",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "7684",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 99,
+      "code": "BV-099",
+      "status": "Unassigned",
+      "group": "Intervention",
+      "notes": "",
+      "accessPin": "6482",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Intervention",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 100,
+      "code": "BV-100",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4750",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 101,
+      "code": "BV-101",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6127",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 102,
+      "code": "BV-102",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2640",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 103,
+      "code": "BV-103",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7563",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 104,
+      "code": "BV-104",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5228",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 105,
+      "code": "BV-105",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5314",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 106,
+      "code": "BV-106",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5501",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 107,
+      "code": "BV-107",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2064",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 108,
+      "code": "BV-108",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8519",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 109,
+      "code": "BV-109",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1268",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 110,
+      "code": "BV-110",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3534",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 111,
+      "code": "BV-111",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5867",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 112,
+      "code": "BV-112",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9712",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 113,
+      "code": "BV-113",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4554",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 114,
+      "code": "BV-114",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7794",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 115,
+      "code": "BV-115",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5723",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 116,
+      "code": "BV-116",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7099",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 117,
+      "code": "BV-117",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5710",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 118,
+      "code": "BV-118",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8798",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 119,
+      "code": "BV-119",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2540",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 120,
+      "code": "BV-120",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2133",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 121,
+      "code": "BV-121",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6327",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 122,
+      "code": "BV-122",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4882",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 123,
+      "code": "BV-123",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8530",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 124,
+      "code": "BV-124",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5075",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 125,
+      "code": "BV-125",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9747",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 126,
+      "code": "BV-126",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2795",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 127,
+      "code": "BV-127",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6457",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 128,
+      "code": "BV-128",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5686",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 129,
+      "code": "BV-129",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3429",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 130,
+      "code": "BV-130",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8163",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 131,
+      "code": "BV-131",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9794",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 132,
+      "code": "BV-132",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9985",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 133,
+      "code": "BV-133",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4585",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 134,
+      "code": "BV-134",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3483",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 135,
+      "code": "BV-135",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7153",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 136,
+      "code": "BV-136",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1181",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 137,
+      "code": "BV-137",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6431",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 138,
+      "code": "BV-138",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3744",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 139,
+      "code": "BV-139",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7234",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 140,
+      "code": "BV-140",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7169",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 141,
+      "code": "BV-141",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9488",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 142,
+      "code": "BV-142",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5892",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 143,
+      "code": "BV-143",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1489",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 144,
+      "code": "BV-144",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4852",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 145,
+      "code": "BV-145",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2846",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 146,
+      "code": "BV-146",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1911",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 147,
+      "code": "BV-147",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7816",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 148,
+      "code": "BV-148",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8067",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 149,
+      "code": "BV-149",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3257",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 150,
+      "code": "BV-150",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7906",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 151,
+      "code": "BV-151",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7035",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 152,
+      "code": "BV-152",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2943",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 153,
+      "code": "BV-153",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6882",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 154,
+      "code": "BV-154",
+      "status": "Assigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3133",
+      "assignedAt": "2026-11-07T08:00:00+08:00",
+      "assignedBy": "researcher_admin",
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": true,
+      "assentVerified": true
+    },
+    {
+      "no": 155,
+      "code": "BV-155",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2738",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 156,
+      "code": "BV-156",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1672",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 157,
+      "code": "BV-157",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6508",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 158,
+      "code": "BV-158",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "6757",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 159,
+      "code": "BV-159",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4768",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 160,
+      "code": "BV-160",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7221",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 161,
+      "code": "BV-161",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3590",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 162,
+      "code": "BV-162",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8381",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 163,
+      "code": "BV-163",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9946",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 164,
+      "code": "BV-164",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4940",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 165,
+      "code": "BV-165",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2319",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 166,
+      "code": "BV-166",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7596",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 167,
+      "code": "BV-167",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5003",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 168,
+      "code": "BV-168",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "3186",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 169,
+      "code": "BV-169",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1763",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 170,
+      "code": "BV-170",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9234",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 171,
+      "code": "BV-171",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "7771",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 172,
+      "code": "BV-172",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8602",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 173,
+      "code": "BV-173",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "2528",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 174,
+      "code": "BV-174",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1773",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 175,
+      "code": "BV-175",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "1778",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 176,
+      "code": "BV-176",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9891",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 177,
+      "code": "BV-177",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "9296",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 178,
+      "code": "BV-178",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "4272",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 179,
+      "code": "BV-179",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "8213",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 180,
+      "code": "BV-180",
+      "status": "Unassigned",
+      "group": "Comparison",
+      "notes": "",
+      "accessPin": "5251",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 181,
+      "code": "BV-181",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "9539",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 182,
+      "code": "BV-182",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "8886",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 183,
+      "code": "BV-183",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7942",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 184,
+      "code": "BV-184",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "9020",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 185,
+      "code": "BV-185",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "2171",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 186,
+      "code": "BV-186",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "2932",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 187,
+      "code": "BV-187",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "8749",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 188,
+      "code": "BV-188",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7273",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 189,
+      "code": "BV-189",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7264",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 190,
+      "code": "BV-190",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "2508",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 191,
+      "code": "BV-191",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "8195",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 192,
+      "code": "BV-192",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "9049",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 193,
+      "code": "BV-193",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7423",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 194,
+      "code": "BV-194",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "8983",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 195,
+      "code": "BV-195",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "5888",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 196,
+      "code": "BV-196",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "3557",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 197,
+      "code": "BV-197",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "5618",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 198,
+      "code": "BV-198",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7707",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 199,
+      "code": "BV-199",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "7445",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    },
+    {
+      "no": 200,
+      "code": "BV-200",
+      "status": "Unassigned",
+      "group": "Reserve",
+      "notes": "",
+      "accessPin": "9447",
+      "assignedAt": null,
+      "assignedBy": null,
+      "history": [
+        {
+          "timestamp": "2026-11-07T00:00:00Z",
+          "action": "Imported from official register BioVoice_Participant_Codes_BV001-BV200.xlsx",
+          "status": "Unassigned",
+          "group": "Comparison",
+          "by": "System Seed"
+        }
+      ],
+      "consentVerified": false,
+      "assentVerified": false
+    }
+  ]
+}

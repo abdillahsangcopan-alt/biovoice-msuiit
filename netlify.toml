@@ -1,0 +1,28 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/private_data/*"
+  to = "/api/forbidden"
+  status = 403
+  force = true
+
+[[redirects]]
+  from = "/.backup*/*"
+  to = "/api/forbidden"
+  status = 403
+  force = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

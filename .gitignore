@@ -1,0 +1,22 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*service-account*.json
+
+# Protected Research Data & Official Participant Code Register
+private_data/interaction_logs.json
+private_data/monitoring_logs.json
+*.xlsx
+*.csv
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+node_modules/
+.netlify/
+.backup-original-local/
+.backup-original-netlify-live/

@@ -1,0 +1,22 @@
+{
+  "studyPhase": "Implementation",
+  "activeSession": "Session 1",
+  "requirePin": true,
+  "strictAssignedOnly": true,
+  "requireConsentVerification": true,
+  "classAccessPin": "2026",
+  "officialPlantSpecies": "Hydrilla",
+  "enableCloudSpeechFallback": false,
+  "arrangementMode": "Preferred (Shared Physical Station + Unified Simulation for Both Groups; BioVoice for Intervention Only)",
+  "teacherPermissions": {
+    "viewActivityAndGuide": true,
+    "accessSimulation": true,
+    "monitorClassroomSession": true,
+    "recordObservations": true,
+    "reviewFidelity": true,
+    "viewAnonymizedLogs": false,
+    "exportRawData": false
+  },
+  "lastUpdated": "2026-11-08T02:08:00+08:00",
+  "updatedBy": "researcher_admin"
+}
