@@ -6,6 +6,7 @@
 *service-account*.json
 
 # Protected Research Data & Official Participant Code Register
+private_data/participant_codes.json
 private_data/interaction_logs.json
 private_data/monitoring_logs.json
 *.xlsx

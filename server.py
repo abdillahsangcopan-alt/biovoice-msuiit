@@ -92,6 +92,71 @@ def write_json(path, data):
     os.replace(tmp_path, path)
 
 
+def ensure_private_data_initialized():
+    """Auto-seeds participant_codes.json (BV-001..BV-200) and study_config.json on first server boot."""
+    if not os.path.exists(CODES_FILE):
+        codes = []
+        for no in range(1, 201):
+            code = f"BV-{no:03d}"
+            h = hashlib.sha256((code + "-msuiit-biovoice-pin-2026").encode("utf-8")).hexdigest()
+            pin_num = (int(h[:8], 16) % 8999) + 1000
+            if str(pin_num).endswith(f"{no:03d}"):
+                pin_num = ((pin_num + 137) % 8999) + 1000
+            if 1 <= no <= 54:
+                group, status, consent = "Intervention", "Assigned", True
+            elif no == 55:
+                group, status, consent = "Intervention", "Assigned", False
+            elif 56 <= no <= 99:
+                group, status, consent = "Intervention", "Unassigned", False
+            elif 100 <= no <= 154:
+                group, status, consent = "Comparison", "Assigned", True
+            elif 155 <= no <= 180:
+                group, status, consent = "Comparison", "Unassigned", False
+            else:
+                group, status, consent = "Reserve", "Unassigned", False
+            codes.append({
+                "no": no,
+                "code": code,
+                "status": status,
+                "group": group,
+                "notes": "",
+                "accessPin": str(pin_num),
+                "consentVerified": consent,
+                "assentVerified": consent,
+                "assignedAt": now_iso() if status == "Assigned" else None,
+                "assignedBy": "researcher_admin" if status == "Assigned" else None,
+                "history": [],
+            })
+        write_json(CODES_FILE, {"sourceFile": "BioVoice_Participant_Codes_BV001-BV200.xlsx", "totalCodes": 200, "validatedAt": now_iso(), "codes": codes})
+
+    if not os.path.exists(CONFIG_FILE):
+        write_json(CONFIG_FILE, {
+            "studyPhase": "Implementation",
+            "activeSession": "Session 1",
+            "requirePin": True,
+            "strictAssignedOnly": True,
+            "requireConsentVerification": True,
+            "classAccessPin": os.environ.get("BIOVOICE_CLASS_PIN", "2026"),
+            "officialPlantSpecies": "Hydrilla",
+            "enableCloudSpeechFallback": False,
+            "arrangementMode": "Preferred (Shared Physical Station + Unified Simulation for Both Groups; BioVoice for Intervention Only)",
+            "teacherPermissions": {
+                "viewActivityAndGuide": True,
+                "accessSimulation": True,
+                "monitorClassroomSession": True,
+                "recordObservations": True,
+                "reviewFidelity": True,
+                "viewAnonymizedLogs": False,
+                "exportRawData": False,
+            },
+            "lastUpdated": now_iso(),
+            "updatedBy": "System Initialization",
+        })
+
+
+ensure_private_data_initialized()
+
+
 def sign_token(payload_dict):
     payload_bytes = json.dumps(payload_dict, sort_keys=True).encode("utf-8")
     payload_hex = payload_bytes.hex()
