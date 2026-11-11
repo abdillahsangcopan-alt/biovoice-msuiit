@@ -23,6 +23,7 @@ import hmac
 import http.server
 import json
 import os
+import random
 import re
 import socketserver
 import time
@@ -62,6 +63,8 @@ LOGS_FILE = os.path.join(PRIVATE_DIR, "interaction_logs.json")
 SYNTHETIC_LOGS_FILE = os.path.join(PRIVATE_DIR, "synthetic_demo_logs.json")
 MONITORING_FILE = os.path.join(PRIVATE_DIR, "monitoring_logs.json")
 CONFIG_FILE = os.path.join(PRIVATE_DIR, "study_config.json")
+PROGRESS_FILE = os.path.join(PRIVATE_DIR, "student_progress.json")
+SESSIONS_FILE = os.path.join(PRIVATE_DIR, "class_sessions.json")
 
 # Rate-limiting state against brute-force / code enumeration
 LOGIN_ATTEMPTS = {}
@@ -129,7 +132,20 @@ def ensure_private_data_initialized():
             })
         write_json(CODES_FILE, {"sourceFile": "BioVoice_Participant_Codes_BV001-BV200.xlsx", "totalCodes": 200, "validatedAt": now_iso(), "codes": codes})
 
-    if not os.path.exists(CONFIG_FILE):
+    if not os.path.exists(PROGRESS_FILE):
+        write_json(PROGRESS_FILE, {"savedRecords": []})
+
+    if not os.path.exists(SESSIONS_FILE):
+        write_json(SESSIONS_FILE, {"activeSessions": [
+            {
+                "sessionCode": "BV-S1-2026",
+                "sessionLabel": "Session 1",
+                "groupName": "All",
+                "createdAt": now_iso(),
+                "createdBy": "System Default",
+                "isActive": True
+            }
+        ]})
         write_json(CONFIG_FILE, {
             "studyPhase": "Implementation",
             "activeSession": "Session 1",
@@ -353,6 +369,10 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
+        if path == "/api/session/active-codes":
+            sessions_data = read_json(SESSIONS_FILE, {"activeSessions": []})
+            return self.send_json(200, sessions_data)
+
         if path == "/api/public-config":
             cfg = read_json(CONFIG_FILE, {})
             return self.send_json(
@@ -421,6 +441,13 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
             return self.handle_participant_session(body)
         if path == "/api/session/confirm-group":
             return self.handle_confirm_group(body)
+        if path == "/api/session/save-progress":
+            return self.handle_save_progress(body)
+        if path == "/api/session/generate-code":
+            user = self.get_auth_user()
+            if not user:
+                return self.send_json(401, {"error": "Unauthorized."})
+            return self.handle_generate_class_session(user, body)
         if path == "/api/chat":
             return self.handle_chat(body)
         if path == "/api/logs":
@@ -785,6 +812,77 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
             },
         )
 
+    def handle_save_progress(self, body):
+        code = str(body.get("participantCode", "")).strip().upper()
+        if not code:
+            code = "ANONYMOUS"
+        progress_data = read_json(PROGRESS_FILE, {"savedRecords": []})
+        records = progress_data.get("savedRecords", [])
+
+        existing = next((r for r in records if r.get("participantCode") == code), None)
+        record = {
+            "participantCode": code,
+            "sessionCode": str(body.get("sessionCode", "")).strip(),
+            "activeStep": int(body.get("activeStep", 0)),
+            "stepNotes": body.get("stepNotes", []),
+            "stepCompleted": body.get("stepCompleted", []),
+            "simTable": body.get("simTable", {}),
+            "physicalTable": body.get("physicalTable", {}),
+            "lastSaved": now_iso(),
+            "clientIp": self.client_address[0],
+        }
+        if existing:
+            records[records.index(existing)] = record
+        else:
+            records.append(record)
+
+        progress_data["savedRecords"] = records
+        progress_data["lastUpdated"] = now_iso()
+        write_json(PROGRESS_FILE, progress_data)
+        return self.send_json(
+            200,
+            {
+                "saved": True,
+                "savedAt": record["lastSaved"],
+                "participantCode": code,
+            },
+        )
+
+    def handle_generate_class_session(self, user, body):
+        session_label = str(body.get("sessionLabel", "Session 1")).strip()
+        group_name = str(body.get("groupName", "All")).strip()
+        s_num = "1"
+        if "2" in session_label:
+            s_num = "2"
+        elif "3" in session_label:
+            s_num = "3"
+        elif "4" in session_label:
+            s_num = "4"
+        rand_suffix = "".join(random.choices("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", k=4))
+        code = f"BV-S{s_num}-{rand_suffix}"
+
+        sessions_data = read_json(SESSIONS_FILE, {"activeSessions": []})
+        active_list = sessions_data.get("activeSessions", [])
+        new_session = {
+            "sessionCode": code,
+            "sessionLabel": session_label,
+            "groupName": group_name,
+            "createdAt": now_iso(),
+            "createdBy": user.get("username", "researcher"),
+            "isActive": True,
+        }
+        active_list.insert(0, new_session)
+        sessions_data["activeSessions"] = active_list
+        sessions_data["lastUpdated"] = now_iso()
+        write_json(SESSIONS_FILE, sessions_data)
+        return self.send_json(
+            200,
+            {
+                "success": True,
+                "session": new_session,
+            },
+        )
+
     def handle_create_log(self, body):
         # Strictly block Guest / Sandbox interactions from ever entering official research logs
         if body.get("isSandbox") or str(body.get("participantCode", "")).upper().startswith("GUEST"):
@@ -1120,6 +1218,9 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
             else []
         )
 
+        progress_data = read_json(PROGRESS_FILE, {"savedRecords": []})
+        sessions_data = read_json(SESSIONS_FILE, {"activeSessions": []})
+
         return self.send_json(
             200,
             {
@@ -1131,6 +1232,8 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "realLogs": visible_real_logs,
                 "syntheticLogs": synth_logs if is_admin else [],
                 "monitoringLogs": monitoring_logs,
+                "savedProgress": progress_data.get("savedRecords", []),
+                "activeSessions": sessions_data.get("activeSessions", []),
             },
         )
 

@@ -33,14 +33,14 @@
       key: "20",
       label: "20 cm (Med-High Light)",
       shortLabel: "20 cm",
-      lux: 1100,
+      lux: 625,
       lampX: 310,
       coneOpacity: 0.64,
       heatWaveOpacity: 0.35,
       tempC: 26.0,
       rangesByPlant: {
-        Hydrilla: [28, 34],
-        Elodea: [23, 29],
+        Hydrilla: [30, 35],
+        Elodea: [25, 30],
         "Water Hyacinth": [1, 4],
       },
     },
@@ -48,14 +48,14 @@
       key: "30",
       label: "30 cm (Medium Light)",
       shortLabel: "30 cm",
-      lux: 550,
+      lux: 278,
       lampX: 200,
       coneOpacity: 0.42,
       heatWaveOpacity: 0.12,
       tempC: 26.0,
       rangesByPlant: {
-        Hydrilla: [15, 20],
-        Elodea: [12, 17],
+        Hydrilla: [13, 17],
+        Elodea: [10, 14],
         "Water Hyacinth": [1, 3],
       },
     },
@@ -63,7 +63,7 @@
       key: "40",
       label: "40 cm (Low Light)",
       shortLabel: "40 cm",
-      lux: 280,
+      lux: 156,
       lampX: 90,
       coneOpacity: 0.24,
       heatWaveOpacity: 0.0,
@@ -223,7 +223,7 @@
 
   const FIDELITY_ITEMS = [
     "F1. Shared orientation and research code privacy check completed",
-    "F2. Printed Student Activity Sheet (Appendix F) distributed to all students",
+    "F2. Printed Student Activity Sheet (Appendix G) distributed to all students",
     "F3. Physical Hydrilla / simulation setup verified at constant 26.0 °C and 0.2% NaHCO₃",
     "F4. 60-second observation timing procedure explained clearly",
     "F5. Intervention/Comparison group condition strictly maintained without cross-contamination",
@@ -248,6 +248,11 @@
   const state = {
     // Active screen: "welcome" | "learning" | "dashboard"
     currentScreen: "welcome",
+    sessionCode: "",
+    isNightTime: false,
+    nightLampOn: false,
+    vocabBypassActive: false,
+    liveWaterTemp: 26.0,
     // Role: null | "student" | "admin" | "teacher" | "guest"
     activeRole: null,
     // Pending student verification before group confirmation & terms
@@ -507,6 +512,29 @@
     if (welcomeEl) welcomeEl.hidden = screenName !== "welcome";
     if (learningEl) learningEl.hidden = screenName !== "learning";
     if (dashEl) dashEl.hidden = screenName !== "dashboard";
+
+    // Condition Equivalence: Comparison Group vs Intervention Group
+    if (screenName === "learning") {
+      const isComparison = state.participantGroup === "Comparison";
+      const sidebar = $("biovoice-sidebar");
+      const toggleBtn = $("toggle-biovoice-btn");
+      const compBanner = $("comparison-teacher-banner");
+      const groupBadge = $("participant-group-badge");
+
+      if (isComparison) {
+        if (sidebar) sidebar.style.display = "none";
+        if (toggleBtn) toggleBtn.style.display = "none";
+        if (compBanner) compBanner.style.display = "block";
+        if (groupBadge) groupBadge.textContent = "Group B: Comparison (Standard Teacher-Led Inquiry)";
+      } else {
+        if (sidebar) sidebar.style.display = "";
+        if (toggleBtn) toggleBtn.style.display = "";
+        if (compBanner) compBanner.style.display = "none";
+        if (groupBadge && state.participantGroup) {
+          groupBadge.textContent = `Group A: Intervention (${state.participantGroup})`;
+        }
+      }
+    }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -1120,12 +1148,26 @@
   }
 
   function generateControlledTrialBubbleCount(plantSpecies, distKey) {
+    const historyKey = `${plantSpecies}:${distKey}`;
+    const prevCounts = state.trialVariationHistory[historyKey] || [];
+    const trialSlot = (prevCounts.length % 3) + 1;
+
+    // Use pure scientific model if available
+    if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.generateTrialCount) {
+      if (state.isNightTime && !state.nightLampOn) {
+        return 0;
+      }
+      const val = window.PhotosynthesisModel.generateTrialCount(distKey, trialSlot, plantSpecies);
+      prevCounts.push(val);
+      if (prevCounts.length > 3) prevCounts.shift();
+      state.trialVariationHistory[historyKey] = prevCounts;
+      return val;
+    }
+
     const cond = LIGHT_CONDITIONS.find((c) => c.key === String(distKey)) || LIGHT_CONDITIONS[0];
     const range =
       (cond.rangesByPlant && cond.rangesByPlant[plantSpecies]) || cond.rangesByPlant.Hydrilla;
     const [minVal, maxVal] = range;
-    const historyKey = `${plantSpecies}:${distKey}`;
-    const prevCounts = state.trialVariationHistory[historyKey] || [];
 
     let candidate = minVal;
     for (let attempt = 0; attempt < 12; attempt++) {
@@ -1190,6 +1232,25 @@
 
     state.elapsedSeconds += 1;
     state.remainingSeconds = Math.max(0, 60 - state.elapsedSeconds);
+
+    // Live water temperature simulation: heats slightly at 10 cm, cools in dark or far distance
+    const isDarkCondition = state.selectedDistance === "dark" || (state.isNightTime && !state.nightLampOn);
+    if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.calculateLiveTemperature) {
+      state.liveWaterTemp = window.PhotosynthesisModel.calculateLiveTemperature(
+        state.selectedDistance,
+        state.elapsedSeconds,
+        isDarkCondition
+      );
+      if ($("readout-water-temp")) {
+        const hint = state.liveWaterTemp > 26.2 ? "Mild Lamp Radiant Heat" : "Stabilized Water Bath";
+        $("readout-water-temp").textContent = `${state.liveWaterTemp.toFixed(1)} °C (${hint})`;
+      }
+      if ($("sim-thermo-mercury")) {
+        const baseH = 92;
+        const delta = (state.liveWaterTemp - 26.0) * 14;
+        $("sim-thermo-mercury").setAttribute("height", String(Math.max(20, baseH + delta)));
+      }
+    }
 
     const scheduledNow = state.bubbleSchedule[state.elapsedSeconds] || 0;
     for (let b = 0; b < scheduledNow; b++) {
@@ -1735,37 +1796,37 @@
     I1: {
       title: "Need for light in photosynthesis",
       en: {
-        H: "Think about what chlorophyll inside the chloroplasts captures from the lamp. Without light energy, can the light-dependent reactions split water ($\\text{H}_2\\text{O}$) to start photosynthesis?",
+        H: "Think about what chlorophyll inside the chloroplasts captures from the lamp. Without light energy, can the light-dependent reactions split water (H₂O) to start photosynthesis?",
         C: "Light energy is absorbed by chlorophyll in the thylakoid membranes to excite electrons and split water molecules (photolysis). That is why illuminated plants actively release bubbles while unlit plants barely do.",
-        E: "Photosynthesis begins with the light-dependent reactions in the thylakoid membranes. Chlorophyll absorbs photons from the lamp to split water ($\\text{H}_2\\text{O}$) into oxygen gas ($\\text{O}_2$), protons, and electrons, while generating ATP and NADPH. Compare your lit trials with your activity sheet!",
+        E: "Photosynthesis begins with the light-dependent reactions in the thylakoid membranes. Chlorophyll absorbs photons from the lamp to split water (H₂O) into oxygen gas (O₂), protons, and electrons, while generating ATP and NADPH. Compare your lit trials with your activity sheet!",
       },
       fil: {
-        H: "Isipin kung ano ang sinasagap ng chlorophyll sa loob ng chloroplast mula sa lamp. Kapag walang light energy, mahahati ba ang tubig ($\\text{H}_2\\text{O}$) sa light-dependent reactions?",
+        H: "Isipin kung ano ang sinasagap ng chlorophyll sa loob ng chloroplast mula sa lamp. Kapag walang light energy, mahahati ba ang tubig (H₂O) sa light-dependent reactions?",
         C: "Kailangan ng chlorophyll ang light energy sa thylakoid membrane upang hatiin ang water molecules (photolysis) at makagawa ng ATP at NADPH. Kaya kapag may ilaw, tuloy-tuloy ang paglabas ng oxygen bubbles.",
-        E: "Sa light-dependent reactions sa thylakoid, sinasagap ng chlorophyll ang light energy upang hatiin ang $\\text{H}_2\\text{O}$ at maglabas ng oxygen gas ($\\text{O}_2$) habang bumubuo ng ATP at NADPH. Ikumpara ito sa iyong Student Activity Sheet!",
+        E: "Sa light-dependent reactions sa thylakoid, sinasagap ng chlorophyll ang light energy upang hatiin ang H₂O at maglabas ng oxygen gas (O₂) habang bumubuo ng ATP at NADPH. Ikumpara ito sa iyong Student Activity Sheet!",
       },
       ceb: {
-        H: "Hunahunaa unsay ginadakop sa chlorophyll sulod sa chloroplast gikan sa suga. Kon walay light energy, mabahin ba ang tubig ($\\text{H}_2\\text{O}$) sa light-dependent reactions?",
+        H: "Hunahunaa unsay ginadakop sa chlorophyll sulod sa chloroplast gikan sa suga. Kon walay light energy, mabahin ba ang tubig (H₂O) sa light-dependent reactions?",
         C: "Gikinahanglan sa chlorophyll ang light energy sa thylakoid membrane aron mabahin ang water molecules (photolysis) ug makahimo og ATP ug NADPH. Mao nga adunay bula sa oxygen kon hayag ang suga.",
-        E: "Sa light-dependent reactions sulod sa thylakoid, ginadakop sa chlorophyll ang light energy aron mabahin ang $\\text{H}_2\\text{O}$ ug mopagawas og oxygen gas ($\\text{O}_2$) samtang naghimo og ATP ug NADPH. I-tandi kini sa imong Activity Sheet!",
+        E: "Sa light-dependent reactions sulod sa thylakoid, ginadakop sa chlorophyll ang light energy aron mabahin ang H₂O ug mopagawas og oxygen gas (O₂) samtang naghimo og ATP ug NADPH. I-tandi kini sa imong Activity Sheet!",
       },
     },
     I2: {
       title: "Bubble count as sign of rate",
       en: {
-        H: "When water ($\\text{H}_2\\text{O}$) is split during the light-dependent reactions, which gas escapes from the cut stem as visible underwater bubbles?",
-        C: "Each rising bubble is mostly oxygen gas ($\\text{O}_2$), a direct by-product of water photolysis in the thylakoids. Counting bubbles over 60 seconds gives us an observable indicator of how fast photosynthesis is running.",
-        E: "Because oxygen gas ($\\text{O}_2$) is released whenever water molecules are split in the light-dependent reactions, a higher number of bubbles counted in 60 seconds indicates a faster rate of photosynthesis. Check how your bubble counts change across rows in your table!",
+        H: "When water (H₂O) is split during the light-dependent reactions, which gas escapes from the cut stem as visible underwater bubbles?",
+        C: "Each rising bubble is mostly oxygen gas (O₂), a direct by-product of water photolysis in the thylakoids. Counting bubbles over 60 seconds gives us an observable indicator of how fast photosynthesis is running.",
+        E: "Because oxygen gas (O₂) is released whenever water molecules are split in the light-dependent reactions, a higher number of bubbles counted in 60 seconds indicates a faster rate of photosynthesis. Check how your bubble counts change across rows in your table!",
       },
       fil: {
-        H: "Kapag hinati ang tubig ($\\text{H}_2\\text{O}$) sa light-dependent reactions, anong gas ang lumalabas sa tangkay ng halaman bilang mga bula?",
-        C: "Ang bawat bula ay oxygen gas ($\\text{O}_2$) na by-product ng photolysis ng tubig sa thylakoid. Ang bilang ng bula sa loob ng 60 seconds ang nagsisilbing sukatan ng bilis (rate) ng photosynthesis.",
-        E: "Dahil oxygen gas ($\\text{O}_2$) ang direktang produkto kapag hinahati ang $\\text{H}_2\\text{O}$ sa light-dependent reactions, mas maraming bubbles sa 60 seconds ay nangangahulugang mas mabilis ang photosynthesis rate. Suriin ang iyong data table!",
+        H: "Kapag hinati ang tubig (H₂O) sa light-dependent reactions, anong gas ang lumalabas sa tangkay ng halaman bilang mga bula?",
+        C: "Ang bawat bula ay oxygen gas (O₂) na by-product ng photolysis ng tubig sa thylakoid. Ang bilang ng bula sa loob ng 60 seconds ang nagsisilbing sukatan ng bilis (rate) ng photosynthesis.",
+        E: "Dahil oxygen gas (O₂) ang direktang produkto kapag hinahati ang H₂O sa light-dependent reactions, mas maraming bubbles sa 60 seconds ay nangangahulugang mas mabilis ang photosynthesis rate. Suriin ang iyong data table!",
       },
       ceb: {
-        H: "Kon mabahin ang tubig ($\\text{H}_2\\text{O}$) sa light-dependent reactions, unsang gas ang mogawas sa tangkay sa tanom isip mga bula sa tubig?",
-        C: "Ang matag bula mao ang oxygen gas ($\\text{O}_2$) nga by-product sa photolysis sa tubig sulod sa thylakoid. Ang ihap sa bula sulod sa 60 seconds nagpakita kung unsa kapaspas ang rate sa photosynthesis.",
-        E: "Tungod kay oxygen gas ($\\text{O}_2$) ang mogawas matag bahin sa $\\text{H}_2\\text{O}$ sa light-dependent reactions, ang mas daghang bula sulod sa 60 seconds nagpasabot nga mas paspas ang photosynthesis rate. Tan-awa ang imong data table!",
+        H: "Kon mabahin ang tubig (H₂O) sa light-dependent reactions, unsang gas ang mogawas sa tangkay sa tanom isip mga bula sa tubig?",
+        C: "Ang matag bula mao ang oxygen gas (O₂) nga by-product sa photolysis sa tubig sulod sa thylakoid. Ang ihap sa bula sulod sa 60 seconds nagpakita kung unsa kapaspas ang rate sa photosynthesis.",
+        E: "Tungod kay oxygen gas (O₂) ang mogawas matag bahin sa H₂O sa light-dependent reactions, ang mas daghang bula sulod sa 60 seconds nagpasabot nga mas paspas ang photosynthesis rate. Tan-awa ang imong data table!",
       },
     },
     I3: {
@@ -1791,35 +1852,35 @@
       en: {
         H: "Why do scientists include a Dark Control (0 lx) where the lamp is completely off? What does that prove about the bubbles you counted in the lit trials?",
         C: "The Dark Control (0 lx) serves as our baseline comparison. Because bubble production drops to nearly zero (0–2 bubbles/60s) in the dark, it confirms that the bubbles in the lit trials are caused by light-driven photosynthesis.",
-        E: "In an experiment, a Dark Control (0 lx) isolates the effect of light. When the lamp is off while temperature (26.0 °C) and $\\text{NaHCO}_3$ stay constant, photolysis stops and oxygen bubbles drop to 0–2 per 60 seconds—proving light is essential for oxygen release.",
+        E: "In an experiment, a Dark Control (0 lx) isolates the effect of light. When the lamp is off while temperature (26.0 °C) and NaHCO₃ stay constant, photolysis stops and oxygen bubbles drop to 0–2 per 60 seconds—proving light is essential for oxygen release.",
       },
       fil: {
         H: "Bakit kaya mahalagang magsama ng Dark Control (0 lx) kung saan patay ang lamp? Ano ang pinatutunayan nito tungkol sa mga bubbles na nabilang mo noong may ilaw?",
         C: "Ang Dark Control (0 lx) ang ating baseline comparison. Dahil halos zero (0–2 bubbles/60s) ang lumalabas sa dilim, pinatutunayan nitong ang mga bula ay talagang bunga ng light-dependent reactions.",
-        E: "Ginagamit ang Dark Control (0 lx) upang patunayan na liwanag ang sanhi ng paglabas ng oxygen. Kapag patay ang ilaw habang pareho pa rin ang 26.0 °C at $\\text{NaHCO}_3$, humihinto ang photolysis kaya 0–2 bubbles na lang ang lumalabas.",
+        E: "Ginagamit ang Dark Control (0 lx) upang patunayan na liwanag ang sanhi ng paglabas ng oxygen. Kapag patay ang ilaw habang pareho pa rin ang 26.0 °C at NaHCO₃, humihinto ang photolysis kaya 0–2 bubbles na lang ang lumalabas.",
       },
       ceb: {
         H: "Ngano man nga importante ang Dark Control (0 lx) diin palong ang suga? Unsay gipamatud-an niini bahin sa mga bula nga imong naihap sa dihang nagsiga ang suga?",
         C: "Ang Dark Control (0 lx) mao ang atong baseline comparison. Tungod kay halos sero (0–2 bubbles/60s) ang bula sa ngitngit, nagpamatuod kini nga ang bula nagagikan gyud sa light-driven photosynthesis.",
-        E: "Ang Dark Control (0 lx) gigamit aron ipakita nga kahayag ang hinungdan sa pagpagawas og oxygen. Kon palong ang suga samtang pareho ang 26.0 °C ug $\\text{NaHCO}_3$, mohunong ang photolysis ug mahimong 0–2 bubbles na lang.",
+        E: "Ang Dark Control (0 lx) gigamit aron ipakita nga kahayag ang hinungdan sa pagpagawas og oxygen. Kon palong ang suga samtang pareho ang 26.0 °C ug NaHCO₃, mohunong ang photolysis ug mahimong 0–2 bubbles na lang.",
       },
     },
     I5: {
       title: "High-light leveling off",
       en: {
         H: "Look closely at the curve between 20 cm and 10 cm: Even when light intensity more than doubles (1,100 lx to 2,500 lx), why doesn't the bubble count double forever?",
-        C: "At high light intensity, chlorophyll is already working near capacity, so another factor—such as dissolved $\\text{CO}_2$ supply or Calvin cycle enzyme speed (RuBisCO)—becomes the limiting factor, causing the curve to level off.",
-        E: "This plateau is called light saturation. At 10 cm, the light-dependent reactions produce plenty of ATP and NADPH, but the overall rate of photosynthesis is limited by how fast Calvin cycle enzymes and dissolved $\\text{CO}_2$ (from 0.2% $\\text{NaHCO}_3$) can fix carbon in the stroma.",
+        C: "At high light intensity, chlorophyll is already working near capacity, so another factor—such as dissolved CO₂ supply or Calvin cycle enzyme speed (RuBisCO)—becomes the limiting factor, causing the curve to level off.",
+        E: "This plateau is called light saturation. At 10 cm, the light-dependent reactions produce plenty of ATP and NADPH, but the overall rate of photosynthesis is limited by how fast Calvin cycle enzymes and dissolved CO₂ (from 0.2% NaHCO₃) can fix carbon in the stroma.",
       },
       fil: {
         H: "Tingnan ang pagitan ng 20 cm at 10 cm sa graph: Kahit mahigit doble ang itinaas ng lux (1,100 lx tungong 2,500 lx), bakit hindi nag-doble nang tuloy-tuloy ang bilang ng bubbles?",
-        C: "Sa napakataas na liwanag, halos puno na ang kapasidad ng chloroplast, kaya ibang salik na—tulad ng dissolved $\\text{CO}_2$ o bilis ng enzymes sa Calvin cycle—ang nagiging limiting factor.",
-        E: "Tinatawag itong light saturation. Sa 10 cm, sapat na ang liwanag para sa ATP at NADPH, ngunit nililimitahan na ng dami ng dissolved $\\text{CO}_2$ at bilis ng Calvin cycle enzymes sa stroma ang kabuuang bilis ng photosynthesis kaya nagle-level off ang graph.",
+        C: "Sa napakataas na liwanag, halos puno na ang kapasidad ng chloroplast, kaya ibang salik na—tulad ng dissolved CO₂ o bilis ng enzymes sa Calvin cycle—ang nagiging limiting factor.",
+        E: "Tinatawag itong light saturation. Sa 10 cm, sapat na ang liwanag para sa ATP at NADPH, ngunit nililimitahan na ng dami ng dissolved CO₂ at bilis ng Calvin cycle enzymes sa stroma ang kabuuang bilis ng photosynthesis kaya nagle-level off ang graph.",
       },
       ceb: {
         H: "Tan-awa ang kalainan sa 20 cm ug 10 cm sa graph: Bisan og kapin sa doble ang pagsaka sa kahayag (1,100 lx ngadto sa 2,500 lx), nganong dili man mo-doble sa walay katapusan ang ihap sa bula?",
-        C: "Sa kusog kaayo nga kahayag, hapit na mapuno ang kapasidad sa chloroplast, busa laing factor—sama sa dissolved $\\text{CO}_2$ o katulinon sa Calvin cycle enzymes—ang mahimong limiting factor.",
-        E: "Gitawag kini og light saturation. Sa 10 cm, abunda na ang ATP ug NADPH gikan sa kahayag, apan ang kinatibuk-ang rate sa photosynthesis gilimitahan na sa suplay sa $\\text{CO}_2$ ug sa enzymes sa Calvin cycle sulod sa stroma.",
+        C: "Sa kusog kaayo nga kahayag, hapit na mapuno ang kapasidad sa chloroplast, busa laing factor—sama sa dissolved CO₂ o katulinon sa Calvin cycle enzymes—ang mahimong limiting factor.",
+        E: "Gitawag kini og light saturation. Sa 10 cm, abunda na ang ATP ug NADPH gikan sa kahayag, apan ang kinatibuk-ang rate sa photosynthesis gilimitahan na sa suplay sa CO₂ ug sa enzymes sa Calvin cycle sulod sa stroma.",
       },
     },
     I6: {
@@ -1843,54 +1904,54 @@
     I7: {
       title: "Constant variables / fair test",
       en: {
-        H: "If water bath temperature or $\\text{NaHCO}_3$ concentration changed at the same time as lamp distance, would we know which variable caused the bubble count to change?",
-        C: "To make this a fair test, we change only the independent variable (lamp distance) while keeping water temperature ($26.0\\text{ }^\\circ\\text{C}$), $\\text{NaHCO}_3$ ($0.2\\%$), plant shoot, and observation time ($60\\text{ seconds}$) constant.",
-        E: "Notice the radiant warmth waves near the lamp versus the submerged thermometer reading ($26.0\\text{ }^\\circ\\text{C}$). By stabilizing water temperature at $26.0\\text{ }^\\circ\\text{C}$ and $\\text{NaHCO}_3$ at $0.2\\%$, we ensure changes in bubble rate are caused solely by light intensity.",
+        H: "If water bath temperature or NaHCO₃ concentration changed at the same time as lamp distance, would we know which variable caused the bubble count to change?",
+        C: "To make this a fair test, we change only the independent variable (lamp distance) while keeping water temperature (26.0 °C), NaHCO₃ (0.2%), plant shoot, and observation time (60 seconds) constant.",
+        E: "Notice the radiant warmth waves near the lamp versus the submerged thermometer reading (26.0 °C). By stabilizing water temperature at 26.0 °C and NaHCO₃ at 0.2%, we ensure changes in bubble rate are caused solely by light intensity.",
       },
       fil: {
         H: "Kung sabay na nagbago ang temperatura ng tubig at ang distansya ng lamp, malalaman ba natin kung alin talaga ang nagpabago sa dami ng bubbles?",
-        C: "Para maging fair test ang eksperimento, distansya lang ng lamp (independent variable) ang binabago habang pinananatiling constant ang temperatura ($26.0\\text{ }^\\circ\\text{C}$), $0.2\\%\\text{ NaHCO}_3$, halaman, at $60\\text{ seconds}$ timer.",
-        E: "Kahit may visual heat waves malapit sa lamp, nananatiling $26.0\\text{ }^\\circ\\text{C}$ ang water bath at $0.2\\%$ ang $\\text{NaHCO}_3$. Dahil constant ang mga ito, sigurado tayong light intensity lang ang dahilan ng pagbabago sa bubble count.",
+        C: "Para maging fair test ang eksperimento, distansya lang ng lamp (independent variable) ang binabago habang pinananatiling constant ang temperatura (26.0 °C), $0.2\\%\\text{ NaHCO}_3$, halaman, at 60 seconds timer.",
+        E: "Kahit may visual heat waves malapit sa lamp, nananatiling 26.0 °C ang water bath at 0.2% ang NaHCO₃. Dahil constant ang mga ito, sigurado tayong light intensity lang ang dahilan ng pagbabago sa bubble count.",
       },
       ceb: {
         H: "Kon dungan nga mausab ang temperatura sa tubig ug ang gilay-on sa suga, mahibal-an ba nato kung unsa gyud ang nakapausab sa ihap sa bula?",
-        C: "Aron mahimong fair test ang eksperimento, ang gilay-on ra sa suga (independent variable) ang usbon samtang kanunay nga constant ang temperatura ($26.0\\text{ }^\\circ\\text{C}$), $0.2\\%\\text{ NaHCO}_3$, tanom, ug $60\\text{ seconds}$ nga oras.",
-        E: "Bisan og adunay visual heat waves duol sa suga, nagpabilin nga $26.0\\text{ }^\\circ\\text{C}$ ang water bath ug $0.2\\%$ ang $\\text{NaHCO}_3$. Tungod kay constant kini, segurado kita nga ang light intensity ra ang nakaapekto sa rate sa bula.",
+        C: "Aron mahimong fair test ang eksperimento, ang gilay-on ra sa suga (independent variable) ang usbon samtang kanunay nga constant ang temperatura (26.0 °C), $0.2\\%\\text{ NaHCO}_3$, tanom, ug 60 seconds nga oras.",
+        E: "Bisan og adunay visual heat waves duol sa suga, nagpabilin nga 26.0 °C ang water bath ug 0.2% ang NaHCO₃. Tungod kay constant kini, segurado kita nga ang light intensity ra ang nakaapekto sa rate sa bula.",
       },
     },
     I8: {
       title: "Light energy to chemical energy (glucose)",
       en: {
         H: "While oxygen bubbles leave the thylakoids, what happens to the ATP and NADPH produced during the light-dependent reactions?",
-        C: "ATP and NADPH carry chemical energy from the thylakoid membranes into the stroma, where the Calvin cycle uses them to fix carbon dioxide ($\\text{CO}_2$) into glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$).",
-        E: "Photosynthesis links two stages inside the chloroplast: (1) Light-dependent reactions in the thylakoids capture light to split $\\text{H}_2\\text{O}$ (releasing $\\text{O}_2$ bubbles) and make ATP and NADPH; (2) The Calvin cycle in the stroma uses that ATP and NADPH to build glucose from $\\text{CO}_2$.",
+        C: "ATP and NADPH carry chemical energy from the thylakoid membranes into the stroma, where the Calvin cycle uses them to fix carbon dioxide (CO₂) into glucose (C₆H₁₂O₆).",
+        E: "Photosynthesis links two stages inside the chloroplast: (1) Light-dependent reactions in the thylakoids capture light to split H₂O (releasing O₂ bubbles) and make ATP and NADPH; (2) The Calvin cycle in the stroma uses that ATP and NADPH to build glucose from CO₂.",
       },
       fil: {
         H: "Habang lumalabas ang oxygen bubbles mula sa thylakoid, saan naman ginagamit ng halaman ang ATP at NADPH na nabuo sa light-dependent reactions?",
-        C: "Dinadala ang ATP at NADPH papunta sa stroma, kung saan ginagamit ang mga ito ng Calvin cycle upang gawing glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$) ang carbon dioxide ($\\text{CO}_2$).",
-        E: "May dalawang magkaugnay na yugto sa chloroplast: (1) Sa thylakoid, hinahati ng light-dependent reactions ang $\\text{H}_2\\text{O}$ (kaya may $\\text{O}_2$ bubbles) at bumubuo ng ATP at NADPH; (2) Sa stroma, ginagamit ng Calvin cycle ang ATP at NADPH upang makabuo ng glucose mula sa $\\text{CO}_2$.",
+        C: "Dinadala ang ATP at NADPH papunta sa stroma, kung saan ginagamit ang mga ito ng Calvin cycle upang gawing glucose (C₆H₁₂O₆) ang carbon dioxide (CO₂).",
+        E: "May dalawang magkaugnay na yugto sa chloroplast: (1) Sa thylakoid, hinahati ng light-dependent reactions ang H₂O (kaya may O₂ bubbles) at bumubuo ng ATP at NADPH; (2) Sa stroma, ginagamit ng Calvin cycle ang ATP at NADPH upang makabuo ng glucose mula sa CO₂.",
       },
       ceb: {
         H: "Samtang nagagawas ang oxygen bubbles gikan sa thylakoid, asa man gamiton sa tanom ang ATP ug NADPH nga naporma sa light-dependent reactions?",
-        C: "Ang ATP ug NADPH dad-on ngadto sa stroma aron gamiton sa Calvin cycle sa paghimo og glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$) gikan sa carbon dioxide ($\\text{CO}_2$).",
-        E: "Duha ka hugna ang nagkonektar sulod sa chloroplast: (1) Sa thylakoid, ang light-dependent reactions nagbahin sa $\\text{H}_2\\text{O}$ (nga mopagawas og $\\text{O}_2$ bubbles) ug naghimo og ATP ug NADPH; (2) Sa stroma, ang Calvin cycle mogamit sa ATP ug NADPH aron makahimo og glucose.",
+        C: "Ang ATP ug NADPH dad-on ngadto sa stroma aron gamiton sa Calvin cycle sa paghimo og glucose (C₆H₁₂O₆) gikan sa carbon dioxide (CO₂).",
+        E: "Duha ka hugna ang nagkonektar sulod sa chloroplast: (1) Sa thylakoid, ang light-dependent reactions nagbahin sa H₂O (nga mopagawas og O₂ bubbles) ug naghimo og ATP ug NADPH; (2) Sa stroma, ang Calvin cycle mogamit sa ATP ug NADPH aron makahimo og glucose.",
       },
     },
     I9: {
       title: "Value of photosynthesis to organisms",
       en: {
-        H: "Think beyond the beaker: How do the two main products of photosynthesis—oxygen gas ($\\text{O}_2$) and glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$)—support nearly all living organisms on Earth?",
-        C: "Photosynthesis provides the organic food (glucose) at the base of food webs and replenishes the dissolved and atmospheric oxygen ($\\text{O}_2$) needed for aerobic cellular respiration.",
+        H: "Think beyond the beaker: How do the two main products of photosynthesis—oxygen gas (O₂) and glucose (C₆H₁₂O₆)—support nearly all living organisms on Earth?",
+        C: "Photosynthesis provides the organic food (glucose) at the base of food webs and replenishes the dissolved and atmospheric oxygen (O₂) needed for aerobic cellular respiration.",
         E: "Every oxygen bubble rising from Hydrilla or Elodea represents the process that oxygenates aquatic habitats and Earth's atmosphere, while the glucose synthesized in the Calvin cycle stores solar energy as biomass for food chains and ecosystems.",
       },
       fil: {
-        H: "Isipin ang labas ng laboratoryo: Paano sinusuportahan ng dalawang produkto ng photosynthesis—oxygen ($\\text{O}_2$) at glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$)—ang halos lahat ng may buhay sa mundo?",
-        C: "Ang photosynthesis ang gumagawa ng glucose na pundasyon ng food web at nagbibigay ng oxygen ($\\text{O}_2$) sa tubig at hangin na kailangan sa cellular respiration.",
+        H: "Isipin ang labas ng laboratoryo: Paano sinusuportahan ng dalawang produkto ng photosynthesis—oxygen (O₂) at glucose (C₆H₁₂O₆)—ang halos lahat ng may buhay sa mundo?",
+        C: "Ang photosynthesis ang gumagawa ng glucose na pundasyon ng food web at nagbibigay ng oxygen (O₂) sa tubig at hangin na kailangan sa cellular respiration.",
         E: "Ang bawat oxygen bubble mula sa Hydrilla ay mahalaga sa mga isda at iba pang organismo para sa aerobic respiration, habang ang glucose na binubuo nito ay nagsisilbing pangunahing pinagkukunan ng enerhiya sa buong ecosystem.",
       },
       ceb: {
-        H: "Hunahunaa gawas sa beaker: Giunsa pagsuporta sa duha ka produkto sa photosynthesis—oxygen ($\\text{O}_2$) ug glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$)—ang halos tanang buhing organismo sa kalibutan?",
-        C: "Ang photosynthesis mao ang naghimo sa glucose nga pundasyon sa food web ug naghatag og oxygen ($\\text{O}_2$) sa tubig ug kahanginan alang sa cellular respiration.",
+        H: "Hunahunaa gawas sa beaker: Giunsa pagsuporta sa duha ka produkto sa photosynthesis—oxygen (O₂) ug glucose (C₆H₁₂O₆)—ang halos tanang buhing organismo sa kalibutan?",
+        C: "Ang photosynthesis mao ang naghimo sa glucose nga pundasyon sa food web ug naghatag og oxygen (O₂) sa tubig ug kahanginan alang sa cellular respiration.",
         E: "Ang matag bula sa oxygen gikan sa Hydrilla naghatag og hangin sa mga organismo sa tubig ug kalibutan, samtang ang glucose nga naporma sa Calvin cycle mao ang tinubdan sa enerhiya sa tanang food chains.",
       },
     },
@@ -2056,9 +2117,9 @@
     // Special Contextual Topic: Comparing Hydrilla, Elodea, and Floating Water Hyacinth
     if (classification.intent === "plant_comparison") {
       const plantReplies = {
-        en: "Great observation comparing the three aquatic plants! Hydrilla and Elodea are fully submerged macrophytes, so the oxygen ($\\text{O}_2$) produced in their leaves escapes into the water as countable bubbles. Water Hyacinth (*Eichhornia crassipes*), however, floats at the water surface with aerial leaves—so most of its oxygen diffuses directly into the air through stomata rather than forming underwater bubbles!",
-        fil: "Magandang obserbasyon sa paghahambing ng tatlong halaman! Ang Hydrilla at Elodea ay nakalubog sa tubig (submerged), kaya ang oxygen ($\\text{O}_2$) mula sa kanilang dahon ay lumalabas bilang mga bula sa tubig. Ang Water Hyacinth (*Eichhornia crassipes*) naman ay nakalutang sa ibabaw at nasa hangin ang mga dahon, kaya sa stomata sa hangin lumalabas ang karamihan ng oxygen nito!",
-        ceb: "Nindot kaayo nga obserbasyon sa pagtandi sa tulo ka tanom! Ang Hydrilla ug Elodea kay nakalunod sa tubig (submerged), mao nga ang oxygen ($\\text{O}_2$) gikan sa ilang dahon mogawas isip maihap nga bula sa tubig. Apan ang Water Hyacinth (*Eichhornia crassipes*) naglutaw sa ibabaw sa tubig ug ang iyang dahon naa sa hangin—mao nga sa stomata sa hangin mogawas ang kadaghanang oxygen niini!",
+        en: "Great observation comparing the three aquatic plants! Hydrilla and Elodea are fully submerged macrophytes, so the oxygen (O₂) produced in their leaves escapes into the water as countable bubbles. Water Hyacinth (*Eichhornia crassipes*), however, floats at the water surface with aerial leaves—so most of its oxygen diffuses directly into the air through stomata rather than forming underwater bubbles!",
+        fil: "Magandang obserbasyon sa paghahambing ng tatlong halaman! Ang Hydrilla at Elodea ay nakalubog sa tubig (submerged), kaya ang oxygen (O₂) mula sa kanilang dahon ay lumalabas bilang mga bula sa tubig. Ang Water Hyacinth (*Eichhornia crassipes*) naman ay nakalutang sa ibabaw at nasa hangin ang mga dahon, kaya sa stomata sa hangin lumalabas ang karamihan ng oxygen nito!",
+        ceb: "Nindot kaayo nga obserbasyon sa pagtandi sa tulo ka tanom! Ang Hydrilla ug Elodea kay nakalunod sa tubig (submerged), mao nga ang oxygen (O₂) gikan sa ilang dahon mogawas isip maihap nga bula sa tubig. Apan ang Water Hyacinth (*Eichhornia crassipes*) naglutaw sa ibabaw sa tubig ug ang iyang dahon naa sa hangin—mao nga sa stomata sa hangin mogawas ang kadaghanang oxygen niini!",
       };
       state.conversationMemory.turnCount += 1;
       state.conversationMemory.lastIdeaCode = "I2";
@@ -2379,21 +2440,19 @@
   // ==========================================================================
   function cleanTextForNaturalSpeech(rawText) {
     return String(rawText || "")
-      .replace(/\$\\text\{CO\}_2\$/g, "carbon dioxide")
-      .replace(/CO₂/g, "carbon dioxide")
-      .replace(/\$\\text\{H\}_2\\text\{O\}\$/g, "water")
-      .replace(/H₂O/g, "water")
-      .replace(/\$\\text\{O\}_2\$/g, "oxygen")
-      .replace(/O₂/g, "oxygen")
-      .replace(/\$\\text\{C\}_6\\text\{H\}_\{12\}\\text\{O\}_6\$/g, "glucose")
-      .replace(/C₆H₁₂O₆/g, "glucose")
-      .replace(/\$\\text\{NaHCO\}_3\$/g, "sodium bicarbonate")
-      .replace(/NaHCO₃/g, "sodium bicarbonate")
-      .replace(/\$26\.0\\text\{ \}\^\\circ\\text\{C\}\$/g, "26 degrees Celsius")
-      .replace(/26\.0 °C/g, "26 degrees Celsius")
-      .replace(/\$0\.2\\%\$/g, "0.2 percent")
-      .replace(/\$60\\text\{ seconds\}\$/g, "60 seconds")
-      .replace(/[*_`~]/g, "")
+      .replace(/6\s*CO₂\s*\+\s*6\s*H₂O[^→]*→[^\n]+/gi, "six molecules of carbon dioxide plus six molecules of water, in the presence of light and chlorophyll, produce glucose and six molecules of oxygen")
+      .replace(/CO₂|CO2/g, "carbon dioxide")
+      .replace(/H₂O|H2O/g, "water")
+      .replace(/O₂|O2/g, "oxygen")
+      .replace(/C₆H₁₂O₆|C6H12O6/g, "glucose")
+      .replace(/NaHCO₃|NaHCO3/g, "sodium bicarbonate")
+      .replace(/26\.0\s*°C/g, "26 degrees Celsius")
+      .replace(/0\.2%/g, "0.2 percent")
+      .replace(/60\s*seconds/g, "60 seconds")
+      .replace(/\\text\{([^}]+)\}/g, "$1")
+      .replace(/[\$\\*_`~]/g, "")
+      .replace(/&rarr;|→/g, " yields ")
+      .replace(/&uarr;|↑/g, " gas ")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -2992,7 +3051,360 @@
     ).join("");
   }
 
+
+  // ==========================================================================
+  // 15. NEW THESIS UPGRADES (BIOVOICE 2026-2027)
+  // ==========================================================================
+
+  // --- Upgrade: Save Student Progress to Server & LocalStorage ---
+  async function handleSaveStudentProgress() {
+    const saveBtn = $("save-progress-btn");
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "💾 Saving...";
+    }
+
+    // Gather active step text
+    const activeText = $("step-response-text") ? $("step-response-text").value.trim() : "";
+    if (activeText && state.stepResponses) {
+      state.stepResponses[state.currentStepIndex] = activeText;
+    }
+
+    const payload = {
+      participantCode: state.participantCode || "BV-GUEST",
+      participantGroup: state.participantGroup || "Sandbox",
+      sessionCode: state.sessionCode || "",
+      activeStepIndex: state.currentStepIndex,
+      stepResponses: state.stepResponses || {},
+      simulatedDataHydrilla: state.simulatedDataHydrilla || {},
+      manualDataHydrilla: state.manualDataHydrilla || {},
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem(`biovoice_saved_progress_${payload.participantCode}`, JSON.stringify(payload));
+    } catch (_) {}
+
+    try {
+      const res = await fetch(resolveApiUrl("/api/session/save-progress"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showSaveToast("✓ Progress successfully saved to research server!");
+      } else {
+        showSaveToast("✓ Saved locally in browser storage.");
+      }
+    } catch (err) {
+      showSaveToast("✓ Saved locally in browser storage.");
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "💾 Save Progress";
+      }
+    }
+  }
+
+  function showSaveToast(msg) {
+    let toast = $("bv-save-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "bv-save-toast";
+      toast.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#065f46;color:#ffffff;padding:10px 20px;border-radius:24px;font-weight:600;font-size:0.9rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:9999;transition:opacity 0.3s ease;";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = "1";
+    setTimeout(() => {
+      if (toast) toast.style.opacity = "0";
+    }, 2800);
+  }
+
+  // --- Upgrade: Active Speaker Switcher ---
+  function handleSwitchActiveSpeaker() {
+    const select = $("lab-station-select");
+    if (!select || !select.value) return;
+    const newCode = select.value;
+    state.participantCode = newCode;
+    const tag = $("active-speaker-tag");
+    if (tag) tag.textContent = newCode;
+    const badge = $("participant-code-badge");
+    if (badge) badge.textContent = newCode;
+
+    appendChatBubble(
+      "assistant",
+      `Switched active speaker to ${newCode}. You may now record your ideas or ask BioVoice for guidance!`,
+      "BioVoice · Speaker Switch"
+    );
+  }
+
+  // --- Upgrade: Day & Night Explorer ---
+  function setDayNightMode(mode) {
+    const frame = $("sim-apparatus-frame");
+    const badge = $("dn-status-badge");
+    const insight = $("dn-insight-text");
+    const dayBtn = $("dn-day-btn");
+    const nightBtn = $("dn-night-btn");
+    const nightLampBtn = $("dn-night-lamp-btn");
+
+    if (mode === "day") {
+      state.isNightTime = false;
+      state.nightLampOn = false;
+      if (frame) frame.classList.remove("night-mode");
+      if (badge) badge.textContent = "☀️ Daytime (Natural Light Available)";
+      if (insight) {
+        insight.textContent = "In daytime, natural photons activate the light-dependent reactions in the thylakoid membranes, photolyzing water and releasing observable oxygen bubbles.";
+      }
+      if (dayBtn) dayBtn.classList.add("btn-primary");
+      if (nightBtn) nightBtn.classList.remove("btn-primary");
+      if (nightLampBtn) nightLampBtn.classList.remove("btn-primary");
+    } else if (mode === "night") {
+      state.isNightTime = true;
+      state.nightLampOn = false;
+      if (frame) frame.classList.add("night-mode");
+      if (badge) badge.textContent = "🌙 Nighttime (Natural Dark · No Lamp)";
+      if (insight) {
+        insight.textContent = "In darkness, photolysis ceases completely (0 bubbles). Plant cellular respiration continues unabated, consuming dissolved oxygen and releasing carbon dioxide.";
+      }
+      if (dayBtn) dayBtn.classList.remove("btn-primary");
+      if (nightBtn) nightBtn.classList.add("btn-primary");
+      if (nightLampBtn) nightLampBtn.classList.remove("btn-primary");
+    } else if (mode === "night-lamp") {
+      state.isNightTime = true;
+      state.nightLampOn = true;
+      if (frame) frame.classList.remove("night-mode");
+      if (badge) badge.textContent = "💡 Nighttime + Artificial Lamp ON";
+      if (insight) {
+        insight.textContent = "Oxygen bubbles resume immediately! This provides empirical proof that photosynthesis depends strictly on the arrival of photons (light energy), NOT on biological clock time (refuting Misconceptions M2 & M7).";
+      }
+      if (dayBtn) dayBtn.classList.remove("btn-primary");
+      if (nightBtn) nightBtn.classList.remove("btn-primary");
+      if (nightLampBtn) nightLampBtn.classList.add("btn-primary");
+    }
+  }
+
+  // --- Upgrade: Factor Explorer ('Test Your Idea') ---
+  function runFactorExplorerTest() {
+    const co2Val = $("factor-co2-select") ? parseFloat($("factor-co2-select").value) : 0.2;
+    const tempVal = $("factor-temp-range") ? parseFloat($("factor-temp-range").value) : 26.0;
+    const luxVal = $("factor-lux-range") ? parseFloat($("factor-lux-range").value) : 2500;
+    const waveVal = $("factor-wave-select") ? $("factor-wave-select").value : "white";
+
+    if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.calculateBubbleRate) {
+      const res = window.PhotosynthesisModel.calculateBubbleRate({
+        lux: luxVal,
+        co2Pct: co2Val,
+        tempC: tempVal,
+        wavelength: waveVal,
+        species: "Hydrilla"
+      });
+
+      if ($("factor-rate-display")) {
+        $("factor-rate-display").textContent = `${res.bubbleRate} bubbles / 60s`;
+      }
+      if ($("factor-limiter-display")) {
+        $("factor-limiter-display").textContent = res.limitingFactor;
+      }
+      if ($("factor-explanation-display")) {
+        $("factor-explanation-display").textContent = res.scientificExplanation;
+      }
+    }
+  }
+
+  // --- Upgrade: Digital Auto-Scorers in Researcher Dashboard ---
+  const APPENDIX_F_ANSWER_KEY = [
+    "A", "B", "C", "A", "B", "C", "D", "A", "B", "C",
+    "B", "A", "D", "C", "B", "A", "C", "D", "A", "B"
+  ];
+
+  function runConceptTestScorer() {
+    const preText = $("pre-test-responses-input") ? $("pre-test-responses-input").value.trim().toUpperCase() : "";
+    const postText = $("post-test-responses-input") ? $("post-test-responses-input").value.trim().toUpperCase() : "";
+
+    const preAnswers = preText.split(/[^A-D]/).filter(Boolean);
+    const postAnswers = postText.split(/[^A-D]/).filter(Boolean);
+
+    let preScore = 0;
+    let postScore = 0;
+
+    for (let i = 0; i < 20; i++) {
+      if (preAnswers[i] === APPENDIX_F_ANSWER_KEY[i]) preScore++;
+      if (postAnswers[i] === APPENDIX_F_ANSWER_KEY[i]) postScore++;
+    }
+
+    const prePct = ((preScore / 20) * 100).toFixed(1);
+    const postPct = ((postScore / 20) * 100).toFixed(1);
+
+    // Hake's normalized gain g
+    let g = 0;
+    if (20 - preScore > 0) {
+      g = ((postScore - preScore) / (20 - preScore)).toFixed(2);
+    }
+
+    let level = "Low (<50%)";
+    if (postPct >= 75) level = "High (≥75%)";
+    else if (postPct >= 50) level = "Moderate (50%–74%)";
+
+    if ($("concept-score-result")) {
+      $("concept-score-result").innerHTML = `
+        <div style="background:#ecfdf5;border:1px solid #10b981;border-radius:8px;padding:12px;margin-top:10px;">
+          <strong>Pre-Test:</strong> ${preScore}/20 (${prePct}%) &nbsp;|&nbsp;
+          <strong>Post-Test:</strong> ${postScore}/20 (${postPct}%) &nbsp;|&nbsp;
+          <strong>Hake's Gain (g):</strong> ${g} &nbsp;|&nbsp;
+          <strong>Mastery Level (Table 4):</strong> <span class="badge" style="background:#065f46;color:#fff;">${level}</span>
+        </div>
+      `;
+    }
+  }
+
+  function runPerceptionScorer() {
+    const raw = $("perception-responses-input") ? $("perception-responses-input").value.trim() : "";
+    const nums = raw.split(/[^1-5]/).filter(Boolean).map(Number);
+    if (!nums.length) return;
+
+    const mean = (nums.reduce((a, b) => a + b, 0) / nums.length).toFixed(2);
+    const variance = (nums.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / nums.length);
+    const sd = Math.sqrt(variance).toFixed(2);
+
+    let interp = "Positive (Strong Agreement)";
+    if (mean < 2.5) interp = "Low / Disagree";
+    else if (mean < 3.5) interp = "Neutral / Moderate";
+
+    if ($("perception-score-result")) {
+      $("perception-score-result").innerHTML = `
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-top:10px;">
+          <strong>Items Count:</strong> ${nums.length} &nbsp;|&nbsp;
+          <strong>Composite Mean:</strong> ${mean} / 5.00 &nbsp;|&nbsp;
+          <strong>SD:</strong> ${sd} &nbsp;|&nbsp;
+          <strong>Verbal Interpretation (Appendix K):</strong> <span class="badge" style="background:#047857;color:#fff;">${interp}</span>
+        </div>
+      `;
+    }
+  }
+
+  function runICVICalculator() {
+    const experts = $("icvi-experts-input") ? parseInt($("icvi-experts-input").value) || 5 : 5;
+    const agreeing = $("icvi-agreeing-input") ? parseInt($("icvi-agreeing-input").value) || 5 : 5;
+
+    const icvi = (agreeing / experts).toFixed(2);
+    const isValid = parseFloat(icvi) >= 0.83;
+
+    if ($("icvi-calc-result")) {
+      $("icvi-calc-result").innerHTML = `
+        <div style="background:${isValid ? '#ecfdf5' : '#fef2f2'};border:1px solid ${isValid ? '#10b981' : '#ef4444'};border-radius:8px;padding:12px;margin-top:10px;">
+          <strong>I-CVI:</strong> ${icvi} &nbsp;|&nbsp;
+          <strong>Lynn (1986) Criterion (≥0.83):</strong> ${isValid ? "<span style='color:#065f46;font-weight:700;'>✓ Content Valid</span>" : "<span style='color:#dc2626;font-weight:700;'>✗ Needs Revision</span>"}
+        </div>
+      `;
+    }
+  }
+
+  async function handleGenerateSessionCode() {
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const code = `BV-S1-${randomSuffix}`;
+
+    try {
+      await fetch(resolveApiUrl("/api/session/generate-code"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionCode: code, createdBy: "Researcher Console" })
+      });
+    } catch (_) {}
+
+    if ($("generated-session-code-display")) {
+      $("generated-session-code-display").textContent = code;
+    }
+  }
+
+  async function handleRefreshActiveProgress() {
+    const tbody = $("active-progress-tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Loading live student records...</td></tr>";
+
+    try {
+      const res = await fetch(resolveApiUrl("/api/session/active-codes"));
+      if (!res.ok) throw new Error("Fetch failed");
+      const data = await res.json();
+      const records = data.savedProgress || [];
+
+      if (!records.length) {
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>No saved student records found yet.</td></tr>";
+        return;
+      }
+
+      tbody.innerHTML = records.map((r) => `
+        <tr>
+          <td><strong>${r.participantCode || "-"}</strong></td>
+          <td>${r.participantGroup || "-"}</td>
+          <td>${r.sessionCode || "-"}</td>
+          <td>Part ${Number(r.activeStepIndex || 0) + 1}</td>
+          <td><span class="badge" style="background:#10b981;color:#fff;">Active</span></td>
+        </tr>
+      `).join("");
+    } catch (err) {
+      tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:#ef4444;'>Unable to connect to live server. Displaying local data.</td></tr>";
+    }
+  }
+
   function bindAllEvents() {
+    // New Thesis Upgrades Event Listeners
+    if ($("save-progress-btn")) {
+      $("save-progress-btn").addEventListener("click", handleSaveStudentProgress);
+    }
+    if ($("switch-speaker-btn")) {
+      $("switch-speaker-btn").addEventListener("click", handleSwitchActiveSpeaker);
+    }
+    if ($("dn-day-btn")) {
+      $("dn-day-btn").addEventListener("click", () => setDayNightMode("day"));
+    }
+    if ($("dn-night-btn")) {
+      $("dn-night-btn").addEventListener("click", () => setDayNightMode("night"));
+    }
+    if ($("dn-night-lamp-btn")) {
+      $("dn-night-lamp-btn").addEventListener("click", () => setDayNightMode("night-lamp"));
+    }
+    if ($("open-factor-explorer-btn")) {
+      $("open-factor-explorer-btn").addEventListener("click", () => {
+        if ($("factor-explorer-modal")) $("factor-explorer-modal").hidden = false;
+      });
+    }
+    if ($("close-factor-explorer-btn")) {
+      $("close-factor-explorer-btn").addEventListener("click", () => {
+        if ($("factor-explorer-modal")) $("factor-explorer-modal").hidden = true;
+      });
+    }
+    if ($("run-factor-test-btn")) {
+      $("run-factor-test-btn").addEventListener("click", runFactorExplorerTest);
+    }
+    if ($("score-concept-test-btn")) {
+      $("score-concept-test-btn").addEventListener("click", runConceptTestScorer);
+    }
+    if ($("score-perception-btn")) {
+      $("score-perception-btn").addEventListener("click", runPerceptionScorer);
+    }
+    if ($("calc-icvi-btn")) {
+      $("calc-icvi-btn").addEventListener("click", runICVICalculator);
+    }
+    if ($("gen-session-code-btn")) {
+      $("gen-session-code-btn").addEventListener("click", handleGenerateSessionCode);
+    }
+    if ($("refresh-progress-btn")) {
+      $("refresh-progress-btn").addEventListener("click", handleRefreshActiveProgress);
+    }
+    if ($("vocab-clarify-btn")) {
+      $("vocab-clarify-btn").addEventListener("click", () => {
+        state.vocabBypassActive = true;
+        const alertBox = $("try-first-alert");
+        if (alertBox) alertBox.style.display = "none";
+        const input = $("chat-input-text");
+        if (input) {
+          input.value = "What is the definition of ";
+          input.focus();
+        }
+      });
+    }
+
     // Welcome & 4-Role Login Forms
     const studentForm = $("student-login-form");
     if (studentForm) studentForm.addEventListener("submit", handleStudentLoginSubmit);

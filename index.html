@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BioVoice — MSU-IIT Interactive Photosynthesis Simulation &amp; AI Voice Learning Platform</title>
+  <title>BioVoice (Research-Made) — Interactive Photosynthesis Simulation &amp; AI Voice Platform</title>
   <meta
     name="description"
     content="Explore photosynthesis through interactive scientific investigation and AI-assisted learning. Developed at Mindanao State University – Iligan Institute of Technology (MSU-IIT)."
@@ -15,7 +15,7 @@
     rel="stylesheet"
   />
   <link rel="icon" type="image/png" href="msu-iit-logo.png" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <!-- ==================================================================== -->
@@ -37,13 +37,29 @@
 
     <!-- Welcome Top Bar with MSU-IIT Branding -->
     <header class="welcome-header">
-      <div class="msuiit-brand">
-        <div class="msuiit-crest">
-          <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+      <div class="biovoice-brand">
+        <div class="biovoice-crest">
+          <svg class="biovoice-logo-svg" viewBox="0 0 38 38" width="34" height="34" aria-hidden="true">
+            <defs>
+              <linearGradient id="bvLeafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#059669"/>
+              </linearGradient>
+              <linearGradient id="bvWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#0284c7"/>
+              </linearGradient>
+            </defs>
+            <path d="M19 4 C10 4 5 12 6 20 C7 28 15 34 24 33 C23 27 25 21 29 17 C32 14 32 8 19 4 Z" fill="url(#bvLeafGrad)"/>
+            <path d="M11 23 C13 19 17 15 22 12" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="27" cy="11" r="2.8" fill="#facc15"/>
+            <path d="M28 5 C32 7 35 11 35 16" stroke="url(#bvWaveGrad)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path d="M31 2 C36 5 38 10 38 17" stroke="url(#bvWaveGrad)" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.65"/>
+          </svg>
         </div>
-        <div class="msuiit-brand-text">
-          <span class="msuiit-acronym">MSU-IIT</span>
-          <span class="msuiit-sub">BioVoice Research Platform</span>
+        <div class="biovoice-brand-text">
+          <span class="biovoice-main-title">BioVoice</span>
+          <span class="biovoice-sub-tag">Research-Made</span>
         </div>
       </div>
       <div class="welcome-header-actions">
@@ -100,6 +116,16 @@
                 maxlength="12"
                 required
                 aria-label="Separate Participant PIN"
+              />
+            </label>
+            <label class="field-label">
+              <span>Classroom Session Code <small style="color:var(--text-muted);font-weight:normal;">(Optional)</small></span>
+              <input
+                id="student-session-code-input"
+                type="text"
+                placeholder="e.g., BV-S1-8924 (if provided by teacher)"
+                maxlength="16"
+                aria-label="Classroom Session Code"
               />
             </label>
             <button id="student-login-btn" class="primary-btn full-width" type="submit">
@@ -272,24 +298,70 @@
     <!-- Top Navigation Bar (Part 4 & Additional UI Requirement) -->
     <header class="learning-topbar">
       <div class="topbar-left">
-        <div class="msuiit-brand compact">
-          <div class="msuiit-crest">
-            <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+        <div class="biovoice-brand compact">
+          <div class="biovoice-crest">
+            <svg class="biovoice-logo-svg" viewBox="0 0 38 38" width="30" height="30" aria-hidden="true">
+              <defs>
+                <linearGradient id="bvLeafGradL" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#10b981"/>
+                  <stop offset="100%" stop-color="#059669"/>
+                </linearGradient>
+                <linearGradient id="bvWaveGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+              <path d="M19 4 C10 4 5 12 6 20 C7 28 15 34 24 33 C23 27 25 21 29 17 C32 14 32 8 19 4 Z" fill="url(#bvLeafGradL)"/>
+              <path d="M11 23 C13 19 17 15 22 12" stroke="#a7f3d0" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <circle cx="27" cy="11" r="2.8" fill="#facc15"/>
+              <path d="M28 5 C32 7 35 11 35 16" stroke="url(#bvWaveGradL)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            </svg>
           </div>
-          <div class="msuiit-brand-text">
-            <span class="msuiit-acronym">MSU-IIT</span>
-            <span class="msuiit-sub">BioVoice</span>
+          <div class="biovoice-brand-text">
+            <span class="biovoice-main-title">BioVoice</span>
+            <span class="biovoice-sub-tag">Research-Made</span>
           </div>
         </div>
         <span id="active-mode-banner-pill" class="mode-banner-pill">Participant Session</span>
       </div>
 
       <nav class="topbar-right" aria-label="Learning Environment Controls">
+        <!-- 💾 Save Progress Button (Reflects live to Researcher Dashboard) -->
+        <button id="topbar-save-progress-btn" class="save-progress-pill-btn" type="button" title="Save current progress & notes to researcher dashboard">
+          💾 Save Progress
+        </button>
+        <!-- Active Speaker Switcher for small groups (3-4 students sharing device) -->
+        <div id="active-speaker-container" class="active-speaker-container" title="If 3–4 students share this device, select your code before asking BioVoice">
+          <span class="speaker-label">Station:</span>
+          <select id="lab-station-select" class="speaker-select" aria-label="Lab Station Group">
+            <option value="Group 1">Station 1</option>
+            <option value="Group 2">Station 2</option>
+            <option value="Group 3">Station 3</option>
+            <option value="Group 4">Station 4</option>
+            <option value="Group 5">Station 5</option>
+            <option value="Group 6">Station 6</option>
+            <option value="Group 7">Station 7</option>
+            <option value="Group 8">Station 8</option>
+            <option value="Group 9">Station 9</option>
+            <option value="Group 10">Station 10</option>
+            <option value="Group 11">Station 11</option>
+            <option value="Group 12">Station 12</option>
+          </select>
+          <span class="speaker-label">Active:</span>
+          <strong id="active-speaker-badge" class="active-speaker-badge">BV-001</strong>
+          <button id="switch-speaker-btn" class="mini-ghost-btn" type="button" title="Switch active participant code">Switch</button>
+        </div>
         <button id="open-guide-modal-btn" class="topbar-link-btn" type="button">
           📖 Activity Guide
         </button>
         <button id="open-about-modal-btn" class="topbar-link-btn" type="button">
           ℹ️ About BioVoice
+        </button>
+        <button id="open-bow-modal-btn" class="topbar-link-btn" type="button">
+          📅 Budget of Work &amp; Matrix
+        </button>
+        <button id="open-factor-explorer-btn" class="topbar-link-btn" type="button">
+          🧪 Factor Explorer
         </button>
         <button id="open-teacher-modal-btn" class="topbar-link-btn teacher-portal-btn" type="button" hidden>
           📋 Classroom Monitor
@@ -336,6 +408,42 @@
       <!-- PRIMARY WORKSPACE: PHOTOSYNTHESIS SIMULATION (VERTICALLY STACKED)-->
       <!-- ================================================================ -->
       <main id="simulation-main-column" class="simulation-main-column" aria-label="Photosynthesis Investigation Workspace">
+        <!-- Collapsible Activity Learning Objectives (DepEd Grade 11 Biology 1 — Quarter 2 · Appendix G-1) -->
+        <section class="ilo-header-card" aria-label="Intended Learning Outcomes">
+          <button id="toggle-ilo-btn" class="ilo-toggle-btn" type="button" aria-expanded="false" aria-controls="ilo-content-collapse">
+            <span>🎯 <strong>Activity Learning Objectives (DepEd Grade 11 Biology 1 — Quarter 2 · ILOs 1 to 6)</strong></span>
+            <span id="ilo-toggle-icon" class="ilo-toggle-icon">▼ View Objectives</span>
+          </button>
+          <div id="ilo-content-collapse" class="ilo-content-collapse" hidden>
+            <div class="ilo-grid">
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 1 · LC 1 &amp; LC 2</span>
+                <p>Identify the role of chloroplasts and photosynthetic pigments (chlorophyll a, chlorophyll b, carotenoids) in capturing light energy.</p>
+              </article>
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 2 · LC 3 &amp; Biomass</span>
+                <p>Explain the balanced equation (6CO₂ + 6H₂O &rarr; C₆H₁₂O₆ + 6O₂), trace released O₂ to water (photolysis), and explain how CO₂ builds plant biomass.</p>
+              </article>
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 3 · LC 4</span>
+                <p>Use a chloroplast diagram to explain the light-dependent reactions, ATP and NADPH generation, and the Calvin cycle.</p>
+              </article>
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 4 · Performance Task</span>
+                <p>Investigate and graph oxygen-bubble formation by an aquatic plant under different light conditions; explain limiting factors.</p>
+              </article>
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 5 · LC 5</span>
+                <p>Evaluate a secondary source (NOAA/NASA) about how photosynthesis affects atmospheric CO₂ and global carbon storage.</p>
+              </article>
+              <article class="ilo-item">
+                <span class="ilo-tag">ILO 6 · Conceptual Change</span>
+                <p>Revise initial ideas about photosynthesis using experimental observations, rate patterns, and scientific source evidence.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <!-- 1. SIMULATION WORKSPACE CARD (PLANT SELECTOR + VISUAL APPARATUS) -->
         <section class="sim-card sim-workspace-card" aria-labelledby="sim-workspace-heading">
           <div class="sim-card-header">
@@ -378,6 +486,138 @@
             <span id="plant-species-desc">
               Submerged stems with whorled serrated leaves (4–8 per node). Oxygen produced during the light-dependent reactions nucleates at the cut stem and leaf nodes as countable rising bubbles.
             </span>
+          </div>
+
+          <!-- 🔬 Microscopic Leaf & Pigment View (DepEd LC 1 & LC 2 · Pretest/Posttest Items 4-6, Misconceptions M3 & M5) -->
+          <div class="micro-leaf-card" aria-label="Microscopic Leaf & Chloroplast View">
+            <div class="micro-card-header">
+              <div>
+                <span class="eyebrow">Cellular Level Exploration · DepEd LC 1 &amp; LC 2</span>
+                <h3>🔬 Microscopic Leaf &amp; Chloroplast View: Photosynthetic Pigments &amp; Light Capture</h3>
+              </div>
+              <button id="toggle-micro-btn" class="ghost-pill-btn" type="button" aria-expanded="true">
+                Hide Microscopic View
+              </button>
+            </div>
+            <div id="micro-card-body" class="micro-card-body">
+              <div class="micro-split-grid">
+                <!-- Interactive SVG Chloroplast Anatomy -->
+                <div class="micro-visual-box">
+                  <svg viewBox="0 0 340 190" class="chloroplast-anatomy-svg" role="img" aria-label="Chloroplast structure showing outer membrane, inner membrane, thylakoid grana, and stroma fluid">
+                    <defs>
+                      <linearGradient id="chloroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#065f46"/>
+                        <stop offset="100%" stop-color="#064e3b"/>
+                      </linearGradient>
+                      <linearGradient id="granaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#22c55e"/>
+                        <stop offset="100%" stop-color="#15803d"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Outer Membrane -->
+                    <ellipse cx="170" cy="95" rx="155" ry="85" fill="url(#chloroGrad)" stroke="#34d399" stroke-width="2.5"/>
+                    <!-- Inner Membrane -->
+                    <ellipse cx="170" cy="95" rx="146" ry="77" fill="none" stroke="#6ee7b7" stroke-width="1.2" stroke-dasharray="4 2"/>
+                    <!-- Stroma Fluid Background Label -->
+                    <text x="250" y="45" fill="#a7f3d0" font-size="10.5" font-weight="700">Stroma (Fluid Matrix)</text>
+                    <text x="250" y="58" fill="#cbd5e1" font-size="8.5">Site of Calvin Cycle</text>
+                    <!-- Thylakoid Grana Stack 1 -->
+                    <g transform="translate(65, 55)">
+                      <rect x="0" y="0" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="12" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="24" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="36" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="48" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <text x="18" y="70" fill="#fde047" font-size="9" text-anchor="middle" font-weight="700">Granum</text>
+                    </g>
+                    <!-- Thylakoid Grana Stack 2 -->
+                    <g transform="translate(130, 48)">
+                      <rect x="0" y="0" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="12" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="24" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="36" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="48" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="60" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <text x="19" y="82" fill="#86efac" font-size="8.5" text-anchor="middle">Thylakoids</text>
+                    </g>
+                    <!-- Lamellae Interconnections -->
+                    <line x1="101" y1="80" x2="130" y2="72" stroke="#22c55e" stroke-width="2.5"/>
+                    <line x1="168" y1="80" x2="195" y2="85" stroke="#22c55e" stroke-width="2.5"/>
+                    <!-- Thylakoid Grana Stack 3 -->
+                    <g transform="translate(195, 60)">
+                      <rect x="0" y="0" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="12" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="24" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                      <rect x="0" y="36" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+                    </g>
+                    <!-- Sunlight photons hitting thylakoid -->
+                    <g stroke="#fde047" stroke-width="1.8" stroke-dasharray="3 1">
+                      <line x1="40" y1="15" x2="80" y2="55"/>
+                      <line x1="80" y1="10" x2="135" y2="50"/>
+                    </g>
+                    <text x="65" y="24" fill="#fef08a" font-size="9" font-weight="700">Light Energy Photons</text>
+                  </svg>
+                  <p class="micro-caption">
+                    <strong>Chloroplast Organelle:</strong> Thylakoid grana contain photosynthetic pigments that trap light energy and split water (photolysis). The stroma fluid uses that energy to fix CO₂ into glucose.
+                  </p>
+                </div>
+
+                <!-- Pigment Cards & Variegated Leaf Mini-Toggle -->
+                <div class="micro-info-box">
+                  <div class="pigments-grid">
+                    <article class="pigment-pill-card p-chla">
+                      <strong>Chlorophyll a (Primary)</strong>
+                      <span>Absorbs blue-violet &amp; red light, reflects green. Directly converts light energy into chemical energy during photolysis.</span>
+                    </article>
+                    <article class="pigment-pill-card p-chlb">
+                      <strong>Chlorophyll b (Accessory)</strong>
+                      <span>Absorbs blue &amp; red-orange wavelengths; transfers captured light energy to chlorophyll a to broaden light harvesting.</span>
+                    </article>
+                    <article class="pigment-pill-card p-carot">
+                      <strong>Carotenoids (Accessory)</strong>
+                      <span>Absorb blue-green wavelengths; protect chlorophyll from photo-damage and dissipate excessive light as heat.</span>
+                    </article>
+                  </div>
+
+                  <!-- Variegated Leaf Mini-Toggle (Item 6 & Misconception M5) -->
+                  <div class="variegated-tester-box">
+                    <span class="tester-label">🌿 Variegated Leaf Test (Addressing Misconception M5 &amp; Item 6):</span>
+                    <div class="variegated-buttons">
+                      <button id="test-green-leaf-btn" type="button" class="var-btn is-active" data-leaf-zone="green">
+                        🌿 Green Center (With Chlorophyll)
+                      </button>
+                      <button id="test-white-leaf-btn" type="button" class="var-btn" data-leaf-zone="white">
+                        🏳️ White Edge (No Chlorophyll)
+                      </button>
+                    </div>
+                    <div id="variegated-result-text" class="var-result-text">
+                      <strong>Green Center:</strong> Contains abundant chlorophyll inside chloroplasts &rarr; Captures light energy &rarr; Splits water &rarr; High glucose synthesis (turns dark blue-black in starch test).
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ☀️ Day vs. 🌑 Night (24-Hour Cycle) & DepEd Variables Explorer -->
+          <div class="day-night-strip">
+            <div class="day-night-controls">
+              <span class="day-night-title">🕒 24-Hour Day/Night &amp; Respiration Explorer (LC 4 &amp; Item 8, M2):</span>
+              <div class="day-night-toggle-group">
+                <button id="dn-day-btn" type="button" class="dn-btn is-active" data-dn="day">
+                  ☀️ Day (Sunlight)
+                </button>
+                <button id="dn-night-btn" type="button" class="dn-btn" data-dn="night">
+                  🌑 Night (Darkness)
+                </button>
+                <button id="dn-night-lamp-btn" type="button" class="dn-btn" data-dn="night-lamp" title="Turn lamp on during nighttime">
+                  💡 Turn Lamp ON at Night
+                </button>
+              </div>
+            </div>
+            <div id="day-night-explanation" class="day-night-explanation">
+              <strong>Day Condition:</strong> Photosynthesis produces oxygen bubbles &amp; glucose; cellular respiration also occurs 24/7 in mitochondria. <em>Net oxygen balance is positive!</em>
+            </div>
           </div>
 
           <!-- Large Responsive SVG Simulation Canvas (Parts 7 & 8) -->
@@ -792,6 +1032,17 @@
             </div>
           </div>
 
+          <!-- Comparison Group Teacher-Led Support Banner (Hidden in Intervention Mode) -->
+          <div id="comparison-teacher-banner" class="comparison-teacher-banner" hidden>
+            <div class="comp-banner-content">
+              <span class="comp-icon" aria-hidden="true">👩‍🏫</span>
+              <div>
+                <strong>Teacher-Led Support Point (<span id="comp-sp-label">SP1</span>):</strong>
+                <span>Write your initial idea in the worksheet box below first, then raise your hand to ask your Biology teacher for a guiding hint, clarification, or explanation.</span>
+              </div>
+            </div>
+          </div>
+
           <div class="stepper-body">
             <h2 id="stepper-current-title" class="stepper-title">Part 1: Predict — Support Point SP1</h2>
             <p id="stepper-current-prompt" class="stepper-prompt">
@@ -804,7 +1055,7 @@
               <textarea
                 id="stepper-response-input"
                 rows="2"
-                placeholder="Write your prediction or observation notes here (and on your printed Appendix F worksheet)..."
+                placeholder="Write your prediction or observation notes here (and on your printed Appendix G worksheet)..."
               ></textarea>
             </div>
             <div id="stepper-validation-msg" class="stepper-validation-msg" role="status" aria-live="polite" hidden></div>
@@ -952,12 +1203,12 @@
           <div class="bv-controls-strip">
             <div class="bv-control-row">
               <label class="bv-compact-field">
-                <span>Language</span>
+                <span>Language (Rule R10)</span>
                 <select id="language-select" aria-label="BioVoice Language Mode">
-                  <option value="auto" selected>Auto Detect (EN / FIL / CEB)</option>
-                  <option value="en-PH">English</option>
-                  <option value="fil-PH">Filipino</option>
-                  <option value="ceb-PH">Cebuano (Bisaya)</option>
+                  <option value="auto">Auto Detect Language</option>
+                  <option value="en-PH" selected>EN · English (en-PH)</option>
+                  <option value="fil-PH">FIL · Filipino (fil-PH)</option>
+                  <option value="ceb-PH">CEB · Cebuano (ceb-PH)</option>
                 </select>
               </label>
               <label class="bv-compact-field">
@@ -1033,6 +1284,18 @@
             </div>
           </div>
 
+          <!-- "Try-First" Gate Banner (Appendix H Rules R1 & R5) -->
+          <div id="try-first-gate-banner" class="try-first-gate-banner">
+            <span class="gate-icon">✏️</span>
+            <div class="gate-text">
+              <strong>Try First (Rule R5):</strong>
+              <span>Write your own initial idea (at least 5 words) in the worksheet box above to unlock BioVoice.</span>
+            </div>
+            <button id="gate-vocab-clarify-btn" class="mini-btn vocab-btn" type="button" title="Stuck on question wording? Click for a Level 2 clarification">
+              I need question clarification
+            </button>
+          </div>
+
           <!-- Voice & Text Input Composer -->
           <form id="chat-form" class="bv-composer" autocomplete="off">
             <div class="bv-composer-top">
@@ -1070,13 +1333,16 @@
   <!-- ==================================================================== -->
   <section id="screen-dashboard" class="dashboard-screen" aria-label="Private Researcher Dashboard" hidden>
     <header class="dashboard-topbar">
-      <div class="msuiit-brand compact">
-        <div class="msuiit-crest">
-          <img src="msu-iit-logo.png" alt="MSU-IIT Official Logo" class="msuiit-logo-img" width="34" height="34" style="width:34px;height:34px;max-width:34px;max-height:34px;object-fit:contain;display:block;" />
+      <div class="biovoice-brand compact">
+        <div class="biovoice-crest">
+          <svg class="biovoice-logo-svg" viewBox="0 0 38 38" width="30" height="30" aria-hidden="true">
+            <path d="M19 4 C10 4 5 12 6 20 C7 28 15 34 24 33 C23 27 25 21 29 17 C32 14 32 8 19 4 Z" fill="#10b981"/>
+            <circle cx="27" cy="11" r="2.8" fill="#facc15"/>
+          </svg>
         </div>
-        <div class="msuiit-brand-text">
-          <span class="msuiit-acronym">MSU-IIT</span>
-          <span class="msuiit-sub">Private Researcher Dashboard</span>
+        <div class="biovoice-brand-text">
+          <span class="biovoice-main-title">BioVoice</span>
+          <span class="biovoice-sub-tag">Private Researcher Console</span>
         </div>
       </div>
 
@@ -1123,6 +1389,102 @@
           <small>Appendix I accuracy &amp; scope check</small>
         </article>
       </div>
+
+      <!-- Digital Auto-Scorers for Research Instruments (Appendices B, F, and K) -->
+      <section class="dash-panel" id="dash-scorers-panel">
+        <div class="dash-panel-header">
+          <div>
+            <span class="eyebrow">Psychometric &amp; Assessment Auto-Scorers</span>
+            <h2>Digital Scorers: Appendix F (Two-Tier Test &amp; Misconceptions), Appendix K (Perception), and Appendix B (I-CVI)</h2>
+          </div>
+        </div>
+        <div class="dash-tabs-nav" role="tablist">
+          <button id="tab-scorer-f" class="bow-tab-btn is-active" type="button">Appendix F: Two-Tier Test &amp; Misconceptions</button>
+          <button id="tab-scorer-k" class="bow-tab-btn" type="button">Appendix K: Perception Questionnaire</button>
+          <button id="tab-scorer-b" class="bow-tab-btn" type="button">Appendix B: I-CVI Calculator</button>
+          <button id="tab-class-sessions" class="bow-tab-btn" type="button">Classroom Session Codes &amp; Live Progress</button>
+        </div>
+
+        <!-- Scorer F Panel -->
+        <div id="scorer-f-panel" class="scorer-tab-panel">
+          <div class="scorer-box">
+            <h3>Appendix F Two-Tier Diagnostic Scorer (Forms A &amp; B · Items 1–15)</h3>
+            <p>Enter student 15 two-tier answers (e.g. <code>B,3; D,1; A,4...</code>) or click "Load Sample Class Data". 1 point awarded only when BOTH tiers are correct.</p>
+            <div class="scorer-input-row">
+              <select id="scorer-f-form-select">
+                <option value="A">Form A (Pretest)</option>
+                <option value="B">Form B (Posttest)</option>
+              </select>
+              <select id="scorer-f-group-select">
+                <option value="Intervention">Intervention Group</option>
+                <option value="Comparison">Comparison Group</option>
+              </select>
+              <button id="btn-load-sample-f" class="secondary-btn" type="button">Load Sample Two-Tier Data</button>
+              <button id="btn-run-scorer-f" class="primary-btn" type="button">Compute Appendix F Scores</button>
+            </div>
+            <div id="scorer-f-results" class="scorer-result-container" hidden></div>
+          </div>
+        </div>
+
+        <!-- Scorer K Panel -->
+        <div id="scorer-k-panel" class="scorer-tab-panel" hidden>
+          <div class="scorer-box">
+            <h3>Appendix K BioVoice Perception Questionnaire Scorer (Table 5 · 4-Point Likert)</h3>
+            <p>Computes subscale means and SDs: Usefulness (U1–U6), Ease of Use (E1–E6), Clarity (C1–C4), Trust (T1–T4), and Concerns (K1–K5).</p>
+            <button id="btn-load-sample-k" class="secondary-btn" type="button">Load Sample Perception Data</button>
+            <button id="btn-run-scorer-k" class="primary-btn" type="button">Compute Perception Means</button>
+            <div id="scorer-k-results" class="scorer-result-container" hidden></div>
+          </div>
+        </div>
+
+        <!-- Scorer B Panel -->
+        <div id="scorer-b-panel" class="scorer-tab-panel" hidden>
+          <div class="scorer-box">
+            <h3>Appendix B Content Validity Index (I-CVI &amp; S-CVI/Ave) Calculator</h3>
+            <p>Calculates item and scale CVI for 4 expert validators (Ratings 1 to 4; Agreement = 3 or 4; Cutoff &ge; 0.78).</p>
+            <button id="btn-load-sample-b" class="secondary-btn" type="button">Load Validation Ratings</button>
+            <button id="btn-run-scorer-b" class="primary-btn" type="button">Calculate I-CVI &amp; S-CVI</button>
+            <div id="scorer-b-results" class="scorer-result-container" hidden></div>
+          </div>
+        </div>
+
+        <!-- Classroom Sessions & Live Student Progress -->
+        <div id="class-sessions-panel" class="scorer-tab-panel" hidden>
+          <div class="scorer-box">
+            <h3>Classroom Session Code Generator</h3>
+            <p>Generate a unique classroom session code for students to enter during class login:</p>
+            <div class="scorer-input-row">
+              <select id="gen-session-label">
+                <option value="Session 1">Session 1 (Orientation &amp; Part 1)</option>
+                <option value="Session 2">Session 2 (Part 2 Plan)</option>
+                <option value="Session 3">Session 3 (Part 3 Investigate)</option>
+                <option value="Session 4">Session 4 (Parts 4 &amp; 5)</option>
+              </select>
+              <button id="btn-generate-session-code" class="primary-btn" type="button">⚡ Generate New Session Code</button>
+            </div>
+            <div id="active-session-codes-list" class="session-codes-list"></div>
+
+            <h3 style="margin-top:1.5rem;">Live Student Saved Progress (via Topbar "Save Progress")</h3>
+            <p>Real-time records saved by students working in the classroom:</p>
+            <div id="live-student-progress-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Participant Code</th>
+                    <th>Session Code</th>
+                    <th>Active Step</th>
+                    <th>Step Notes Saved</th>
+                    <th>Last Saved (GMT+8)</th>
+                  </tr>
+                </thead>
+                <tbody id="student-progress-tbody">
+                  <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No student progress records received yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Study Configuration & Teacher Permission Controls -->
       <section class="dash-panel">
@@ -1420,7 +1782,7 @@
             <strong>Hints, Clarifications, and Explanations Only:</strong> BioVoice provides hints first, followed by clarifications and explanations to guide your thinking—it will never give out test answers or write final worksheet answers for you.
           </li>
           <li>
-            <strong>Verify with Your Activity Sheet and Teacher:</strong> Always compare BioVoice explanations and simulation observations with your printed Student Activity Sheet (Appendix F) and your Biology teacher's guidance.
+            <strong>Verify with Your Activity Sheet and Teacher:</strong> Always compare BioVoice explanations and simulation observations with your printed Student Activity Sheet (Appendix G) and your Biology teacher's guidance.
           </li>
           <li>
             <strong>School and Research Conduct:</strong> Your participation follows Iligan City National High School classroom rules and MSU-IIT ethical research standards.
@@ -1454,7 +1816,7 @@
     <div class="modal-window content-modal-window">
       <header class="modal-header">
         <div>
-          <span class="eyebrow">Appendix F &amp; DepEd Strengthened SHS Biology 1</span>
+          <span class="eyebrow">Appendix G &amp; DepEd Strengthened SHS Biology 1</span>
           <h2 id="guide-modal-title">Student Activity Guide: Investigating Photosynthesis</h2>
         </div>
         <button id="close-guide-modal-btn" class="modal-close-btn" type="button" aria-label="Close Activity Guide">
@@ -1519,7 +1881,7 @@
             Record each completed 60-second trial in the Data Table and compute the <strong>Mean</strong> ((Trial 1 + Trial 2 + Trial 3) &divide; 3). Inspect the graph below the table to see how bubble rate decreases with distance and drops near zero in the Dark control.
           </p>
           <p class="guide-reminder-box">
-            <strong>Important Reminder:</strong> Always compare your simulation results and any BioVoice explanations with your printed Student Activity Sheet (Appendix F) and your Biology teacher's instructions.
+            <strong>Important Reminder:</strong> Always compare your simulation results and any BioVoice explanations with your printed Student Activity Sheet (Appendix G) and your Biology teacher's instructions.
           </p>
         </section>
       </div>
@@ -1723,24 +2085,24 @@
           <label class="field-label">
             <span>Verified Idea Code (I1–I9)</span>
             <select id="review-idea-select">
-              <option value="I1">I1 · Need for light in photosynthesis</option>
-              <option value="I2">I2 · Bubble count as sign of rate</option>
-              <option value="I3">I3 · Lamp distance and light strength</option>
-              <option value="I4">I4 · Dark setup as comparison</option>
-              <option value="I5">I5 · High-light leveling off</option>
-              <option value="I6">I6 · Repeated trials and mean</option>
-              <option value="I7">I7 · Constant variables / fair test</option>
-              <option value="I8">I8 · Light energy to chemical energy</option>
-              <option value="I9">I9 · Value of photosynthesis to organisms</option>
+              <option value="I1">I1 · Raw materials and products (LC 3)</option>
+              <option value="I2">I2 · Role of light in photosynthesis (LC 1, LC 2)</option>
+              <option value="I3">I3 · Chlorophyll and chloroplasts (LC 1, LC 2)</option>
+              <option value="I4">I4 · Source of plant mass and food (M1, Biomass)</option>
+              <option value="I5">I5 · Light-dependent and Calvin cycle stages (LC 4)</option>
+              <option value="I6">I6 · Respiration and gas exchange (M2, Mitochondria)</option>
+              <option value="I7">I7 · Factors affecting rate (Light, CO₂, Temp - Limiting Factors)</option>
+              <option value="I8">I8 · Procedure, variables, or data (IV, DV, CV, Trials)</option>
+              <option value="I9">I9 · Environmental carbon and source evaluation (LC 5 NOAA)</option>
             </select>
           </label>
           <label class="field-label">
             <span>Accuracy &amp; Scope Rating</span>
             <select id="review-accuracy-select">
-              <option value="Pending researcher review">Pending researcher review</option>
-              <option value="Accurate and within scope">Accurate and within scope</option>
-              <option value="Minor wording issue">Minor wording issue</option>
-              <option value="Out of scope / Needs teacher follow-up">Out of scope / Needs teacher follow-up</option>
+              <option value="Pending">Pending · Pending researcher review</option>
+              <option value="Y">Y · Accurate and within scope</option>
+              <option value="N">N · Not accurate or out of scope</option>
+              <option value="C">C · Teacher corrected</option>
             </select>
           </label>
         </div>
@@ -1755,6 +2117,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=3"></script>
+  <script src="photosynthesisModel.js"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
