@@ -5226,10 +5226,44 @@
       }
     });
 
-    // Hideable BioVoice Panel Toggles
+    // Hideable BioVoice Panel Toggles & Mobile VisualViewport Synchronization
+    function syncMobileBioVoiceViewport() {
+      const panel = $("biovoice-side-panel");
+      if (!panel) return;
+      if (window.innerWidth > 980 || !window.visualViewport) {
+        panel.style.removeProperty("--bv-vv-max-h");
+        panel.style.removeProperty("--bv-kb-bottom");
+        return;
+      }
+      const vv = window.visualViewport;
+      const kbGap = Math.max(0, Math.round(window.innerHeight - (vv.height + vv.offsetTop)));
+      const maxH = Math.max(280, Math.round(vv.height * (kbGap > 60 ? 0.94 : 0.84)));
+      panel.style.setProperty("--bv-vv-max-h", `${maxH}px`);
+      panel.style.setProperty("--bv-kb-bottom", `${kbGap}px`);
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", syncMobileBioVoiceViewport);
+      window.visualViewport.addEventListener("scroll", syncMobileBioVoiceViewport);
+    }
+    window.addEventListener("resize", syncMobileBioVoiceViewport);
+    if ($("question-input")) {
+      $("question-input").addEventListener("focus", () => {
+        setTimeout(() => {
+          syncMobileBioVoiceViewport();
+          const stream = $("chat-messages");
+          if (stream) stream.scrollTop = stream.scrollHeight;
+        }, 120);
+      });
+      $("question-input").addEventListener("blur", () => {
+        setTimeout(syncMobileBioVoiceViewport, 150);
+      });
+    }
+
     if ($("toggle-biovoice-panel-btn")) {
       $("toggle-biovoice-panel-btn").addEventListener("click", () => {
         setBioVoicePanelVisibility(!state.bioVoicePanelVisible);
+        syncMobileBioVoiceViewport();
       });
     }
     if ($("close-biovoice-panel-btn")) {
@@ -5237,6 +5271,7 @@
         setBioVoicePanelVisibility(false);
       });
     }
+    syncMobileBioVoiceViewport();
 
     // Logout & Dashboard Navigation
     ["logout-btn", "dashboard-logout-btn"].forEach((id) => {
