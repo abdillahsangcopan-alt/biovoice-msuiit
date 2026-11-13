@@ -73,7 +73,6 @@
       <div class="welcome-hero">
         <div class="welcome-badge-row">
           <span class="welcome-pill">Mindanao State University – Iligan Institute of Technology</span>
-          <span id="welcome-phase-pill" class="welcome-pill phase-pill">Active Session: Session 1</span>
         </div>
         <h1 class="welcome-title">Welcome to BioVoice</h1>
         <p class="welcome-subtitle">
@@ -357,12 +356,6 @@
         <button id="open-about-modal-btn" class="topbar-link-btn" type="button">
           ℹ️ About BioVoice
         </button>
-        <button id="open-bow-modal-btn" class="topbar-link-btn" type="button">
-          📅 Budget of Work &amp; Matrix
-        </button>
-        <button id="open-factor-explorer-btn" class="topbar-link-btn" type="button">
-          🧪 Factor Explorer
-        </button>
         <button id="open-teacher-modal-btn" class="topbar-link-btn teacher-portal-btn" type="button" hidden>
           📋 Classroom Monitor
         </button>
@@ -411,7 +404,7 @@
         <!-- Collapsible Activity Learning Objectives (DepEd Grade 11 Biology 1 — Quarter 2 · Appendix G-1) -->
         <section class="ilo-header-card" aria-label="Intended Learning Outcomes">
           <button id="toggle-ilo-btn" class="ilo-toggle-btn" type="button" aria-expanded="false" aria-controls="ilo-content-collapse">
-            <span>🎯 <strong>Activity Learning Objectives (DepEd Grade 11 Biology 1 — Quarter 2 · ILOs 1 to 6)</strong></span>
+            <span><strong>Activity Learning Objectives</strong></span>
             <span id="ilo-toggle-icon" class="ilo-toggle-icon">▼ View Objectives</span>
           </button>
           <div id="ilo-content-collapse" class="ilo-content-collapse" hidden>
@@ -495,93 +488,128 @@
                 <span class="eyebrow">Cellular Level Exploration · DepEd LC 1 &amp; LC 2</span>
                 <h3>🔬 Microscopic Leaf &amp; Chloroplast View: Photosynthetic Pigments &amp; Light Capture</h3>
               </div>
-              <button id="toggle-micro-btn" class="ghost-pill-btn" type="button" aria-expanded="true">
+              <button id="toggle-micro-btn" class="micro-toggle-btn" type="button" aria-expanded="true">
                 Hide Microscopic View
               </button>
             </div>
             <div id="micro-card-body" class="micro-card-body">
               <div class="micro-split-grid">
-                <!-- Interactive SVG Chloroplast Anatomy -->
+                <!-- Interactive Clickable SVG Chloroplast Anatomy -->
                 <div class="micro-visual-box">
-                  <svg viewBox="0 0 340 190" class="chloroplast-anatomy-svg" role="img" aria-label="Chloroplast structure showing outer membrane, inner membrane, thylakoid grana, and stroma fluid">
+                  <svg viewBox="0 0 340 198" class="chloroplast-anatomy-svg" role="img" aria-label="Interactive chloroplast and leaf structure diagram. Click any structure to inspect how variables act there.">
                     <defs>
                       <linearGradient id="chloroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#065f46"/>
-                        <stop offset="100%" stop-color="#064e3b"/>
+                        <stop offset="0%" stop-color="#059669"/>
+                        <stop offset="100%" stop-color="#047857"/>
                       </linearGradient>
                       <linearGradient id="granaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stop-color="#22c55e"/>
                         <stop offset="100%" stop-color="#15803d"/>
                       </linearGradient>
                     </defs>
-                    <!-- Outer Membrane -->
-                    <ellipse cx="170" cy="95" rx="155" ry="85" fill="url(#chloroGrad)" stroke="#34d399" stroke-width="2.5"/>
-                    <!-- Inner Membrane -->
-                    <ellipse cx="170" cy="95" rx="146" ry="77" fill="none" stroke="#6ee7b7" stroke-width="1.2" stroke-dasharray="4 2"/>
-                    <!-- Stroma Fluid Background Label -->
-                    <text x="250" y="45" fill="#a7f3d0" font-size="10.5" font-weight="700">Stroma (Fluid Matrix)</text>
-                    <text x="250" y="58" fill="#cbd5e1" font-size="8.5">Site of Calvin Cycle</text>
-                    <!-- Thylakoid Grana Stack 1 -->
-                    <g transform="translate(65, 55)">
-                      <rect x="0" y="0" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="12" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="24" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="36" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="48" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <text x="18" y="70" fill="#fde047" font-size="9" text-anchor="middle" font-weight="700">Granum</text>
+
+                    <!-- Outer & Inner Membrane (Clickable: membrane) -->
+                    <g class="micro-hotspot" data-micro-structure="membrane" tabindex="0" role="button" aria-label="Inspect Chloroplast Envelope and Leaf Epidermis">
+                      <ellipse cx="170" cy="100" rx="154" ry="84" fill="url(#chloroGrad)" stroke="#064e3b" stroke-width="2.5"/>
+                      <ellipse cx="170" cy="100" rx="144" ry="75" fill="rgba(236, 253, 245, 0.14)" stroke="#a7f3d0" stroke-width="1.4" stroke-dasharray="4 2"/>
+                      <text x="170" y="177" fill="#ecfdf5" font-size="8.5" font-weight="700" text-anchor="middle">Outer &amp; Inner Membrane (Click)</text>
                     </g>
-                    <!-- Thylakoid Grana Stack 2 -->
-                    <g transform="translate(130, 48)">
-                      <rect x="0" y="0" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="12" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="24" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="36" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="48" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="60" width="38" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <text x="19" y="82" fill="#86efac" font-size="8.5" text-anchor="middle">Thylakoids</text>
+
+                    <!-- Stroma Fluid Matrix (Clickable: stroma) -->
+                    <g class="micro-hotspot" data-micro-structure="stroma" tabindex="0" role="button" aria-label="Inspect Stroma Fluid Matrix, CO2 fixation, and Temperature">
+                      <ellipse cx="266" cy="96" rx="44" ry="36" fill="rgba(16, 185, 129, 0.25)" stroke="#d1fae5" stroke-width="1.2" stroke-dasharray="3 2"/>
+                      <text x="266" y="79" fill="#ffffff" font-size="10" font-weight="800" text-anchor="middle">Stroma Fluid</text>
+                      <text x="266" y="92" fill="#ecfdf5" font-size="8.2" font-weight="600" text-anchor="middle">CO₂ + Enzymes</text>
+                      <text x="266" y="104" fill="#fde68a" font-size="8" font-weight="700" text-anchor="middle">(Temp-sensitive)</text>
                     </g>
-                    <!-- Lamellae Interconnections -->
-                    <line x1="101" y1="80" x2="130" y2="72" stroke="#22c55e" stroke-width="2.5"/>
-                    <line x1="168" y1="80" x2="195" y2="85" stroke="#22c55e" stroke-width="2.5"/>
-                    <!-- Thylakoid Grana Stack 3 -->
-                    <g transform="translate(195, 60)">
-                      <rect x="0" y="0" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="12" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="24" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
-                      <rect x="0" y="36" width="36" height="10" rx="3" fill="url(#granaGrad)" stroke="#14532d" stroke-width="0.8"/>
+
+                    <!-- Thylakoid Grana Stacks (Clickable: thylakoid) -->
+                    <g class="micro-hotspot is-selected" data-micro-structure="thylakoid" tabindex="0" role="button" aria-label="Inspect Thylakoid Grana, Light Capture, Water Splitting, and Oxygen">
+                      <!-- Stack 1 -->
+                      <g transform="translate(55, 62)">
+                        <rect x="0" y="0" width="36" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="11" width="36" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="22" width="36" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="33" width="36" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="44" width="36" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                      </g>
+                      <!-- Lamellae -->
+                      <line x1="91" y1="86" x2="118" y2="79" stroke="#86efac" stroke-width="2.6"/>
+                      <line x1="156" y1="86" x2="182" y2="91" stroke="#86efac" stroke-width="2.6"/>
+                      <!-- Stack 2 -->
+                      <g transform="translate(118, 55)">
+                        <rect x="0" y="0" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="11" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="22" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="33" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="44" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="55" width="38" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                      </g>
+                      <!-- Stack 3 -->
+                      <g transform="translate(182, 66)">
+                        <rect x="0" y="0" width="34" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="11" width="34" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="22" width="34" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                        <rect x="0" y="33" width="34" height="9" rx="3" fill="url(#granaGrad)" stroke="#052e16" stroke-width="0.9"/>
+                      </g>
+                      <text x="137" y="136" fill="#fef08a" font-size="9.5" font-weight="800" text-anchor="middle">Thylakoid Grana (H₂O → O₂)</text>
                     </g>
-                    <!-- Sunlight photons hitting thylakoid -->
-                    <g stroke="#fde047" stroke-width="1.8" stroke-dasharray="3 1">
-                      <line x1="40" y1="15" x2="80" y2="55"/>
-                      <line x1="80" y1="10" x2="135" y2="50"/>
+
+                    <!-- Photons / Chlorophyll Excitation (Clickable: photons) -->
+                    <g class="micro-hotspot" data-micro-structure="photons" tabindex="0" role="button" aria-label="Inspect Light Photons and Chlorophyll Pigments">
+                      <line x1="38" y1="22" x2="73" y2="60" stroke="#fde047" stroke-width="2.2" stroke-dasharray="3 2"/>
+                      <line x1="78" y1="16" x2="128" y2="55" stroke="#fde047" stroke-width="2.2" stroke-dasharray="3 2"/>
+                      <rect x="18" y="4" width="132" height="17" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                      <text x="84" y="15.5" fill="#78350f" font-size="8.8" font-weight="800" text-anchor="middle">☀️ Light Photons (Lux)</text>
                     </g>
-                    <text x="65" y="24" fill="#fef08a" font-size="9" font-weight="700">Light Energy Photons</text>
+
+                    <!-- O2 Bubble Release Cue (Clickable: oxygen) -->
+                    <g class="micro-hotspot" data-micro-structure="oxygen" tabindex="0" role="button" aria-label="Inspect Oxygen Gas Bubbles and 24-Hour Respiration Balance">
+                      <circle cx="204" cy="40" r="6" fill="#bae6fd" stroke="#0284c7" stroke-width="1.2"/>
+                      <circle cx="215" cy="27" r="4.5" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+                      <rect x="220" y="18" width="96" height="17" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+                      <text x="268" y="29.5" fill="#0c4a6e" font-size="8.5" font-weight="800" text-anchor="middle">O₂ Bubbles (Output)</text>
+                    </g>
                   </svg>
-                  <p class="micro-caption">
-                    <strong>Chloroplast Organelle:</strong> Thylakoid grana contain photosynthetic pigments that trap light energy and split water (photolysis). The stroma fluid uses that energy to fix CO₂ into glucose.
-                  </p>
+
+                  <!-- Clickable Cellular Structure Selector Pills -->
+                  <div class="micro-hotspot-pills" role="group" aria-label="Select cellular structure to explain variables">
+                    <button type="button" class="micro-pill-btn is-selected" data-micro-structure="thylakoid">Thylakoid Grana (H₂O &amp; Light)</button>
+                    <button type="button" class="micro-pill-btn" data-micro-structure="stroma">Stroma (CO₂ &amp; Temp)</button>
+                    <button type="button" class="micro-pill-btn" data-micro-structure="photons">Photons &amp; Pigments</button>
+                    <button type="button" class="micro-pill-btn" data-micro-structure="membrane">Leaf &amp; Membrane</button>
+                    <button type="button" class="micro-pill-btn" data-micro-structure="oxygen">O₂ &amp; Mitochondria</button>
+                  </div>
+
+                  <!-- High-Contrast Clickable Explanation Panel -->
+                  <div id="micro-structure-detail" class="micro-structure-detail">
+                    <strong class="micro-detail-title">Thylakoid Grana — Light Reactions &amp; Water Splitting (Photolysis)</strong>
+                    <p class="micro-detail-body">
+                      <strong>Variables acting here:</strong> <strong>Light Intensity (Lux)</strong> excites chlorophyll electrons inside thylakoid discs, splitting <strong>Water (H₂O)</strong> and releasing <strong>Oxygen (O₂) bubbles</strong>. Turning the lamp closer increases photon hits; at Night (lamp OFF), photolysis stops immediately.
+                    </p>
+                  </div>
                 </div>
 
                 <!-- Pigment Cards & Variegated Leaf Mini-Toggle -->
                 <div class="micro-info-box">
                   <div class="pigments-grid">
-                    <article class="pigment-pill-card p-chla">
+                    <article class="pigment-pill-card p-chla micro-clickable-card" data-micro-structure="photons" tabindex="0" role="button">
                       <strong>Chlorophyll a (Primary)</strong>
                       <span>Absorbs blue-violet &amp; red light, reflects green. Directly converts light energy into chemical energy during photolysis.</span>
                     </article>
-                    <article class="pigment-pill-card p-chlb">
+                    <article class="pigment-pill-card p-chlb micro-clickable-card" data-micro-structure="photons" tabindex="0" role="button">
                       <strong>Chlorophyll b (Accessory)</strong>
                       <span>Absorbs blue &amp; red-orange wavelengths; transfers captured light energy to chlorophyll a to broaden light harvesting.</span>
                     </article>
-                    <article class="pigment-pill-card p-carot">
-                      <strong>Carotenoids (Accessory)</strong>
-                      <span>Absorb blue-green wavelengths; protect chlorophyll from photo-damage and dissipate excessive light as heat.</span>
+                    <article class="pigment-pill-card p-carot micro-clickable-card" data-micro-structure="stroma" tabindex="0" role="button">
+                      <strong>RuBisCO &amp; Carotenoids</strong>
+                      <span>Carotenoids shield pigments from heat/light stress; Calvin-cycle enzymes in the stroma speed up in warmth and slow down in cold night water.</span>
                     </article>
                   </div>
 
                   <!-- Variegated Leaf Mini-Toggle (Item 6 & Misconception M5) -->
                   <div class="variegated-tester-box">
-                    <span class="tester-label">🌿 Variegated Leaf Test (Addressing Misconception M5 &amp; Item 6):</span>
+                    <span class="tester-label">🌿 Variegated Leaf Test (Addressing Chlorophyll Variable):</span>
                     <div class="variegated-buttons">
                       <button id="test-green-leaf-btn" type="button" class="var-btn is-active" data-leaf-zone="green">
                         🌿 Green Center (With Chlorophyll)
@@ -599,24 +627,21 @@
             </div>
           </div>
 
-          <!-- ☀️ Day vs. 🌑 Night (24-Hour Cycle) & DepEd Variables Explorer -->
+          <!-- ☀️ Day vs. 🌑 Night (24-Hour Cycle) & Temperature-Light Variables Explorer -->
           <div class="day-night-strip">
             <div class="day-night-controls">
-              <span class="day-night-title">🕒 24-Hour Day/Night &amp; Respiration Explorer (LC 4 &amp; Item 8, M2):</span>
+              <span class="day-night-title">🕒 Day / Night Condition (Lamp &amp; Temperature Coupled):</span>
               <div class="day-night-toggle-group">
                 <button id="dn-day-btn" type="button" class="dn-btn is-active" data-dn="day">
-                  ☀️ Day (Sunlight)
+                  ☀️ Day (Lamp ON · Warm)
                 </button>
                 <button id="dn-night-btn" type="button" class="dn-btn" data-dn="night">
-                  🌑 Night (Darkness)
-                </button>
-                <button id="dn-night-lamp-btn" type="button" class="dn-btn" data-dn="night-lamp" title="Turn lamp on during nighttime">
-                  💡 Turn Lamp ON at Night
+                  🌑 Night (Lamp OFF · Cold)
                 </button>
               </div>
             </div>
             <div id="day-night-explanation" class="day-night-explanation">
-              <strong>Day Condition:</strong> Photosynthesis produces oxygen bubbles &amp; glucose; cellular respiration also occurs 24/7 in mitochondria. <em>Net oxygen balance is positive!</em>
+              <strong>Day Condition (Lamp ON · ~26.0–28.6 °C):</strong> Bright daylight &amp; lamp radiation provide photons and warmth that accelerate Calvin-cycle enzyme kinetics. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>
             </div>
           </div>
 
@@ -629,10 +654,20 @@
               aria-label="Interactive aquatic plant photosynthesis setup showing movable light source, optical bench ruler, submerged thermometer, sodium bicarbonate water bath, aquatic plant, and rising oxygen bubbles"
             >
               <defs>
-                <linearGradient id="labBgGrad" x1="0" y1="0" x2="1" y2="1">
+                <linearGradient id="dayBgGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#e0f2fe" />
+                  <stop offset="55%" stop-color="#ecfdf5" />
+                  <stop offset="100%" stop-color="#f0f9ff" />
+                </linearGradient>
+                <linearGradient id="nightBgGrad" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stop-color="#071a19" />
-                  <stop offset="55%" stop-color="#0d2927" />
-                  <stop offset="100%" stop-color="#091d1c" />
+                  <stop offset="55%" stop-color="#0b1d2e" />
+                  <stop offset="100%" stop-color="#06121e" />
+                </linearGradient>
+                <linearGradient id="labBgGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#e0f2fe" />
+                  <stop offset="55%" stop-color="#ecfdf5" />
+                  <stop offset="100%" stop-color="#f0f9ff" />
                 </linearGradient>
                 <linearGradient id="lightBeamGrad" x1="0" y1="0.5" x2="1" y2="0.5">
                   <stop offset="0%" stop-color="#fde047" stop-opacity="0.65" />
@@ -658,27 +693,50 @@
               <!-- Lab Chamber Background -->
               <rect id="sim-bg-rect" x="0" y="0" width="820" height="390" rx="18" fill="url(#labBgGrad)" />
 
+              <!-- Day vs Night Environment Sky Cues -->
+              <g id="sim-sky-day-cue" opacity="1">
+                <circle cx="774" cy="36" r="14" fill="#facc15" stroke="#eab308" stroke-width="2" />
+                <g stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round">
+                  <line x1="774" y1="15" x2="774" y2="19" />
+                  <line x1="774" y1="53" x2="774" y2="57" />
+                  <line x1="753" y1="36" x2="757" y2="36" />
+                  <line x1="791" y1="36" x2="795" y2="36" />
+                  <line x1="759" y1="21" x2="762" y2="24" />
+                  <line x1="786" y1="48" x2="789" y2="51" />
+                  <line x1="789" y1="21" x2="786" y2="24" />
+                  <line x1="762" y1="48" x2="759" y2="51" />
+                </g>
+              </g>
+              <g id="sim-sky-night-cue" opacity="0">
+                <circle cx="774" cy="34" r="12" fill="#e2e8f0" />
+                <circle cx="779" cy="30" r="10" fill="#071a19" />
+                <circle cx="742" cy="24" r="1.6" fill="#fef08a" />
+                <circle cx="754" cy="48" r="1.2" fill="#e0f2fe" />
+                <circle cx="798" cy="20" r="1.4" fill="#fef08a" />
+                <circle cx="725" cy="38" r="1.3" fill="#e0f2fe" />
+              </g>
+
               <!-- Chamber Header Annotation -->
-              <text x="26" y="30" fill="#a7f3d0" font-size="12" font-weight="700" font-family="Plus Jakarta Sans, sans-serif">
+              <text id="svg-chamber-title" x="26" y="30" fill="#065f46" font-size="12" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">
                 OPTICAL BENCH &amp; AQUATIC PHOTOSYNTHESIS CHAMBER (0.2% NaHCO₃ BUFFERED WATER BATH)
               </text>
-              <text id="svg-species-label" x="26" y="48" fill="#cbd5e1" font-size="11" font-family="Plus Jakarta Sans, sans-serif">
+              <text id="svg-species-label" x="26" y="48" fill="#334155" font-size="11" font-weight="600" font-family="Plus Jakarta Sans, sans-serif">
                 Specimen: Hydrilla verticillata (Submerged shoot) · Controlled Water Bath: 26.0 °C
               </text>
 
               <!-- Lab Bench Surface & Calibrated Ruler Track -->
-              <rect x="24" y="314" width="772" height="14" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
-              <line x1="80" y1="304" x2="540" y2="304" stroke="#64748b" stroke-width="2" />
+              <rect id="sim-bench-rect" x="24" y="314" width="772" height="14" rx="6" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+              <line id="sim-ruler-line" x1="80" y1="304" x2="540" y2="304" stroke="#64748b" stroke-width="2" />
 
               <!-- Distance Calibration Markers (10 cm, 20 cm, 30 cm, 40 cm from Beaker Center x=620) -->
-              <g font-family="JetBrains Mono, monospace" font-size="11" fill="#cbd5e1" text-anchor="middle">
-                <line x1="420" y1="297" x2="420" y2="311" stroke="#94a3b8" stroke-width="2" />
+              <g id="svg-ruler-labels" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="#334155" text-anchor="middle">
+                <line x1="420" y1="297" x2="420" y2="311" stroke="#64748b" stroke-width="2" />
                 <text x="420" y="344">10 cm</text>
-                <line x1="310" y1="297" x2="310" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <line x1="310" y1="297" x2="310" y2="311" stroke="#64748b" stroke-width="2" />
                 <text x="310" y="344">20 cm</text>
-                <line x1="200" y1="297" x2="200" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <line x1="200" y1="297" x2="200" y2="311" stroke="#64748b" stroke-width="2" />
                 <text x="200" y="344">30 cm</text>
-                <line x1="90" y1="297" x2="90" y2="311" stroke="#94a3b8" stroke-width="2" />
+                <line x1="90" y1="297" x2="90" y2="311" stroke="#64748b" stroke-width="2" />
                 <text x="90" y="344">40 cm</text>
               </g>
 
@@ -689,12 +747,12 @@
                 fill="url(#lightBeamGrad)"
               />
 
-              <!-- Subtle Visual Heat Shimmer Waves (Part 8 — Visually distinguished from water temperature) -->
-              <g id="sim-heat-waves" opacity="0.75">
+              <!-- Subtle Visual Heat Shimmer Waves (Part 8 — Radiant warmth coupling) -->
+              <g id="sim-heat-waves" opacity="0.85">
                 <path
                   id="heat-wave-1"
                   d="M475,155 Q482,145 475,135 Q468,125 475,115"
-                  stroke="#fb923c"
+                  stroke="#ea580c"
                   stroke-width="1.8"
                   stroke-dasharray="3 2"
                   fill="none"
@@ -702,24 +760,24 @@
                 <path
                   id="heat-wave-2"
                   d="M495,165 Q502,155 495,145 Q488,135 495,125"
-                  stroke="#fdba74"
+                  stroke="#f97316"
                   stroke-width="1.5"
                   stroke-dasharray="3 2"
                   fill="none"
                 />
-                <text x="486" y="106" fill="#fed7aa" font-size="9.5" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-                  Radiant lamp warmth (visual cue)
+                <text id="sim-lamp-radiant-text" x="486" y="106" fill="#9a3412" font-size="9.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
+                  Solar + Lamp Warmth (plays enzyme kinetic role)
                 </text>
               </g>
 
               <!-- Movable Lamp Assembly -->
               <g id="sim-lamp-group" transform="translate(420, 0)">
                 <circle id="sim-lamp-halo" cx="25" cy="185" r="56" fill="url(#lampHaloGrad)" />
-                <rect x="-18" y="298" width="48" height="16" rx="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+                <rect x="-18" y="298" width="48" height="16" rx="5" fill="#475569" stroke="#64748b" stroke-width="1" />
                 <rect x="2" y="192" width="8" height="108" fill="#64748b" />
-                <path d="M-10,162 L24,150 L24,220 L-10,208 Z" fill="#334155" stroke="#94a3b8" stroke-width="1.5" />
+                <path d="M-10,162 L24,150 L24,220 L-10,208 Z" fill="#334155" stroke="#64748b" stroke-width="1.5" />
                 <circle id="sim-lamp-bulb" cx="26" cy="185" r="14" fill="#fde047" />
-                <text id="sim-lamp-tag" x="6" y="140" fill="#fef08a" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                <text id="sim-lamp-tag" x="6" y="140" fill="#92400e" font-size="11" font-weight="700" font-family="JetBrains Mono, monospace" text-anchor="middle">
                   10 cm (2,500 lx)
                 </text>
               </g>
@@ -728,24 +786,25 @@
               <g id="sim-beaker-group">
                 <!-- Beaker Outer Glass -->
                 <rect
+                  id="svg-beaker-glass"
                   x="545"
                   y="78"
                   width="165"
                   height="236"
                   rx="12"
-                  fill="rgba(255,255,255,0.04)"
-                  stroke="#94a3b8"
+                  fill="rgba(255,255,255,0.45)"
+                  stroke="#64748b"
                   stroke-width="2.5"
                 />
                 <!-- Beaker Lip -->
-                <line x1="538" y1="78" x2="717" y2="78" stroke="#cbd5e1" stroke-width="3.5" stroke-linecap="round" />
+                <line id="svg-beaker-lip" x1="538" y1="78" x2="717" y2="78" stroke="#475569" stroke-width="3.5" stroke-linecap="round" />
 
                 <!-- Buffered Water Column (Meniscus at y=130) -->
                 <rect x="548" y="130" width="159" height="181" rx="8" fill="url(#waterColumnGrad)" />
-                <path id="sim-water-meniscus" d="M548,130 Q627,134 707,130" stroke="#7dd3fc" stroke-width="2" fill="none" />
+                <path id="sim-water-meniscus" d="M548,130 Q627,134 707,130" stroke="#0284c7" stroke-width="2" fill="none" />
 
                 <!-- Beaker Volume Graduation Ticks -->
-                <g stroke="rgba(226,232,240,0.42)" stroke-width="1.2" font-family="JetBrains Mono, monospace" font-size="9" fill="#cbd5e1">
+                <g id="svg-beaker-ticks" stroke="rgba(15,23,42,0.35)" stroke-width="1.2" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#334155">
                   <line x1="686" y1="155" x2="702" y2="155" />
                   <text x="682" y="158" text-anchor="end">250mL</text>
                   <line x1="686" y1="195" x2="702" y2="195" />
@@ -756,12 +815,12 @@
                   <text x="682" y="278" text-anchor="end">100mL</text>
                 </g>
 
-                <!-- Submerged Thermometer (Constant Water Temperature Check) -->
+                <!-- Submerged Thermometer (Live Day/Night & Proximity Temperature) -->
                 <g id="sim-thermometer" transform="translate(560, 92)">
-                  <rect x="0" y="0" width="8" height="185" rx="4" fill="rgba(241,245,249,0.85)" stroke="#64748b" stroke-width="1" />
-                  <circle cx="4" cy="187" r="7" fill="#ef4444" stroke="#64748b" stroke-width="1" />
-                  <rect x="2.2" y="75" width="3.6" height="110" fill="#ef4444" />
-                  <rect x="-12" y="-18" width="54" height="15" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                  <rect x="0" y="0" width="8" height="185" rx="4" fill="rgba(241,245,249,0.92)" stroke="#475569" stroke-width="1" />
+                  <circle cx="4" cy="187" r="7" fill="#ef4444" stroke="#475569" stroke-width="1" />
+                  <rect id="sim-thermo-mercury" x="2.2" y="93" width="3.6" height="92" fill="#ef4444" />
+                  <rect x="-12" y="-18" width="54" height="15" rx="4" fill="#0f172a" stroke="#0284c7" stroke-width="1" />
                   <text id="svg-temp-text" x="15" y="-7" fill="#7dd3fc" font-size="9.5" font-family="JetBrains Mono, monospace" text-anchor="middle">
                     26.0°C
                   </text>
@@ -951,15 +1010,15 @@
             </button>
             <button type="button" class="distance-btn" data-distance="20">
               <span class="dist-main">20 cm</span>
-              <span class="dist-sub">Med-High · 1,100 lx</span>
+              <span class="dist-sub">Med-High · 625 lx</span>
             </button>
             <button type="button" class="distance-btn" data-distance="30">
               <span class="dist-main">30 cm</span>
-              <span class="dist-sub">Medium · 550 lx</span>
+              <span class="dist-sub">Medium · 278 lx</span>
             </button>
             <button type="button" class="distance-btn" data-distance="40">
               <span class="dist-main">40 cm</span>
-              <span class="dist-sub">Low · 280 lx</span>
+              <span class="dist-sub">Low · 156 lx</span>
             </button>
             <button type="button" class="distance-btn" data-distance="dark">
               <span class="dist-main">Dark Control</span>
@@ -1282,18 +1341,6 @@
                 ✓ Checked with Teacher
               </button>
             </div>
-          </div>
-
-          <!-- "Try-First" Gate Banner (Appendix H Rules R1 & R5) -->
-          <div id="try-first-gate-banner" class="try-first-gate-banner">
-            <span class="gate-icon">✏️</span>
-            <div class="gate-text">
-              <strong>Try First (Rule R5):</strong>
-              <span>Write your own initial idea (at least 5 words) in the worksheet box above to unlock BioVoice.</span>
-            </div>
-            <button id="gate-vocab-clarify-btn" class="mini-btn vocab-btn" type="button" title="Stuck on question wording? Click for a Level 2 clarification">
-              I need question clarification
-            </button>
           </div>
 
           <!-- Voice & Text Input Composer -->
@@ -1996,10 +2043,6 @@
       </header>
       <div class="modal-body structured-guide-body">
         <div class="dash-metrics-grid compact-metrics">
-          <div class="dash-metric-card">
-            <span class="metric-label">Current Study Phase</span>
-            <strong id="teacher-phase-readout">Implementation</strong>
-          </div>
           <div class="dash-metric-card">
             <span class="metric-label">Active Session</span>
             <strong id="teacher-session-readout">Session 1</strong>

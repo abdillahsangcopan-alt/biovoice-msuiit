@@ -22,11 +22,12 @@
   const DEFAULTS = {
     lampType: "LED", // "LED" | "incandescent"
     heatFilter: true,
-    extraClosePosition: true, // 5 cm enabled in factor tester
-    baselineTemp: 26.0,
+    extraClosePosition: true,
+    baselineTemp: 26.0, // Daytime ambient solar water bath (°C)
+    nightBaselineTemp: 18.5, // Cold nighttime ambient water temperature (°C)
     baselineNaHCO3: 0.2, // percent
     baselineE10: 2500, // lux at 10 cm
-    tauTemp: 180, // thermal relaxation time constant in seconds
+    tauTemp: 75, // thermal relaxation time constant in seconds for visible 60s response
   };
 
   /**
@@ -51,26 +52,34 @@
 
   /**
    * Equilibrium temperature rise dT_eq(d) = H * (10 / d)^2
+   * Models combined solar + lamp radiant warmth during Day runs.
    */
   function getHeatConstant(lampType, heatFilter) {
     const isLED = (lampType || "LED").toUpperCase() === "LED";
     if (isLED) {
-      return heatFilter ? 0.6 : 1.2;
+      return heatFilter ? 2.6 : 3.4;
     }
     // Incandescent
-    return heatFilter ? 2.0 : 4.0;
+    return heatFilter ? 3.2 : 4.6;
   }
 
   /**
-   * Water temperature T(t) given elapsed time, distance, and starting temp:
-   * T(t) = T_start + (T_target - T_start) * (1 - exp(-t / tau))
+   * Water temperature T(t) given elapsed time, distance, and Day/Night condition:
+   * - Day + lamp ON: starts at 26.0 °C (solar ambient) and warms with lamp proximity
+   * - Day + Dark Covered: stays shielded near 26.0 °C
+   * - Night (lamp OFF): starts at 18.5 °C (cold night water) and cools slightly toward 17.8 °C
    */
-  function calculateWaterTemperature(tSec, distanceCm, startTemp, lampType, heatFilter) {
-    const tStart = typeof startTemp === "number" ? startTemp : DEFAULTS.baselineTemp;
-    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "covered";
-    let targetTemp = DEFAULTS.baselineTemp;
+  function calculateWaterTemperature(tSec, distanceCm, startTemp, lampType, heatFilter, options) {
+    const opts = options || {};
+    const isNight = Boolean(opts.isNight);
+    const ambientBase = isNight ? DEFAULTS.nightBaselineTemp : DEFAULTS.baselineTemp;
+    const tStart = typeof startTemp === "number" ? startTemp : ambientBase;
+    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "0" || distanceCm === "covered";
 
-    if (!isDark) {
+    let targetTemp = ambientBase;
+    if (isNight) {
+      targetTemp = 17.8; // Cold nighttime ambient drop
+    } else if (!isDark) {
       const d = Math.max(5, parseFloat(distanceCm) || 10);
       const H = getHeatConstant(lampType, heatFilter);
       const dTe = H * Math.pow(10 / d, 2);
@@ -143,17 +152,19 @@
    */
   function calculateMeanRate(distanceCm, options) {
     const opts = options || {};
-    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "covered";
-    const isNight = opts.isNight === true && opts.lampOnAtNight !== true;
+    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "0" || distanceCm === "covered";
+    const isNight = opts.isNight === true;
 
     if (isDark || isNight) {
       return 0;
     }
 
     const lux = calculateIlluminance(distanceCm, opts.baselineE10);
-    const tempC = typeof opts.tempC === "number" ? opts.tempC : DEFAULTS.baselineTemp;
-    const cPercent = typeof opts.nahco3Percent === "number" ? opts.nahco3Percent : DEFAULTS.baselineNaHCO3;
-    const color = opts.lightColor || "white";
+    const rawTemp = typeof opts.tempC === "number" ? opts.tempC : opts.temperatureC;
+    const tempC = typeof rawTemp === "number" ? rawTemp : calculateWaterTemperature(30, distanceCm, DEFAULTS.baselineTemp, "LED", true, { isNight: false });
+    const rawCo2 = typeof opts.nahco3Percent === "number" ? opts.nahco3Percent : opts.co2Percent;
+    const cPercent = typeof rawCo2 === "number" ? rawCo2 : DEFAULTS.baselineNaHCO3;
+    const color = opts.lightColor || opts.wavelength || "white";
     const species = opts.species || "Hydrilla";
 
     // Species scaling
@@ -193,14 +204,20 @@
    * Adds ~10% controlled biological variation while maintaining exact order
    */
   function generateTrialCount(distanceCm, trialIndex, participantCode, options) {
-    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "covered";
+    const opts = options || {};
+    const isDark = distanceCm === "dark" || distanceCm === 0 || distanceCm === "0" || distanceCm === "covered";
+    const isNight = opts.isNight === true;
+    if (isNight) {
+      // At Night the lamp is turned OFF (0 photons): no photosynthesis O2 bubbles
+      return 0;
+    }
     if (isDark) {
-      // In dark, occasional 0 or 1 dissolved gas release, mean = 0
+      // In dark control, occasional 0 or 1 dissolved gas release, mean = 0
       const seed = hashString(`${participantCode || "BV"}-${distanceCm}-t${trialIndex}`);
       return seed % 7 === 0 ? 1 : 0;
     }
 
-    const meanRate = calculateMeanRate(distanceCm, options);
+    const meanRate = calculateMeanRate(distanceCm, opts);
     if (meanRate <= 0.5) return 0;
 
     const seedKey = `${participantCode || "BV"}-${distanceCm}-trial${trialIndex}-${options ? JSON.stringify(options) : ""}`;
@@ -213,13 +230,16 @@
   }
 
   /**
-   * Educational simulation alias for live temperature
+   * Educational simulation alias for live temperature (handles Day warm vs Night cold)
    */
-  function calculateLiveTemperature(distanceCm, tSec, isDark) {
-    if (isDark) {
-      return calculateWaterTemperature(tSec, "dark", DEFAULTS.baselineTemp, "LED", true);
+  function calculateLiveTemperature(distanceCm, tSec, isDark, isNight) {
+    if (isNight) {
+      return calculateWaterTemperature(tSec, "dark", DEFAULTS.nightBaselineTemp, "LED", true, { isNight: true });
     }
-    return calculateWaterTemperature(tSec, distanceCm, DEFAULTS.baselineTemp, "LED", true);
+    if (isDark) {
+      return calculateWaterTemperature(tSec, "dark", DEFAULTS.baselineTemp, "LED", true, { isNight: false });
+    }
+    return calculateWaterTemperature(tSec, distanceCm, DEFAULTS.baselineTemp, "LED", true, { isNight: false });
   }
 
   /**
@@ -282,14 +302,20 @@
    */
   function getOxygenBalance(distanceCm, options) {
     const opts = options || {};
+    const isNight = opts.isNight === true;
+    const tempC = typeof opts.tempC === "number"
+      ? opts.tempC
+      : calculateLiveTemperature(distanceCm, 30, distanceCm === "dark", isNight);
     const meanRate = calculateMeanRate(distanceCm, opts);
-    const respRate = 2.4; // Constant baseline cellular respiration by mitochondria
+    // Mitochondrial cellular respiration runs 24/7 and scales mildly with temperature (Q10)
+    const respRate = parseFloat((2.4 * getTemperatureFactor(tempC)).toFixed(1));
     const grossMade = parseFloat((meanRate * 1.05).toFixed(1));
     const netRelease = parseFloat((grossMade - respRate).toFixed(1));
     return {
       grossOxygenMade: grossMade,
       respirationUsed: respRate,
-      netOxygenRelease: netRelease, // Can be negative in the dark / at night!
+      netOxygenRelease: netRelease, // Negative in the dark / cold night!
+      temperatureC: tempC,
       inDeficit: netRelease < 0,
     };
   }

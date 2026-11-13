@@ -250,8 +250,7 @@
     currentScreen: "welcome",
     sessionCode: "",
     isNightTime: false,
-    nightLampOn: false,
-    vocabBypassActive: false,
+    lastLitDistance: "10",
     liveWaterTemp: 26.0,
     // Role: null | "student" | "admin" | "teacher" | "guest"
     activeRole: null,
@@ -513,18 +512,39 @@
     if (learningEl) learningEl.hidden = screenName !== "learning";
     if (dashEl) dashEl.hidden = screenName !== "dashboard";
 
-    // Condition Equivalence: Comparison Group vs Intervention Group
+    // Condition Equivalence & Role Visibility on Learning Screen
     if (screenName === "learning") {
       const isComparison = state.participantGroup === "Comparison";
+      const isGuest = state.activeRole === "guest" || state.isSandbox;
+      const isStudent = state.activeRole === "student" && !isGuest;
       const sidebar = $("biovoice-sidebar");
       const toggleBtn = $("toggle-biovoice-btn");
       const compBanner = $("comparison-teacher-banner");
       const groupBadge = $("participant-group-badge");
+      const saveBtn = $("topbar-save-progress-btn");
+      const speakerBox = $("active-speaker-container");
 
-      if (isComparison) {
+      // Guest mode cannot save progress or switch participant station codes
+      if (saveBtn) {
+        saveBtn.hidden = !isStudent;
+        saveBtn.disabled = !isStudent;
+        saveBtn.style.display = isStudent ? "" : "none";
+      }
+      if (speakerBox) {
+        const showStation = isStudent && !isComparison;
+        speakerBox.hidden = !showStation;
+        speakerBox.style.display = showStation ? "" : "none";
+      }
+
+      if (isGuest) {
+        if (sidebar) sidebar.style.display = "";
+        if (toggleBtn) toggleBtn.style.display = "";
+        if (compBanner) compBanner.style.display = "none";
+        if (groupBadge) groupBadge.textContent = "Guest Sandbox (Exploration Only · Not Saved)";
+      } else if (isComparison) {
         if (sidebar) sidebar.style.display = "none";
         if (toggleBtn) toggleBtn.style.display = "none";
-        if (compBanner) compBanner.style.display = "block";
+        if (compBanner) compBanner.style.display = "flex";
         if (groupBadge) groupBadge.textContent = "Group B: Comparison (Standard Teacher-Led Inquiry)";
       } else {
         if (sidebar) sidebar.style.display = "";
@@ -534,6 +554,8 @@
           groupBadge.textContent = `Group A: Intervention (${state.participantGroup})`;
         }
       }
+
+      setDayNightMode(state.isNightTime ? "night" : "day", true);
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -578,10 +600,6 @@
       }
     } catch (_) {
       // Static fallback uses default studyConfig
-    }
-    const phasePill = $("welcome-phase-pill");
-    if (phasePill) {
-      phasePill.textContent = `Phase: ${state.studyConfig.studyPhase} · ${state.studyConfig.activeSession}`;
     }
   }
 
@@ -1091,6 +1109,44 @@
     renderDataTablesAndGraph();
   }
 
+  /**
+   * Synchronizes thermometer mercury, temperature text, and species water readout.
+   */
+  function updateSimulationEnvironmentUI(tempC) {
+    const temp = typeof tempC === "number" ? tempC : 26.0;
+    state.liveWaterTemp = temp;
+
+    if ($("readout-water-temp")) {
+      let hint = "Daytime Sun & Buffer";
+      if (state.isNightTime) {
+        hint = "Cold Night · Slower Enzymes";
+      } else if (state.selectedDistance === "dark") {
+        hint = "Dark Control · Shielded";
+      } else if (temp > 26.2) {
+        hint = "Sun + Lamp Warmth · Active Enzymes";
+      }
+      $("readout-water-temp").textContent = `${temp.toFixed(1)} °C (${hint})`;
+    }
+
+    if ($("svg-temp-text")) {
+      $("svg-temp-text").textContent = `${temp.toFixed(1)}°C`;
+    }
+
+    if ($("sim-thermo-mercury")) {
+      const bottomY = 185;
+      const mercuryHeight = Math.max(22, Math.min(165, Math.round(92 + (temp - 26.0) * 6)));
+      $("sim-thermo-mercury").setAttribute("y", String(bottomY - mercuryHeight));
+      $("sim-thermo-mercury").setAttribute("height", String(mercuryHeight));
+    }
+
+    if ($("svg-species-label")) {
+      const profile = PLANT_PROFILES[state.selectedPlant] || PLANT_PROFILES.Hydrilla;
+      const modeLabel = state.isNightTime ? "Night (Lamp OFF)" : "Day (Lamp ON)";
+      $("svg-species-label").textContent =
+        `Specimen: ${profile.scientific} · ${modeLabel} · Water Temp: ${temp.toFixed(1)} °C`;
+    }
+  }
+
   function updateDistanceSelectionUI(distKey) {
     const cond = LIGHT_CONDITIONS.find((c) => c.key === String(distKey)) || LIGHT_CONDITIONS[0];
     if (state.timerRunning) {
@@ -1102,7 +1158,17 @@
         $("sim-completion-banner").classList.remove("is-complete");
       }
     }
+
+    // Choosing an active lamp distance automatically turns Day/Lamp ON; Night keeps Lamp OFF
+    if (cond.key !== "dark") {
+      state.lastLitDistance = cond.key;
+      if (state.isNightTime) {
+        setDayNightMode("day", true);
+      }
+    }
+
     state.selectedDistance = cond.key;
+    const effectiveDark = cond.key === "dark" || state.isNightTime;
 
     document.querySelectorAll(".distance-btn").forEach((btn) => {
       btn.classList.toggle("is-active", btn.getAttribute("data-distance") === cond.key);
@@ -1122,42 +1188,65 @@
     if (lightCone) {
       const startX = cond.lampX + 25;
       lightCone.setAttribute("points", `${startX},185 695,92 695,298`);
-      lightCone.style.opacity = String(cond.coneOpacity);
+      lightCone.style.opacity = effectiveDark ? "0" : String(cond.coneOpacity);
     }
     if (lampHalo) {
-      lampHalo.style.opacity = cond.key === "dark" ? "0" : String(cond.coneOpacity);
+      lampHalo.style.opacity = effectiveDark ? "0" : String(cond.coneOpacity);
     }
     if (lampBulb) {
-      lampBulb.setAttribute("fill", cond.key === "dark" ? "#475569" : "#fde047");
+      lampBulb.setAttribute("fill", effectiveDark ? "#475569" : "#fde047");
     }
     if (lampTag) {
-      lampTag.textContent =
-        cond.key === "dark" ? "Lamp Off (0 lx)" : `${cond.shortLabel} (${cond.lux.toLocaleString()} lx)`;
+      if (state.isNightTime) {
+        lampTag.textContent = "Night · Lamp Off (0 lx)";
+      } else {
+        lampTag.textContent =
+          cond.key === "dark" ? "Lamp Off (0 lx)" : `${cond.shortLabel} (${cond.lux.toLocaleString()} lx)`;
+      }
     }
     if (heatWaves) {
-      heatWaves.style.opacity = String(cond.heatWaveOpacity);
+      heatWaves.style.opacity = effectiveDark ? "0" : String(cond.heatWaveOpacity);
       heatWaves.setAttribute("transform", `translate(${cond.lampX - 420}, 0)`);
     }
 
     if ($("readout-light-condition")) {
-      $("readout-light-condition").textContent = `${cond.shortLabel} · ${cond.lux.toLocaleString()} lx`;
+      if (state.isNightTime) {
+        $("readout-light-condition").textContent = "Night Darkness · Lamp OFF (0 lx)";
+      } else {
+        $("readout-light-condition").textContent = `${cond.shortLabel} · ${cond.lux.toLocaleString()} lx`;
+      }
     }
-    if ($("readout-water-temp")) {
-      $("readout-water-temp").textContent = `${cond.tempC.toFixed(1)} °C (Stabilized Buffer)`;
+
+    let previewTemp = state.isNightTime ? 18.5 : cond.tempC;
+    if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.calculateLiveTemperature) {
+      const previewSec = effectiveDark ? 0 : 25;
+      previewTemp = window.PhotosynthesisModel.calculateLiveTemperature(
+        cond.key,
+        previewSec,
+        effectiveDark,
+        state.isNightTime
+      );
     }
+    updateSimulationEnvironmentUI(previewTemp);
   }
 
   function generateControlledTrialBubbleCount(plantSpecies, distKey) {
-    const historyKey = `${plantSpecies}:${distKey}`;
+    const historyKey = `${plantSpecies}:${distKey}:${state.isNightTime ? "night" : "day"}`;
     const prevCounts = state.trialVariationHistory[historyKey] || [];
     const trialSlot = (prevCounts.length % 3) + 1;
 
-    // Use pure scientific model if available
+    // Night always keeps the lamp OFF -> 0 photosynthetic oxygen bubbles
+    if (state.isNightTime) {
+      return 0;
+    }
+
+    // Use pure scientific model if available (temperature + distance + species coupled)
     if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.generateTrialCount) {
-      if (state.isNightTime && !state.nightLampOn) {
-        return 0;
-      }
-      const val = window.PhotosynthesisModel.generateTrialCount(distKey, trialSlot, plantSpecies);
+      const val = window.PhotosynthesisModel.generateTrialCount(distKey, trialSlot, plantSpecies, {
+        species: plantSpecies,
+        isNight: state.isNightTime,
+        tempC: state.liveWaterTemp,
+      });
       prevCounts.push(val);
       if (prevCounts.length > 3) prevCounts.shift();
       state.trialVariationHistory[historyKey] = prevCounts;
@@ -1233,23 +1322,16 @@
     state.elapsedSeconds += 1;
     state.remainingSeconds = Math.max(0, 60 - state.elapsedSeconds);
 
-    // Live water temperature simulation: heats slightly at 10 cm, cools in dark or far distance
-    const isDarkCondition = state.selectedDistance === "dark" || (state.isNightTime && !state.nightLampOn);
+    // Live water temperature simulation: Day warms with solar/lamp proximity; Night cools cold
+    const isDarkCondition = state.selectedDistance === "dark" || state.isNightTime;
     if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.calculateLiveTemperature) {
-      state.liveWaterTemp = window.PhotosynthesisModel.calculateLiveTemperature(
+      const nextTemp = window.PhotosynthesisModel.calculateLiveTemperature(
         state.selectedDistance,
         state.elapsedSeconds,
-        isDarkCondition
+        isDarkCondition,
+        state.isNightTime
       );
-      if ($("readout-water-temp")) {
-        const hint = state.liveWaterTemp > 26.2 ? "Mild Lamp Radiant Heat" : "Stabilized Water Bath";
-        $("readout-water-temp").textContent = `${state.liveWaterTemp.toFixed(1)} °C (${hint})`;
-      }
-      if ($("sim-thermo-mercury")) {
-        const baseH = 92;
-        const delta = (state.liveWaterTemp - 26.0) * 14;
-        $("sim-thermo-mercury").setAttribute("height", String(Math.max(20, baseH + delta)));
-      }
+      updateSimulationEnvironmentUI(nextTemp);
     }
 
     const scheduledNow = state.bubbleSchedule[state.elapsedSeconds] || 0;
@@ -2642,7 +2724,6 @@
     }
 
     // Teacher modal readouts
-    if ($("teacher-phase-readout")) $("teacher-phase-readout").textContent = state.studyConfig.studyPhase;
     if ($("teacher-session-readout")) $("teacher-session-readout").textContent = state.studyConfig.activeSession;
     if ($("teacher-assigned-readout")) {
       $("teacher-assigned-readout").textContent = `${sum.interventionAssigned || 54} / ${sum.comparisonAssigned || 55}`;
@@ -3058,7 +3139,11 @@
 
   // --- Upgrade: Save Student Progress to Server & LocalStorage ---
   async function handleSaveStudentProgress() {
-    const saveBtn = $("save-progress-btn");
+    if (state.activeRole === "guest" || state.isSandbox) {
+      return;
+    }
+
+    const saveBtn = $("topbar-save-progress-btn");
     if (saveBtn) {
       saveBtn.disabled = true;
       saveBtn.textContent = "💾 Saving...";
@@ -3071,13 +3156,13 @@
     }
 
     const payload = {
-      participantCode: state.participantCode || "BV-GUEST",
-      participantGroup: state.participantGroup || "Sandbox",
+      participantCode: state.participantCode || "",
+      participantGroup: state.participantGroup || "",
       sessionCode: state.sessionCode || "",
       activeStepIndex: state.currentStepIndex,
       stepResponses: state.stepResponses || {},
-      simulatedDataHydrilla: state.simulatedDataHydrilla || {},
-      manualDataHydrilla: state.manualDataHydrilla || {},
+      simulatedDataHydrilla: state.officialSimTable || {},
+      manualDataHydrilla: state.manualTable || {},
       timestamp: new Date().toISOString()
     };
 
@@ -3123,91 +3208,143 @@
 
   // --- Upgrade: Active Speaker Switcher ---
   function handleSwitchActiveSpeaker() {
+    if (state.activeRole === "guest" || state.isSandbox) return;
     const select = $("lab-station-select");
     if (!select || !select.value) return;
     const newCode = select.value;
     state.participantCode = newCode;
-    const tag = $("active-speaker-tag");
-    if (tag) tag.textContent = newCode;
-    const badge = $("participant-code-badge");
-    if (badge) badge.textContent = newCode;
+    const speakerBadge = $("active-speaker-badge");
+    if (speakerBadge) speakerBadge.textContent = newCode;
+    const headerBadge = $("participant-code-badge");
+    if (headerBadge) headerBadge.textContent = newCode;
 
-    appendChatBubble(
-      "assistant",
-      `Switched active speaker to ${newCode}. You may now record your ideas or ask BioVoice for guidance!`,
-      "BioVoice · Speaker Switch"
-    );
-  }
-
-  // --- Upgrade: Day & Night Explorer ---
-  function setDayNightMode(mode) {
-    const frame = $("sim-apparatus-frame");
-    const badge = $("dn-status-badge");
-    const insight = $("dn-insight-text");
-    const dayBtn = $("dn-day-btn");
-    const nightBtn = $("dn-night-btn");
-    const nightLampBtn = $("dn-night-lamp-btn");
-
-    if (mode === "day") {
-      state.isNightTime = false;
-      state.nightLampOn = false;
-      if (frame) frame.classList.remove("night-mode");
-      if (badge) badge.textContent = "☀️ Daytime (Natural Light Available)";
-      if (insight) {
-        insight.textContent = "In daytime, natural photons activate the light-dependent reactions in the thylakoid membranes, photolyzing water and releasing observable oxygen bubbles.";
-      }
-      if (dayBtn) dayBtn.classList.add("btn-primary");
-      if (nightBtn) nightBtn.classList.remove("btn-primary");
-      if (nightLampBtn) nightLampBtn.classList.remove("btn-primary");
-    } else if (mode === "night") {
-      state.isNightTime = true;
-      state.nightLampOn = false;
-      if (frame) frame.classList.add("night-mode");
-      if (badge) badge.textContent = "🌙 Nighttime (Natural Dark · No Lamp)";
-      if (insight) {
-        insight.textContent = "In darkness, photolysis ceases completely (0 bubbles). Plant cellular respiration continues unabated, consuming dissolved oxygen and releasing carbon dioxide.";
-      }
-      if (dayBtn) dayBtn.classList.remove("btn-primary");
-      if (nightBtn) nightBtn.classList.add("btn-primary");
-      if (nightLampBtn) nightLampBtn.classList.remove("btn-primary");
-    } else if (mode === "night-lamp") {
-      state.isNightTime = true;
-      state.nightLampOn = true;
-      if (frame) frame.classList.remove("night-mode");
-      if (badge) badge.textContent = "💡 Nighttime + Artificial Lamp ON";
-      if (insight) {
-        insight.textContent = "Oxygen bubbles resume immediately! This provides empirical proof that photosynthesis depends strictly on the arrival of photons (light energy), NOT on biological clock time (refuting Misconceptions M2 & M7).";
-      }
-      if (dayBtn) dayBtn.classList.remove("btn-primary");
-      if (nightBtn) nightBtn.classList.remove("btn-primary");
-      if (nightLampBtn) nightLampBtn.classList.add("btn-primary");
+    if (state.bioVoiceAllowed) {
+      appendChatBubble(
+        "assistant",
+        `Switched active speaker to ${newCode}. You may now record your ideas or ask BioVoice for guidance!`,
+        "BioVoice · Speaker Switch"
+      );
     }
   }
 
-  // --- Upgrade: Factor Explorer ('Test Your Idea') ---
-  function runFactorExplorerTest() {
-    const co2Val = $("factor-co2-select") ? parseFloat($("factor-co2-select").value) : 0.2;
-    const tempVal = $("factor-temp-range") ? parseFloat($("factor-temp-range").value) : 26.0;
-    const luxVal = $("factor-lux-range") ? parseFloat($("factor-lux-range").value) : 2500;
-    const waveVal = $("factor-wave-select") ? $("factor-wave-select").value : "white";
+  // --- Cellular Level Exploration: Clickable Structure Explanations ---
+  const MICRO_STRUCTURE_DATA = {
+    thylakoid: {
+      title: "Thylakoid Grana — Light-Dependent Reactions & Photolysis",
+      body: "Variables acting here: Light Intensity (Lux / Distance) excites chlorophyll electrons inside stacked thylakoid discs, splitting Water (H₂O) molecules into electrons, protons, and releasing Oxygen (O₂) bubbles. Closer Day lamp placement increases photon hits; at Night (Lamp OFF), photolysis stops immediately."
+    },
+    stroma: {
+      title: "Stroma Fluid Matrix — Calvin Cycle, CO₂ & Water Temperature",
+      body: "Variables acting here: Dissolved Carbon Dioxide (from 0.2% NaHCO₃) enters the Calvin cycle, where the enzyme RuBisCO fixes carbon into glucose. Water Temperature strongly regulates enzyme activity here: warmer Day water (~26.0–28.6 °C from sun + lamp) speeds catalysis, whereas cold Night water (~18.5 °C) slows enzyme reactions."
+    },
+    photons: {
+      title: "Light Photons & Chlorophyll Pigments — Wavelength Absorption",
+      body: "Variables acting here: Light Intensity & Chlorophyll Presence. Chlorophyll a & b strongly absorb blue and red photons while reflecting green light. White leaf edges without chlorophyll or Night darkness (Lamp OFF, 0 lx) capture zero photons and produce 0 O₂ bubbles."
+    },
+    membrane: {
+      title: "Chloroplast Envelope & Aquatic Leaf Tissues — Gas & Ion Exchange",
+      body: "Variables acting here: Dissolved CO₂ Diffusion & Temperature. Submerged shoots like Hydrilla verticillata absorb dissolved bicarbonate ions (NaHCO₃) and water directly through thin leaf cells. Warmer water accelerates molecular diffusion across chloroplast membranes."
+    },
+    oxygen: {
+      title: "Oxygen (O₂) Output & 24-Hour Mitochondrial Balance",
+      body: "Variables acting here: Net O₂ = Photosynthesis (Chloroplasts) minus Cellular Respiration (Mitochondria). In warm Day light (Lamp ON), chloroplast O₂ release far exceeds respiration so visible bubbles rise. At Night (Lamp OFF, cold ~18.5 °C), O₂ production is 0 while cooler mitochondria still respire slowly."
+    }
+  };
 
-    if (typeof window !== "undefined" && window.PhotosynthesisModel && window.PhotosynthesisModel.calculateBubbleRate) {
-      const res = window.PhotosynthesisModel.calculateBubbleRate({
-        lux: luxVal,
-        co2Pct: co2Val,
-        tempC: tempVal,
-        wavelength: waveVal,
-        species: "Hydrilla"
-      });
+  function selectMicroStructure(structureKey) {
+    const info = MICRO_STRUCTURE_DATA[structureKey] || MICRO_STRUCTURE_DATA.thylakoid;
+    document.querySelectorAll(".micro-hotspot, .micro-pill-btn").forEach((el) => {
+      el.classList.toggle("is-selected", el.getAttribute("data-micro-structure") === structureKey);
+    });
+    const detail = $("micro-structure-detail");
+    if (detail) {
+      detail.innerHTML = `<strong class="micro-detail-title">${escapeHtml(info.title)}</strong><p class="micro-detail-body">${escapeHtml(info.body)}</p>`;
+    }
+  }
 
-      if ($("factor-rate-display")) {
-        $("factor-rate-display").textContent = `${res.bubbleRate} bubbles / 60s`;
+  function setVariegatedLeafZone(zone) {
+    const greenBtn = $("test-green-leaf-btn");
+    const whiteBtn = $("test-white-leaf-btn");
+    const resEl = $("variegated-result-text");
+    const isGreen = zone !== "white";
+
+    if (greenBtn) greenBtn.classList.toggle("is-active", isGreen);
+    if (whiteBtn) whiteBtn.classList.toggle("is-active", !isGreen);
+    if (resEl) {
+      resEl.innerHTML = isGreen
+        ? "<strong>Green Center:</strong> Contains abundant chlorophyll inside chloroplasts &rarr; Captures light energy &rarr; Splits water &rarr; High glucose synthesis (turns dark blue-black in starch test)."
+        : "<strong>White Edge (No Chlorophyll):</strong> Lacks chlorophyll inside plastids &rarr; Cannot absorb light photons even under bright light &rarr; Photolysis and starch synthesis do not occur (remains yellow-brown in iodine test).";
+    }
+  }
+
+  // --- Day & Night Explorer (Day = Light Bg + Lamp ON + Warm; Night = Dark Bg + Lamp OFF + Cold) ---
+  function setDayNightMode(mode, skipDistanceUpdate) {
+    const isNight = mode === "night";
+    const strip = document.querySelector(".day-night-strip");
+    const dayBtn = $("dn-day-btn");
+    const nightBtn = $("dn-night-btn");
+    const expEl = $("day-night-explanation");
+    const bgRect = $("sim-bg-rect");
+    const dayCue = $("sim-sky-day-cue");
+    const nightCue = $("sim-sky-night-cue");
+    const titleEl = $("svg-chamber-title");
+    const speciesEl = $("svg-species-label");
+    const benchEl = $("sim-bench-rect");
+    const rulerLabelsEl = $("svg-ruler-labels");
+    const beakerGlassEl = $("svg-beaker-glass");
+    const beakerLipEl = $("svg-beaker-lip");
+    const beakerTicksEl = $("svg-beaker-ticks");
+    const lampTagEl = $("sim-lamp-tag");
+    const lampRadiantEl = $("sim-lamp-radiant-text");
+
+    if (isNight && state.selectedDistance !== "dark") {
+      state.lastLitDistance = state.selectedDistance;
+    }
+    state.isNightTime = isNight;
+
+    if (strip) strip.classList.toggle("is-night-active", isNight);
+    if (dayBtn) dayBtn.classList.toggle("is-active", !isNight);
+    if (nightBtn) nightBtn.classList.toggle("is-active", isNight);
+
+    // Light Day background vs Dark Night background on #sim-svg
+    if (bgRect) bgRect.setAttribute("fill", isNight ? "url(#nightBgGrad)" : "url(#dayBgGrad)");
+    if (dayCue) dayCue.setAttribute("opacity", isNight ? "0" : "1");
+    if (nightCue) nightCue.setAttribute("opacity", isNight ? "1" : "0");
+    if (titleEl) titleEl.setAttribute("fill", isNight ? "#a7f3d0" : "#065f46");
+    if (speciesEl) speciesEl.setAttribute("fill", isNight ? "#cbd5e1" : "#334155");
+    if (benchEl) {
+      benchEl.setAttribute("fill", isNight ? "#1e293b" : "#cbd5e1");
+      benchEl.setAttribute("stroke", isNight ? "#334155" : "#94a3b8");
+    }
+    if (rulerLabelsEl) rulerLabelsEl.setAttribute("fill", isNight ? "#cbd5e1" : "#334155");
+    if (beakerGlassEl) {
+      beakerGlassEl.setAttribute("fill", isNight ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.45)");
+      beakerGlassEl.setAttribute("stroke", isNight ? "#94a3b8" : "#64748b");
+    }
+    if (beakerLipEl) beakerLipEl.setAttribute("stroke", isNight ? "#cbd5e1" : "#475569");
+    if (beakerTicksEl) {
+      beakerTicksEl.setAttribute("fill", isNight ? "#cbd5e1" : "#334155");
+      beakerTicksEl.setAttribute("stroke", isNight ? "rgba(226,232,240,0.42)" : "rgba(15,23,42,0.35)");
+    }
+    if (lampTagEl) lampTagEl.setAttribute("fill", isNight ? "#fef08a" : "#92400e");
+    if (lampRadiantEl) lampRadiantEl.setAttribute("fill", isNight ? "#fed7aa" : "#9a3412");
+
+    if (expEl) {
+      if (isNight) {
+        expEl.innerHTML =
+          "<strong>Night Condition (Lamp OFF · Cold Water ~18.5 °C):</strong> At night the lamp is turned OFF (0 lx) and cold water temperatures slow enzyme activity. Photolysis ceases completely (0 O₂ bubbles) while cooler mitochondria still consume dissolved O₂ in cellular respiration.";
+      } else {
+        expEl.innerHTML =
+          "<strong>Day Condition (Lamp ON · Warm Water ~26.0–28.6 °C):</strong> Bright daylight &amp; lamp radiation provide photons and warmth that accelerate Calvin-cycle enzyme kinetics. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>";
       }
-      if ($("factor-limiter-display")) {
-        $("factor-limiter-display").textContent = res.limitingFactor;
-      }
-      if ($("factor-explanation-display")) {
-        $("factor-explanation-display").textContent = res.scientificExplanation;
+    }
+
+    if (!skipDistanceUpdate) {
+      if (isNight) {
+        updateDistanceSelectionUI("dark");
+      } else {
+        const restoreDist = state.selectedDistance === "dark" ? (state.lastLitDistance || "10") : state.selectedDistance;
+        updateDistanceSelectionUI(restoreDist);
       }
     }
   }
@@ -3348,12 +3485,54 @@
   }
 
   function bindAllEvents() {
-    // New Thesis Upgrades Event Listeners
-    if ($("save-progress-btn")) {
-      $("save-progress-btn").addEventListener("click", handleSaveStudentProgress);
+    // Save Progress, Active Speaker, Day/Night & Cellular Exploration Listeners
+    if ($("topbar-save-progress-btn")) {
+      $("topbar-save-progress-btn").addEventListener("click", handleSaveStudentProgress);
     }
     if ($("switch-speaker-btn")) {
       $("switch-speaker-btn").addEventListener("click", handleSwitchActiveSpeaker);
+    }
+    if ($("toggle-ilo-btn")) {
+      $("toggle-ilo-btn").addEventListener("click", () => {
+        const panel = $("ilo-content-collapse");
+        const icon = $("ilo-toggle-icon");
+        const btn = $("toggle-ilo-btn");
+        if (!panel) return;
+        const nextHidden = !panel.hidden;
+        panel.hidden = nextHidden;
+        if (btn) btn.setAttribute("aria-expanded", String(!nextHidden));
+        if (icon) icon.textContent = nextHidden ? "▼ View Objectives" : "▲ Hide Objectives";
+      });
+    }
+    if ($("toggle-micro-btn")) {
+      $("toggle-micro-btn").addEventListener("click", () => {
+        const body = $("micro-card-body");
+        const btn = $("toggle-micro-btn");
+        if (!body || !btn) return;
+        const nextHidden = !body.hidden;
+        body.hidden = nextHidden;
+        btn.setAttribute("aria-expanded", String(!nextHidden));
+        btn.textContent = nextHidden ? "Show Microscopic View" : "Hide Microscopic View";
+      });
+    }
+    document.querySelectorAll(".micro-hotspot, .micro-pill-btn, .micro-clickable-card").forEach((el) => {
+      const trigger = () => {
+        const key = el.getAttribute("data-micro-structure");
+        if (key) selectMicroStructure(key);
+      };
+      el.addEventListener("click", trigger);
+      el.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          trigger();
+        }
+      });
+    });
+    if ($("test-green-leaf-btn")) {
+      $("test-green-leaf-btn").addEventListener("click", () => setVariegatedLeafZone("green"));
+    }
+    if ($("test-white-leaf-btn")) {
+      $("test-white-leaf-btn").addEventListener("click", () => setVariegatedLeafZone("white"));
     }
     if ($("dn-day-btn")) {
       $("dn-day-btn").addEventListener("click", () => setDayNightMode("day"));
@@ -3361,21 +3540,32 @@
     if ($("dn-night-btn")) {
       $("dn-night-btn").addEventListener("click", () => setDayNightMode("night"));
     }
-    if ($("dn-night-lamp-btn")) {
-      $("dn-night-lamp-btn").addEventListener("click", () => setDayNightMode("night-lamp"));
+
+    // Researcher Dashboard Scorer Tabs & Runners
+    const scorerTabs = [
+      { btnId: "tab-scorer-f", panelId: "scorer-f-panel" },
+      { btnId: "tab-scorer-k", panelId: "scorer-k-panel" },
+      { btnId: "tab-scorer-b", panelId: "scorer-b-panel" },
+      { btnId: "tab-class-sessions", panelId: "class-sessions-panel" }
+    ];
+    scorerTabs.forEach((tab) => {
+      if ($(tab.btnId)) {
+        $(tab.btnId).addEventListener("click", () => {
+          scorerTabs.forEach((t) => {
+            if ($(t.btnId)) $(t.btnId).classList.toggle("is-active", t.btnId === tab.btnId);
+            if ($(t.panelId)) $(t.panelId).hidden = t.panelId !== tab.panelId;
+          });
+        });
+      }
+    });
+    if ($("btn-run-scorer-f")) {
+      $("btn-run-scorer-f").addEventListener("click", runConceptTestScorer);
     }
-    if ($("open-factor-explorer-btn")) {
-      $("open-factor-explorer-btn").addEventListener("click", () => {
-        if ($("factor-explorer-modal")) $("factor-explorer-modal").hidden = false;
-      });
+    if ($("btn-run-scorer-k")) {
+      $("btn-run-scorer-k").addEventListener("click", runPerceptionScorer);
     }
-    if ($("close-factor-explorer-btn")) {
-      $("close-factor-explorer-btn").addEventListener("click", () => {
-        if ($("factor-explorer-modal")) $("factor-explorer-modal").hidden = true;
-      });
-    }
-    if ($("run-factor-test-btn")) {
-      $("run-factor-test-btn").addEventListener("click", runFactorExplorerTest);
+    if ($("btn-run-scorer-b")) {
+      $("btn-run-scorer-b").addEventListener("click", runICVICalculator);
     }
     if ($("score-concept-test-btn")) {
       $("score-concept-test-btn").addEventListener("click", runConceptTestScorer);
@@ -3391,18 +3581,6 @@
     }
     if ($("refresh-progress-btn")) {
       $("refresh-progress-btn").addEventListener("click", handleRefreshActiveProgress);
-    }
-    if ($("vocab-clarify-btn")) {
-      $("vocab-clarify-btn").addEventListener("click", () => {
-        state.vocabBypassActive = true;
-        const alertBox = $("try-first-alert");
-        if (alertBox) alertBox.style.display = "none";
-        const input = $("chat-input-text");
-        if (input) {
-          input.value = "What is the definition of ";
-          input.focus();
-        }
-      });
     }
 
     // Welcome & 4-Role Login Forms

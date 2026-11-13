@@ -2637,3 +2637,477 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   HIGH-CONTRAST LIGHT MODE & INTERACTIVE CELLULAR / DAY-NIGHT OVERRIDES
+   ========================================================================== */
+[hidden] {
+  display: none !important;
+}
+
+:root {
+  --surface-card: #ffffff;
+  --text-main: #0c221f;
+  --text-muted: #33534d;
+  --emerald-400: #10b981;
+  --sky-300: #0284c7;
+}
+
+/* Activity Learning Objectives Card */
+.ilo-header-card {
+  background: #ffffff;
+  border: 1px solid #d1e3de;
+  border-radius: 14px;
+  padding: 0;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(12, 34, 31, 0.04);
+  overflow: hidden;
+}
+
+.ilo-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  background: linear-gradient(135deg, #f0fdf4, #ffffff);
+  color: #0c221f;
+  font-size: 0.96rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ilo-toggle-btn:hover {
+  background: #ecfdf5;
+}
+
+.ilo-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ilo-content-collapse {
+  padding: 14px 18px 18px;
+  background: #ffffff;
+  border-top: 1px solid #d1e3de;
+}
+
+.ilo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.ilo-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ilo-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.ilo-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #1e293b;
+}
+
+/* Cellular Level Exploration & Interactive Chloroplast View */
+.micro-leaf-card {
+  background: #ffffff;
+  border: 1px solid #cce3dc;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px rgba(12, 34, 31, 0.05);
+}
+
+.micro-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.micro-card-header .eyebrow {
+  color: #047857;
+  font-weight: 700;
+}
+
+.micro-card-header h3 {
+  margin: 2px 0 0;
+  color: #0c221f;
+  font-size: 1.06rem;
+}
+
+.micro-toggle-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.micro-toggle-btn:hover {
+  background: #d1fae5;
+}
+
+.micro-split-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.micro-visual-box {
+  background: #f8fafc;
+  border: 1px solid #dbe7e3;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.chloroplast-anatomy-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.micro-hotspot {
+  cursor: pointer;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+  outline: none;
+}
+
+.micro-hotspot:hover,
+.micro-hotspot:focus-visible {
+  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.85));
+}
+
+.micro-hotspot.is-selected {
+  filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.95));
+}
+
+.micro-hotspot-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.micro-pill-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.micro-pill-btn:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.micro-pill-btn.is-selected {
+  background: #065f46;
+  color: #ffffff;
+  border-color: #065f46;
+}
+
+.micro-structure-detail {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #0c221f;
+}
+
+.micro-detail-title {
+  display: block;
+  color: #065f46;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.micro-detail-body {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+.pigments-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pigment-pill-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #dce6e3;
+  color: #1e293b;
+  font-size: 0.83rem;
+  line-height: 1.45;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.micro-clickable-card {
+  cursor: pointer;
+}
+
+.micro-clickable-card:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.pigment-pill-card strong {
+  display: block;
+  color: #065f46;
+  font-size: 0.87rem;
+  margin-bottom: 2px;
+}
+
+.pigment-pill-card span {
+  color: #334155;
+}
+
+.variegated-tester-box {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #dbe7e3;
+}
+
+.tester-label {
+  display: block;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.variegated-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.var-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.var-btn.is-active {
+  background: #065f46;
+  color: #ffffff;
+  border-color: #065f46;
+}
+
+.var-result-text {
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+/* Day / Night Simulation Switch Strip */
+.day-night-strip {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.day-night-strip.is-night-active {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+.day-night-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.day-night-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.day-night-strip.is-night-active .day-night-title {
+  color: #e2e8f0;
+}
+
+.day-night-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dn-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dn-btn:hover {
+  border-color: #0ea5e9;
+}
+
+.dn-btn.is-active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28);
+}
+
+.day-night-strip.is-night-active .dn-btn.is-active {
+  background: #1e293b;
+  border-color: #38bdf8;
+  color: #f0f9ff;
+}
+
+.day-night-explanation {
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  font-size: 0.84rem;
+  line-height: 1.48;
+}
+
+.day-night-strip.is-night-active .day-night-explanation {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+/* Comparison Banner, Self-Check & Researcher Scorers Light Mode Readability */
+.comparison-teacher-banner {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.comp-banner-content strong {
+  display: block;
+  color: #1e3a8a;
+  font-size: 0.92rem;
+}
+
+.comp-banner-content span {
+  color: #1e40af;
+  font-size: 0.84rem;
+}
+
+.step-self-check-card {
+  background: #f8fafc;
+  border: 1px solid #dbe7e3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.self-check-label {
+  color: #0f172a;
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.check-inline {
+  color: #1e293b;
+  font-size: 0.82rem;
+}
+
+.scorer-box {
+  background: #ffffff;
+  border: 1px solid #dbe7e3;
+  border-radius: 12px;
+  padding: 14px;
+  color: #0c221f;
+}
+
+.scorer-box h3 {
+  color: #0c221f;
+}
+
+.bow-tab-btn {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+}
+
+.bow-tab-btn.is-active {
+  background: #065f46;
+  color: #ffffff;
+  border-color: #065f46;
+}
+
+@media (max-width: 900px) {
+  .micro-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
