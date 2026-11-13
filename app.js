@@ -2250,30 +2250,53 @@
     };
   }
 
-  function hasBiologyOrLabKeywords(q) {
-    return /\b(photosynth|chloroplast|chlorophyll|thylakoid|granum|grana|stroma|calvin|rubisco|photolysis|atp|nadph|glucose|sugar|oxygen|o2|co2|carbon dioxide|h2o|water|light|photon|wavelength|lamp|bulb|lux|dark|night|day|cold|warm|temp|temperature|enzyme|nahco3|bicarbonate|baking soda|buffer|bubble|bubbles|bula|hydrilla|elodea|hyacinth|eichhornia|plant|leaf|leaves|stomata|mitochondria|respiration|limiting|saturat|level off|plateau|trial|mean|average|table|graph|setup|apparatus|variable|independent|dependent|constant|controlled|fair test|control|distance|cm|beaker|thermometer|timer|60 second|ecosystem|food web|food chain|variegated|starch|iodine|cellular|microscopic|experiment|lab|equation|formula|formula|reaction|biovoice|kahayag|liwanag|tubig|init|ngitngit|dilim|tanom|dahon|duol|layo|malapit|malayo|naglutaw|lutang|predict|hypothes|conclu|inverse|square)\b/i.test(
+  function isStrictlyLabProtocolQuery(q) {
+    return /\b(hydrilla|elodea|water hyacinth|hyacinth|eichhornia|nahco3|bicarbonate|baking soda|lux|10\s*cm|20\s*cm|30\s*cm|40\s*cm|dark control|limiting factor|light saturation|thylakoid|stroma|rubisco|photolysis|nadph|atp|chloroplast|chlorophyll|support point|sp[1-6]|trial\s*[123]|bubble\s*(?:count|rate|mean|table|graph)|independent variable|dependent variable|constant variable|controlled variable|prediction\s*part|beaker|thermometer|photosynth)\b/i.test(
       q
     );
   }
 
+  function ensureConversationMemoryDefaults() {
+    if (!state.conversationMemory || typeof state.conversationMemory !== "object") {
+      state.conversationMemory = {};
+    }
+    const mem = state.conversationMemory;
+    if (!mem.topicVisitCounts) mem.topicVisitCounts = {};
+    if (!Array.isArray(mem.recentReplies)) mem.recentReplies = [];
+    if (!Array.isArray(mem.messages)) mem.messages = [];
+    if (typeof mem.turnCount !== "number") mem.turnCount = 0;
+    return mem;
+  }
+
   function detectVariableOrConceptTopic(low) {
-    // Specific variable questions
     if (/\b(independent variable|manipulated variable)\b/i.test(low)) return "independent_variable";
     if (/\b(dependent variable|responding variable)\b/i.test(low)) return "dependent_variable";
     if (/\b(constant variable|controlled variable|control variable|variables.*constant|keep.*same|fair test)\b/i.test(low)) {
       return "constant_variable";
     }
     if (/\b(variables|variable|what.*change.*measure|explain.*variable)\b/i.test(low)) return "variables_all";
-    if (/\b(nahco3|sodium bicarbonate|baking soda|bicarbonate|dissolved co2|co2 source|carbon dioxide source|why.*co2|need.*co2)\b/i.test(low)) {
+    if (/\b(nahco3|sodium bicarbonate|baking soda|bicarbonate|dissolved co2|co2 source|carbon dioxide source)\b/i.test(low)) {
       return "nahco3_co2";
     }
-    if (/\b(temperature|temp|warm|cold|cool|heat|heat waves|thermometer|enzyme|enzymes|26|18\.5|28)\b/i.test(low)) {
+    if (/\b(temperature|temp\b|warm|cold|cool|heat waves|thermometer|enzyme|enzymes|26\.0|18\.5|28\.\d)\b/i.test(low)) {
       return "temperature_enzymes";
     }
-    if (/\b(thylakoid|stroma|atp|nadph|calvin|rubisco|photolysis|two stages|light[- ]dependent|light[- ]independent|inside.*chloroplast|chloroplast.*work)\b/i.test(low)) {
+    if (/\b(photolysis|split(?:ting)?\s+water|where\s+do(?:es)?\s+(?:oxygen|o2|bubbles?)\s+come\s+from)\b/i.test(low)) {
+      return "photolysis_water";
+    }
+    if (/\b(atp|nadph|energy\s+carrier|battery|batteries)\b/i.test(low)) {
+      return "atp_nadph_batteries";
+    }
+    if (/\b(calvin|rubisco|light[- ]independent|dark\s+reaction)\b/i.test(low)) {
+      return "calvin_rubisco";
+    }
+    if (/\b(thylakoid|stroma|two stages|light[- ]dependent|inside.*chloroplast|chloroplast.*work)\b/i.test(low)) {
       return "chloroplast_parts";
     }
-    if (/\b(green|wavelength|absorb|reflect|chlorophyll|pigment|variegated|white edge|white patch)\b/i.test(low)) {
+    if (/\b(variegated|starch\s+test|iodine\s+test|white edge|white patch)\b/i.test(low)) {
+      return "starch_iodine";
+    }
+    if (/\b(chlorophyll|wavelength|absorb|reflect|why.*leaves?\s+(?:are\s+)?green|why.*plants?\s+(?:are\s+)?green)\b/i.test(low)) {
       return "chlorophyll_green";
     }
     if (/\b(inverse[- ]square|625|278|156|2,?500|lux|why.*quarter|half.*distance|illuminance)\b/i.test(low)) {
@@ -2282,8 +2305,17 @@
     if (/\b(level off|plateau|limiting|saturat|bottleneck|why.*not.*quadruple|stop increasing|10 cm and 20 cm|10 cm vs 20 cm)\b/i.test(low)) {
       return "limiting_factor_plateau";
     }
-    if (/\b(mitochondria|respiration|breathe|night|dark control|0 lx|lamp off|night time|24[- ]hour)\b/i.test(low)) {
+    if (/\b(mitochondria|respiration|breathe.*night|dark control|0 lx|lamp off|night time|24[- ]hour)\b/i.test(low)) {
       return "dark_night_respiration";
+    }
+    if (/\b(stomata|guard\s+cell|leaf\s+pore)\b/i.test(low)) {
+      return "stomata_function";
+    }
+    if (/\b(what.*plant.*do.*glucose|why.*make\s+glucose|purpose\s+of\s+glucose|why.*sugar)\b/i.test(low)) {
+      return "glucose_purpose";
+    }
+    if (/\b(why.*count.*bubbles?|bubbles?\s+measure|cut\s+stem.*bubbles?)\b/i.test(low)) {
+      return "bubble_counting_validity";
     }
     if (/\b(equation|formula|6\s*co2|reactant|product|raw material|inputs? and outputs?)\b/i.test(low)) {
       return "equation_walkthrough";
@@ -2291,8 +2323,355 @@
     if (/\b(hyacinth|water hyacinth|eichhornia|floating|elodea|compare plant|three plants|species)\b/i.test(low)) {
       return "plant_comparison";
     }
-    if (/\b(ecosystem|food web|food chain|important|humans?|animals?|fish|value of photosynthesis)\b/i.test(low)) {
+    if (/\b(ecosystem|food web|food chain|value of photosynthesis|why.*photosynthesis.*important)\b/i.test(low)) {
       return "ecosystem_value";
+    }
+    return null;
+  }
+
+  // Multi-angle follow-ups & granular concept explanations so BioVoice never repeats verbatim
+  const MICRO_CONCEPT_ANSWERS = {
+    photolysis_water: {
+      ideaCode: "I2",
+      angles: [
+        "Every oxygen bubble starts from plain water (H₂O)! When light energy slams into green chlorophyll inside the thylakoid discs, it acts like tiny scissors snapping water apart—keeping hydrogen energy for plant food and letting spare oxygen gas bubble out.",
+        "Think of it underwater right in your beaker: Hydrilla pulls H₂O straight into its thin leaves, uses light like solar pliers to pull oxygen off the hydrogen, and vents that extra O₂ out the cut stem as rising bubbles!",
+        "Microscopic detail made easy: splitting 2 H₂O molecules releases electrons chlorophyll needs to charge batteries, hydrogen protons for making ATP, and 1 molecule of O₂ gas that escapes upward!",
+      ],
+    },
+    atp_nadph_batteries: {
+      ideaCode: "I8",
+      angles: [
+        "Think of ATP and NADPH as two rechargeable power banks! Chloroplast thylakoids charge them up using sunlight and water, then carry them into the watery stroma so the Calvin cycle has electricity to turn CO₂ into glucose sugar.",
+        "Once ATP and NADPH hand off their energy in Stage 2 (assembling sugar), they turn back into empty rechargeable batteries (ADP and NADP⁺) and zip right back to the thylakoids to get recharged by the next flash of light!",
+      ],
+    },
+    calvin_rubisco: {
+      ideaCode: "I8",
+      angles: [
+        "The Calvin cycle happens in the chloroplast's fluid (stroma)—no direct light needed, just the charged ATP and NADPH power banks! An enzyme helper called RuBisCO grabs carbon dioxide (CO₂ from your baking soda water) and stitches carbons together into glucose sugar.",
+        "Why does warm Day water (~26–28 °C) speed up the Calvin cycle while cold Night water (~18.5 °C) slows it down? Because RuBisCO is a temperature-sensitive protein enzyme—chilly water slows molecular bumping, whereas gentle warmth keeps sugar-building brisk!",
+      ],
+    },
+    starch_iodine: {
+      ideaCode: "I1",
+      angles: [
+        "Plants pack extra glucose together into long storage chains called starch—just like storing loose coins in a piggy bank! When you drop iodine on a leaf, chlorophyll-rich green parts turn dark blue-black (starch present), while white edges stay yellow-brown because they lacked chlorophyll to capture light.",
+        "Wait—remember how glucose dissolves in water while starch stays tucked inside leaf cells? That's why turning extra sugar into starch stops leaves from bloating with osmotic water and lets students test past photosynthesis with iodine!",
+      ],
+    },
+    stomata_function: {
+      ideaCode: "I2",
+      angles: [
+        "Stomata are microscopic trapdoors on leaves that open to let CO₂ in and O₂ out. Land plants and floating Water Hyacinth rely on leaf stomata in open air—while submerged Hydrilla absorbs dissolved carbon dioxide directly through wafer-thin leaf skin and releases oxygen bubbles underwater!",
+      ],
+    },
+    glucose_purpose: {
+      ideaCode: "I9",
+      angles: [
+        "Plants don't just make glucose sugar for snacks—they burn it inside mitochondria for energy to grow new shoots, stack it into cellulose for sturdy stems and cell walls, or tuck extra sugar away as starch inside roots and fruits!",
+        "Plus, every fruit, grain, vegetable, and underwater leaf packed with plant-made glucose feeds animals, fish, and humans at the base of nearly every food web on Earth!",
+      ],
+    },
+    bubble_counting_validity: {
+      ideaCode: "I2",
+      angles: [
+        "Counting bubbles works because photosynthesis produces oxygen (O₂) as a steady waste product inside submerged stems. By sealing a 60-second clock, steady water temperature, and identical plant size, faster O₂ bubbling directly tracks a faster photosynthesis rate!",
+        "Scientists still use 3 trials per condition and check Water Hyacinth separately because bubble size can vary slightly and floating leaves vent gas straight into air instead of underwater!",
+      ],
+    },
+  };
+
+  const TOPIC_EXTRA_ANGLES = {
+    variables_all: [
+      "Think about tuning a guitar string: the Independent Variable is WHICH fret you press (lamp distance you choose); the Dependent Variable is the note that rings out (bubble count); and Constant Variables make sure nobody bumped the tuning pegs mid-song (same plant, 0.2% NaHCO₃, 60s timer, steady baseline temp)!",
+      "Quick lab check: in your simulation right now, you pick the lamp distance (10 to 40 cm or Dark) FIRST—that makes it Independent. You count the bubbles AFTERWARD—that's Dependent. Everything else locked identical so light alone gets tested is Controlled!",
+    ],
+    chlorophyll_green: [
+      "Here's the twist most people miss: plants actually use RED and BLUE wavelengths best and practically bounce GREEN light back out like a mirror! That's why shining a pure green spotlight onto Hydrilla would actually starve the leaf and crash bubble counts!",
+      "Two chlorophyll helpers (a and b) act like paired solar antennas catching red/blue photons, backed up by orange-yellow carotenoids that catch extra blue light and protect cells from bright glare.",
+    ],
+    temperature_enzymes: [
+      "Think of water temperature like kitchen thermostat speed: cool 18.5 °C Night water slows enzymes down like cold molasses (and with Lamp OFF, 0 photons enter anyway!). Warm 26–28.6 °C Day lamp water keeps enzyme motion lively—while anything boiling hot (>45–50 °C) unravels enzymes permanently!",
+    ],
+    limiting_factor_plateau: [
+      "Look closely at why doubling brightness stops boosting bubbles at 10 cm: photolysis on the thylakoids is spinning fast, yet the Calvin-cycle bakery in the stroma can only grab dissolved CO₂ molecules and run RuBisCO enzymes so fast—whichever step lags behind caps the whole factory!",
+    ],
+    inverse_square_lux: [
+      "Imagine a square spray-paint nozzle: 10 cm away paints a tight 1×1 square with super thick paint (2,500 lx). Step twice as far back to 20 cm, and the exact same paint spreads across a 2×2 square (4× bigger area = 1/4 thickness = 625 lx)!",
+    ],
+    ecosystem_value: [
+      "Think of Earth as a closed spacecraft: animals and humans exhale CO₂ and consume oxygen + calories, while photosynthetic leaves and ocean algae recycle that exact CO₂ back into breathable O₂ and fresh glucose energy!",
+    ],
+  };
+
+  const CORE_COMPARISON_BANK = {
+    "photosynthesis|respiration": "Photosynthesis and cellular respiration are exact mirror partners! Photosynthesis happens inside green chloroplasts (only with light) to CAPTURE solar energy—turning carbon dioxide + water into glucose sugar + oxygen. Cellular respiration happens inside mitochondria 24 hours a day (day AND night!) to RELEASE that stored energy—using oxygen + glucose to power living cells and releasing carbon dioxide + water!",
+    "chlorophyll|chloroplast": "Easy visual difference: a CHLOROPLAST is the whole microscopic kitchen/organelle inside a plant cell, while CHLOROPHYLL is the green solar-panel pigment molecule packed inside the chloroplast's thylakoid discs! Think of a chloroplast as a solar house and chlorophyll as the solar tiles on its roof.",
+    "thylakoid|stroma": "Both live inside the chloroplast, doing back-to-back shifts! Thylakoids are stacked green coin discs where Stage 1 uses light to split water, release O₂ bubbles, and charge ATP + NADPH batteries. Stroma is the clear fluid surrounding those stacks where Stage 2 (the Calvin cycle) uses those charged batteries to build CO₂ into glucose sugar!",
+    "atp|nadph": "Both are tiny charged energy carriers made in thylakoids to power sugar-building in the stroma, just with slightly different jobs: ATP delivers pure chemical energy bursts (like a battery pack's voltage), while NADPH carries both high-energy electrons AND hydrogen atoms needed to stitch CO₂ into glucose!",
+    "independent|dependent": "Quick memory trick: YOU change the Independent Variable ('I' change it = lamp distance 10–40 cm or Dark), while the Dependent Variable ('D'ata you watch) reacts automatically—how many O₂ bubbles rise in 60 seconds because its speed DEPENDS on the light!",
+    "hydrilla|hyacinth": "Hydrilla lives 100% submerged underwater, so every oxygen molecule its leaves release squeezes out underwater as countable bubbles! Water Hyacinth floats at the surface with leaves in open air—so its oxygen escapes invisibly through leaf stomata straight into the air rather than forming underwater bubbles!",
+    "hydrilla|elodea": "Both Hydrilla verticillata and Elodea canadensis are submerged aquatic plants that produce countable underwater O₂ bubbles! In our study, Hydrilla is our official standardized plant (~42 bubbles/min at 10 cm), while Elodea serves as a slightly gentler comparison submerged species (~38 bubbles/min at 10 cm).",
+    "day|night": "In Day mode, the lamp switches ON (up to 2,500 lx) and radiant heat keeps water warm (~26–28.6 °C), powering brisk photolysis and active enzymes so O₂ bubbles stream upward! In Night mode, the lamp switches OFF (0 lx) and water cools to ~18.5 °C—stopping chloroplasts cleanly while chilly mitochondria still respire quietly.",
+    "trial|mean": "A Trial (T1, T2, or T3) is ONE single 60-second bubble count—which can wiggle slightly due to a living leaf. The Mean averages all completed trials together, (T1 + T2 + T3) ÷ 3, filtering out random blips so your graph shows the true photosynthesis trend!",
+  };
+
+  function buildDynamicOfferBridge(topicKey, langKey, snapshot) {
+    const offerMap = {
+      variables_all: {
+        type: "drill_down",
+        choices: ["independent_variable", "dependent_variable", "constant_variable"],
+        defaultTopic: "independent_variable",
+        prompt: {
+          en: "Want me to zoom in on the first one (Independent), the second (Dependent), or how Constant variables keep it a fair test?",
+          fil: "Gusto mo bang unahin natin ang una (Independent), pangalawa (Dependent), o Constant variables?",
+          ceb: "Gusto ka bang tutokan nato ang una (Independent), ikaduha (Dependent), o ang Constant variables?",
+        },
+      },
+      chloroplast_parts: {
+        type: "drill_down",
+        choices: ["photolysis_water", "atp_nadph_batteries", "calvin_rubisco"],
+        defaultTopic: "atp_nadph_batteries",
+        prompt: {
+          en: "Want to see how the ATP & NADPH batteries actually charge up, or test how chloroplasts act during Night mode?",
+          fil: "Gusto mo bang makita kung paano nagcha-charge ang ATP at NADPH, o ano nangyayari sa Night mode?",
+          ceb: "Gusto ka bang tan-awon giunsa pag-charge sa ATP ug NADPH, o unsay mahitabo sa Night mode?",
+        },
+      },
+    };
+    const entry = offerMap[topicKey];
+    if (!entry) return null;
+    ensureConversationMemoryDefaults().pendingOffer = entry;
+    return entry.prompt[langKey] || entry.prompt.en;
+  }
+
+  function handleSelfAwarenessQuery(low, langKey, snapshot) {
+    const mem = ensureConversationMemoryDefaults();
+    const visit = (mem.topicVisitCounts.__self || 0) + 1;
+    mem.topicVisitCounts.__self = visit;
+    const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+
+    if (/\b(repeat|same\s+answer|answer(?:\s+\w+){0,2}\s+the\s+same|always\s+(?:say|answer)|the\s+same\s+(?:thing|reply|response)|why\s+do\s+you\s+(?:answer|say)\s+the\s+same|not\s+smart|dumb|scripted|boring|stale)\b/i.test(low)) {
+      return `Fair callout—thank you for telling me straight! When a live cloud Gemini key isn't connected on the backend yet, older keyword matching could fall back onto the same canned paragraphs. I've now upgraded how I think: I check live open web facts for any general question, run real 'what-if' and comparison logic on your Hydrilla setup (${distLabel}, ${snapshot.liveWaterTemp} °C), and track earlier turns so I don't feed you the same text twice! Hit me with a tough question right now—like 'what if we used green light?' or 'who is Nikola Tesla?'—and test me!`;
+    }
+
+    if (/\b(who\s+made|who\s+built|who\s+created|creators?|researchers?|thesis|msu-?iit)\b/i.test(low)) {
+      return "I'm BioVoice—created for an undergraduate Biology education thesis at Mindanao State University – Iligan Institute of Technology (MSU-IIT) by researchers Abdillah G. Sangcopan and Karen M. Villa, under adviser Vanjoreeh Madale! My job is helping Grade 11 STEM students at Iligan City National High School explore Cell Metabolism and photosynthesis through natural voice and clear analogies.";
+    }
+
+    if (/\b(how\s+do\s+you\s+work|how\s+do\s+you\s+think|are\s+you\s+an?\s+ai|real\s+ai|gemini|what\s+model)\b/i.test(low)) {
+      if (visit % 2 === 1) {
+        return `Great question about my own wiring! I work as a hybrid AI biology partner: when the PythonAnywhere backend has a Google Gemini key linked by the researcher, full Gemini generative reasoning powers my replies. Whenever I'm running standalone in your browser like right now, I combine live beaker telemetry (${snapshot.selectedPlant} at ${distLabel}, ${snapshot.liveWaterTemp} °C), multi-angle photosynthesis reasoning, causal 'what-if' rules, math calculation, and live Wikipedia & dictionary lookups—so I can tackle both outside curiosity and deep lab science!`;
+      }
+      return "Under the hood, I keep one eye on your live simulation (lamp distance, Day/Night temp, baking soda CO₂ source, and your 3-trial table) and the other eye on open-world facts! Whenever Gemini cloud mode is linked in the Researcher Console, it handles every free-form thought dynamically; offline or standalone, my upgraded causal & multi-angle engine keeps you moving without repeating scripts!";
+    }
+
+    if (/\b(what\s+can\s+you\s+do|what\s+can\s+i\s+ask|capabilities|help\s+me)\b/i.test(low)) {
+      return `Ask me literally anything! You can test me on: 1) ANY general knowledge question ('what is black hole radiation?' or 'who wrote Noli Me Tangere?')—I'll answer cleanly and tie back to science; 2) 'What-if' lab experiments ('what happens if the lamp turns green or water boils?'); 3) Concept & variable comparisons ('photosynthesis vs respiration', 'chlorophyll vs chloroplast'); 4) Your own live Hydrilla table, Mean math, or draft check; or 5) Ask me to quiz you or explain anything with a simpler everyday analogy!`;
+    }
+
+    // Default rich self-introduction (varies across visits)
+    if (visit === 1) {
+      return `Hey—I'm BioVoice, speaking with my Nova personality! I'm your interactive MSU-IIT Grade 11 biology companion: smart enough to chat about everyday topics or science trivia you throw at me, while staying anchored to helping you truly understand photosynthesis, variables, and your live ${snapshot.selectedPlant} experiment (currently at ${distLabel}, ${snapshot.liveWaterTemp} °C). Ask me something tricky—let's see what you're curious about!`;
+    }
+    return `Still me—BioVoice! Think of me as your voice-first lab coach for Grade 11 Cell Metabolism. Unlike a static textbook, I read your live ${snapshot.selectedPlant} beaker (${snapshot.dayNightMode}, ${snapshot.liveWaterTemp} °C), walk through variables in everyday words, test 'what-if' ideas with you, and look up real-world facts on the fly! What would you like to throw at me next?`;
+  }
+
+  function tryAnswerWhatIfScenario(low, langKey, snapshot) {
+    const isHypothetical = /\b(what\s+if|what\s+happens\s+if|what\s+would\s+happen|suppose|if\s+i\s+|if\s+we\s+|if\s+the\s+|without\s+(?:light|sun|co2|water|chlorophyll|baking\s+soda|plants))\b/i.test(
+      low
+    );
+    if (!isHypothetical) return null;
+
+    if (/\b(green\s+light|green\s+lamp|green\s+bulb|green\s+wavelength)\b/i.test(low)) {
+      return "Ooh, awesome 'what-if'! If you switched the lamp to pure GREEN light, bubble count would plunge down almost like being in the dark! Why? Because green chlorophyll pigments actually REFLECT green wavelengths back at your eyes instead of absorbing them—red and blue bulbs give the plant tons of usable energy, while green light bounces right off!";
+    }
+    if (/\b(red\s+light|blue\s+light|purple\s+light|violet\s+light)\b/i.test(low)) {
+      return "Great prediction! Both RED and BLUE light sit right inside chlorophyll's favorite energy sweet spots, so Hydrilla absorbs them strongly and keeps producing brisk oxygen bubbles—blue packs the highest energy per photon, while red drives chlorophyll most efficiently!";
+    }
+    if (/\b(boil|hot\s+water|50\s*°?c|60\s*°?c|70\s*°?c|80\s*°?c|90\s*°?c|100\s*°?c|too\s+hot|overheat)\b/i.test(low)) {
+      return "Ooh, careful there—if water heats above ~45 to 50 °C (or boils!), photosynthesis crashes straight to ZERO! Even though gentle warmth (~26–29 °C) helps helper enzymes like RuBisCO move faster, intense heat scrambles and destroys those delicate protein shapes (called denaturing), killing the plant cells permanently.";
+    }
+    if (/\b(ice|freez|0\s*°?c|very\s+cold|frost|fridge)\b/i.test(low)) {
+      return "In icy water near 0 °C, enzyme molecules inside the chloroplast barely wiggle around—like trying to run in thick mud! Plus ice blocks gas movement, so oxygen bubble output drops close to zero even if a bright lamp is shining.";
+    }
+    if (/\b(no\s+co2|without\s+co2|no\s+baking\s+soda|no\s+nahco3|without\s+nahco3|without\s+baking\s+soda|pure\s+water|distilled\s+water|tap\s+water)\b/i.test(low)) {
+      return "Smart variable test! If you left out the 0.2% baking soda (NaHCO₃) and used pure distilled water with almost zero dissolved carbon dioxide, light could still hit chlorophyll—yet the Calvin cycle in the stroma would run out of carbon ingredients right away! Oxygen bubbles would quickly drop way down because Stage 1 stalls whenever Stage 2 backs up without CO₂!";
+    }
+    if (/\b(more\s+co2|extra\s+co2|more\s+baking\s+soda|double\s+co2|higher\s+co2)\b/i.test(low)) {
+      return "Ooh, think back to limiting factors! At 10 cm (2,500 lx), dissolved CO₂ is part of what bottlenecks the speed. Adding a bit extra dissolved CO₂ while keeping temperature gentle (~26–28 °C) would actually lift that 10 cm plateau higher—until chlorophyll or enzyme speed itself becomes the new ceiling!";
+    }
+    if (/\b(change\s+two|two\s+variables|different\s+plant|different\s+temp|unfair\s+test|dont\s+control|not\s+controlled)\b/i.test(low)) {
+      return "If you changed TWO variables at once—say, sliding the lamp back to 40 cm AND dropping ice cubes into the water—your data wouldn't tell you whether dim light OR chilly enzymes caused the bubble drop! That's the whole reason Controlled Variables lock plant size, 0.2% NaHCO₃, and 60s time steady while testing light.";
+    }
+    if (/\b(no\s+plants|all\s+plants\s+died|plants\s+disappear|no\s+photosynthesis\s+on\s+earth)\b/i.test(low)) {
+      return "Whoa—big ecological scenario! Without photosynthesis on land and by ocean algae, fresh oxygen production stops so dissolved O₂ in rivers and atmospheric O₂ slowly get used up by respiration, while Earth's food chains collapse at the base because no glucose gets built from sunlight!";
+    }
+    if (/\b(without\s+water|no\s+water|out\s+of\s+water|dry\s+land)\b/i.test(low)) {
+      return "Without water (H₂O), Stage 1 photolysis in the thylakoids has nothing left to split—stopping oxygen release and starving chlorophyll of replacement electrons, while Hydrilla leaves dry out completely!";
+    }
+    return null;
+  }
+
+  async function tryAnswerComparisonQuery(rawQuestion, low, langKey, snapshot) {
+    const cmpMatch =
+      low.match(/difference\s+between\s+(.+?)\s+(?:and|vs\.?|versus)\s+(.+?)[?!.]*$/i) ||
+      low.match(/compare\s+(.+?)\s+(?:and|with|to|vs\.?|versus)\s+(.+?)[?!.]*$/i) ||
+      low.match(/^(.+?)\s+(?:vs\.?|versus)\s+(.+?)[?!.]*$/i) ||
+      low.match(/how\s+(?:is|are)\s+(.+?)\s+different\s+from\s+(.+?)[?!.]*$/i);
+    if (!cmpMatch) return null;
+
+    const cleanSide = (s) =>
+      s
+        .replace(/^(?:the|a|an)\s+/i, "")
+        .replace(/\bvariables?\b/gi, "")
+        .trim();
+    const sideA = cleanSide(cmpMatch[1]);
+    const sideB = cleanSide(cmpMatch[2]);
+
+    for (const [pairKey, pairText] of Object.entries(CORE_COMPARISON_BANK)) {
+      const [k1, k2] = pairKey.split("|");
+      const matchesOrder1 = sideA.includes(k1) && sideB.includes(k2);
+      const matchesOrder2 = sideA.includes(k2) && sideB.includes(k1);
+      if (matchesOrder1 || matchesOrder2) {
+        return { reply: pairText, ideaCode: pairKey.includes("independent") ? "I7" : pairKey.includes("trial") ? "I6" : "I8" };
+      }
+    }
+
+    // Live dual lookup for arbitrary comparison pairs!
+    if (sideA.length >= 2 && sideB.length >= 2) {
+      const [infoA, infoB] = await Promise.all([lookupWikipediaSummary(sideA), lookupWikipediaSummary(sideB)]);
+      if (infoA || infoB) {
+        const firstPart = infoA ? `First, ${sideA}: ${infoA}` : `First, ${sideA} is its own distinct concept.`;
+        const secondPart = infoB ? ` Meanwhile, ${sideB}: ${infoB}` : "";
+        const bridge = buildTopicalPhotosynthesisBridge(rawQuestion, langKey, snapshot);
+        return { reply: `Great comparison! ${firstPart}${secondPart} ${bridge}`.trim(), ideaCode: "I1" };
+      }
+    }
+    return null;
+  }
+
+  function tryAnswerStepOrStatusQuery(low, langKey, snapshot) {
+    if (/\b(fun\s+fact|cool\s+fact|trivia|amazing\s+fact|did\s+you\s+know|surprise\s+me)\b/i.test(low)) {
+      const facts = [
+        "Fun fact! Over HALF of the breathable oxygen on Earth—50% to 70%—actually comes from microscopic ocean plankton and algae doing underwater photosynthesis just like Hydrilla, not just forest trees!",
+        "Cool plant physics fact: chloroplasts can actually migrate inside a leaf cell! In gentle dim light they spread wide like solar panels to catch every photon, while under harsh glare they tuck sideways along cell walls so they don't burn!",
+        "Mind-blowing photosynthesis fact: the enzyme RuBisCO inside leaf stroma is the single most abundant protein on planet Earth—literally because every plant leaf needs huge teams of RuBisCO workers grabbing CO₂ out of water and air!",
+        "Water Hyacinth vs Hydrilla twist: Hydrilla grows completely underwater so its stems pack tiny air tubes (aerenchyma) that funnel pure oxygen bubbles up—the exact trick letting you measure photosynthesis speed visually!",
+      ];
+      const pick = facts[(ensureConversationMemoryDefaults().turnCount || 0) % facts.length];
+      return { reply: pick, ideaCode: "I9" };
+    }
+
+    if (/\b(what\s+step\s+am\s+i|where\s+am\s+i|current\s+step|my\s+progress|status\s+of\s+my\s+lab|what\s+did\s+i\s+write|my\s+notes|what.*water\s+temp|current\s+setup|current\s+beaker)\b/i.test(low)) {
+      const step = ACTIVITY_STEPS[state.currentStepIndex] || ACTIVITY_STEPS[0];
+      const completed = Object.entries(snapshot.recordedConditions)
+        .filter(([, v]) => v.mean !== null)
+        .map(([k, v]) => `${k === "dark" ? "Dark" : k + " cm"} (Mean ${v.mean.toFixed(1)})`);
+      const notesSnippet = snapshot.studentStepNotes
+        ? `Your saved note here says "${snapshot.studentStepNotes.slice(0, 75)}${snapshot.studentStepNotes.length > 75 ? "..." : ""}".`
+        : "You haven't written a note in this step box yet.";
+      const tableSummary = completed.length
+        ? `Recorded runs so far: ${completed.join(", ")}.`
+        : "No 60-second runs are saved in your table yet—pick 10 cm or another distance and hit Start!";
+      return {
+        reply: `Right now you're on ${step.partTitle} (${step.spCode}) with ${snapshot.selectedPlant} set at ${snapshot.selectedDistance === "dark" ? "Dark Control (0 lx)" : snapshot.selectedDistance + " cm (" + snapshot.currentLux + " lx)"} in ${snapshot.dayNightMode} at ${snapshot.liveWaterTemp} °C. ${tableSummary} ${notesSnippet}`,
+        ideaCode: step.sp === "sp2" ? "I7" : "I6",
+      };
+    }
+    return null;
+  }
+
+  const FOLLOW_UP_ANGLE_REGEX = /\b(another\s+way|explain(?:\s+(?:that|it|this))?\s+differently|in\s+a\s+different\s+way|say\s+(?:that|it)\s+differently|different\s+example|different\s+analogy|another\s+analogy|rephrase|tell\s+me\s+more|go\s+deeper)\b/i;
+
+  function handleConversationalFollowUp(low, langKey, snapshot) {
+    const mem = ensureConversationMemoryDefaults();
+    const lastTopicKey = mem.lastTopicKey;
+    const offer = mem.pendingOffer;
+
+    const isAffirmative = /^(yes|yeah|yep|yup|sure|ok|okay|please|go ahead|go on|continue|yes please|tell me more|more|next|oo|sige|oo nga|cge)[!.?,\s]*$/i.test(
+      low
+    );
+    const ordinalMatch = low.match(/\b(first|1st|number\s*1|one|second|2nd|number\s*2|two|third|3rd|number\s*3|three)\b/i);
+
+    if (offer && (isAffirmative || ordinalMatch)) {
+      let chosenTopic = offer.defaultTopic;
+      if (ordinalMatch && Array.isArray(offer.choices)) {
+        const w = ordinalMatch[1].toLowerCase();
+        if (/second|2|two/.test(w) && offer.choices[1]) chosenTopic = offer.choices[1];
+        else if (/third|3|three/.test(w) && offer.choices[2]) chosenTopic = offer.choices[2];
+        else if (offer.choices[0]) chosenTopic = offer.choices[0];
+      }
+      mem.pendingOffer = null;
+      if (chosenTopic) {
+        return pickFreshTopicReply(chosenTopic, langKey, snapshot, false);
+      }
+    }
+
+    const asksAnotherAngle = isAffirmative || FOLLOW_UP_ANGLE_REGEX.test(low);
+
+    if (asksAnotherAngle && mem.turnCount > 0) {
+      if (lastTopicKey && (CONCEPT_TUTOR_TOPICS[lastTopicKey] || MICRO_CONCEPT_ANSWERS[lastTopicKey])) {
+        return pickFreshTopicReply(lastTopicKey, langKey, snapshot, true);
+      }
+      const nextIdea = mem.lastIdeaCode || "I1";
+      const altStory = SIMPLER_ANALOGY_BANK[nextIdea] || SIMPLER_ANALOGY_BANK.I1;
+      return {
+        reply: `Let's look at that from a fresh everyday angle! ${altStory} How does that connect to what you see in your beaker right now?`,
+        ideaCode: nextIdea,
+        actualType: "E",
+        topicKey: lastTopicKey,
+      };
+    }
+
+    return null;
+  }
+
+  function pickFreshTopicReply(topicKey, langKey, snapshot, forceNextAngle) {
+    const mem = ensureConversationMemoryDefaults();
+    const visitIdx = (mem.topicVisitCounts[topicKey] || 0);
+    mem.topicVisitCounts[topicKey] = visitIdx + 1;
+
+    // 1. Check granular micro-concepts
+    const micro = MICRO_CONCEPT_ANSWERS[topicKey];
+    if (micro && Array.isArray(micro.angles) && micro.angles.length) {
+      const idx = (forceNextAngle ? Math.max(1, visitIdx) : visitIdx) % micro.angles.length;
+      return {
+        reply: micro.angles[idx],
+        ideaCode: micro.ideaCode || "I8",
+        actualType: "E",
+        topicKey,
+      };
+    }
+
+    // 2. Check main CONCEPT_TUTOR_TOPICS with rotating analogies + alternate angles
+    const topicObj = CONCEPT_TUTOR_TOPICS[topicKey];
+    if (topicObj) {
+      const localized = topicObj[langKey] || topicObj.en;
+      const candidatePool = [];
+      if (localized.summary) candidatePool.push(localized.summary);
+      if (localized.analogy) {
+        candidatePool.push(`Here's a fresh everyday picture for that! ${localized.analogy} Pretty intuitive once you visualize it, right?`);
+      }
+      const extras = TOPIC_EXTRA_ANGLES[topicKey] || [];
+      extras.forEach((ex) => candidatePool.push(ex));
+
+      const chosenIndex = (forceNextAngle ? Math.max(1, visitIdx) : visitIdx) % Math.max(1, candidatePool.length);
+      let body = candidatePool[chosenIndex] || localized.summary;
+      if (chosenIndex === 0) {
+        const bridgeOffer = buildDynamicOfferBridge(topicKey, langKey, snapshot);
+        if (bridgeOffer && !body.includes("?") && langKey === "en") {
+          body = `${body} ${bridgeOffer}`;
+        }
+      }
+      const simAdd = topicKey === "plant_comparison" ? "" : buildSimulationContextAddendum(langKey);
+      return {
+        reply: `${body}${simAdd}`.trim(),
+        ideaCode: topicObj.ideaCode || "I1",
+        actualType: "E",
+        topicKey,
+      };
     }
     return null;
   }
@@ -2300,6 +2679,7 @@
   function classifyQuestionAndConversationalIntent(rawQuestion) {
     const q = String(rawQuestion || "").trim();
     const low = q.toLowerCase();
+    const mem = ensureConversationMemoryDefaults();
 
     // 1. Strict Assessment Guardrail: refuse direct quiz/test answer keys
     if (
@@ -2307,59 +2687,51 @@
         low
       )
     ) {
-      return { intent: "test_refusal", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+      return { intent: "test_refusal", ideaCode: mem.lastIdeaCode || "I1", topicKey: null };
     }
 
-    // 2. Answering an active BioVoice practice quiz
-    if (state.conversationMemory.pendingQuiz && !/^(skip|stop|cancel|hint|new topic)/i.test(low)) {
+    // 2. BioVoice Self-Awareness ("who are you", "explain yourself", "why do you say the same", "what can you do")
+    if (
+      /\b(who are you|what are you|what is biovoice|about yourself|your own self|explain yourself|about biovoice|who made you|who created you|who built you|are you an? ai|are you smart|are you a robot|how do you work|how do you think|why do you (?:answer|say|repeat)|always the same|same answer|repeating yourself|only answers? the same|what can you do|what can i ask|your capabilities|how smart are you|your name|what is nova)\b/i.test(
+        low
+      )
+    ) {
+      return { intent: "self_inquiry", ideaCode: mem.lastIdeaCode || "I1", topicKey: "__self" };
+    }
+
+    // 3. Answering an active BioVoice practice quiz
+    if (mem.pendingQuiz && !/^(skip|stop|cancel|hint|new topic)/i.test(low)) {
       return {
         intent: "quiz_grade",
-        ideaCode: state.conversationMemory.pendingQuiz.ideaCode || "I1",
-        topicKey: state.conversationMemory.lastTopicKey,
+        ideaCode: mem.pendingQuiz.ideaCode || "I1",
+        topicKey: mem.lastTopicKey,
       };
     }
 
-    // 3. Student asks BioVoice to check/review their draft or hypothesis
+    // 4. Student asks BioVoice to check/review their draft or hypothesis
     if (
       /\b(check my|is my answer|am i right|review my|is my prediction|check if|tama ba|sakto ba|is this right|what do you think of my)\b/i.test(
         low
       )
     ) {
-      return { intent: "check_my_work", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+      return { intent: "check_my_work", ideaCode: mem.lastIdeaCode || "I1", topicKey: null };
     }
 
-    // 4. Student asks for a practice quiz question
+    // 5. Student asks for a practice quiz question
     if (/\b(quiz me|test me|ask me a question|practice question|tanungin mo ako|pangutan-a ko)\b/i.test(low)) {
-      return { intent: "quiz_request", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+      return { intent: "quiz_request", ideaCode: mem.lastIdeaCode || "I1", topicKey: null };
     }
 
-    // 5. Simplification / Analogy / Beginner Follow-up ("make it simpler", "I don't understand", "give me an analogy")
-    const asksSimplerOrFollowUp =
-      /\b(simpler|simplify|simple words|easier to understand|easy words|hard to understand|confusing|don't get it|dont get it|don't understand|dont understand|didn't get|analogy|example|like i'm|beginner|layman|tagalog|bisaya|cebuano|in simpler|break it down|elaborate|tell me more|explain more)\b/i.test(
-        low
-      ) ||
-      (low.split(/\s+/).length <= 5 &&
-        /^(?:why|why is that|why does that happen|how come|again|what do you mean|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)[?!.\s]*$/i.test(
-          low
-        ));
-    if (asksSimplerOrFollowUp && state.conversationMemory.turnCount > 0 && !detectVariableOrConceptTopic(low)) {
-      return {
-        intent: "simplify_follow_up",
-        ideaCode: state.conversationMemory.lastIdeaCode || "I1",
-        topicKey: state.conversationMemory.lastTopicKey || null,
-      };
-    }
-
-    // 6. Math calculations ("what is (30+32+31)/3", "average of 40, 42, 41", etc.)
+    // 6. Math calculations
     if (
       /\b(calculate|compute|what is|average of|mean of|plus|minus|times|divided by)\b/i.test(low) &&
       /[0-9]+\s*(?:\+|\-|\*|\/|÷|x|\,|plus|minus|divided|times)/i.test(low) &&
       !/\b(trial|bubble|cm|lux|dark)\b/i.test(low)
     ) {
-      return { intent: "math_eval", ideaCode: state.conversationMemory.lastIdeaCode || "I6", topicKey: null };
+      return { intent: "math_eval", ideaCode: mem.lastIdeaCode || "I6", topicKey: null };
     }
 
-    // 7. Live Simulation Data & Quantitative Result Queries ("why is my mean in trial 1 30 bubble count", "compare my 10 cm and 40 cm")
+    // 7. Live Simulation Data & Quantitative Result Queries
     const hasMetricNumber = /\b\d+(?:\.\d+)?\b/.test(low);
     const asksOwnData =
       /\b(my|our|i got|we got|did i|trial\s*[123]|in trial|bubble count|why is my|mean is|mean in|explain my|my table|my graph|my data|compare my|my results|my trend|current temp|water temp right now)\b/i.test(
@@ -2370,19 +2742,69 @@
       return { intent: "sim_data_query", ideaCode: "I6", topicKey: "sim_data_query" };
     }
 
-    // 8. Friendly Smalltalk / Greetings / Acknowledgements
+    // 8. Conversational continuation / "yes" / "tell me more" / "explain that differently"
     if (
-      /^(hi|hello|hey|yo|good morning|good afternoon|good evening|kumusta|kamusta|thank you|thanks|ty|salamat|ok|okay|got it|cool|awesome|who are you|what is your name|how are you|hello biovoice|hi biovoice|hey nova)[!.?,\s]*$/i.test(
+      /^(yes|yeah|yep|yup|sure|ok|okay|please|go ahead|go on|continue|yes please|tell me more|more|next|oo|sige|oo nga|cge|(?:the\s+)?(?:first|1st|second|2nd|third|3rd)\s+one)[!.?,\s]*$/i.test(
+        low
+      ) ||
+      (FOLLOW_UP_ANGLE_REGEX.test(low) && mem.turnCount > 0)
+    ) {
+      return { intent: "conversational_follow_up", ideaCode: mem.lastIdeaCode || "I1", topicKey: mem.lastTopicKey || null };
+    }
+
+    // 9. Simplification / Beginner Follow-up
+    const asksSimplerOrFollowUp =
+      /\b(simpler|simplify|simple words|easier to understand|easy words|hard to understand|confusing|don't get it|dont get it|don't understand|dont understand|didn't get|analogy|like i'm|beginner|layman|in simpler|break it down|elaborate)\b/i.test(
+        low
+      ) ||
+      (low.split(/\s+/).length <= 5 &&
+        /^(?:why|why is that|why does that happen|how come|again|what do you mean|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)[?!.\s]*$/i.test(
+          low
+        ));
+    if (asksSimplerOrFollowUp && mem.turnCount > 0 && !detectVariableOrConceptTopic(low)) {
+      return {
+        intent: "simplify_follow_up",
+        ideaCode: mem.lastIdeaCode || "I1",
+        topicKey: mem.lastTopicKey || null,
+      };
+    }
+
+    // 10. Friendly Smalltalk / Greetings / Acknowledgements
+    if (
+      /^(hi|hello|hey|yo|good morning|good afternoon|good evening|kumusta|kamusta|thank you|thanks|ty|salamat|got it|cool|awesome|nice|great|how are you|hello biovoice|hi biovoice|hey nova)[!.?,\s]*$/i.test(
         low
       )
     ) {
-      return { intent: "conversational_smalltalk", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+      return { intent: "conversational_smalltalk", ideaCode: mem.lastIdeaCode || "I1", topicKey: null };
     }
 
-    // 9. Explicit plain-language Concept & Variable deep-dive matching
+    // 11. Current status, step info, or rotating photosynthesis fun fact
+    if (
+      /\b(fun\s+fact|cool\s+fact|trivia|amazing\s+fact|did\s+you\s+know|surprise\s+me|what\s+step\s+am\s+i|where\s+am\s+i|current\s+step|my\s+progress|status\s+of\s+my\s+lab|what\s+did\s+i\s+write|my\s+notes|current\s+setup|current\s+beaker)\b/i.test(
+        low
+      )
+    ) {
+      return { intent: "step_status_or_fact", ideaCode: mem.lastIdeaCode || "I1", topicKey: null };
+    }
+
+    // 12. Counterfactual "What if..." lab scenarios
+    if (
+      /\b(what\s+if|what\s+happens\s+if|what\s+would\s+happen|suppose|if\s+i\s+|if\s+we\s+|if\s+the\s+|without\s+(?:light|sun|co2|water|chlorophyll|baking\s+soda|plants))\b/i.test(
+        low
+      )
+    ) {
+      return { intent: "what_if_scenario", ideaCode: mem.lastIdeaCode || "I7", topicKey: null };
+    }
+
+    // 13. Side-by-side comparison / "difference between X and Y" / "X vs Y"
+    if (/\b(difference\s+between|compare\s+.+\s+(?:and|with|to|vs)|versus|\bvs\.?\b|different\s+from)\b/i.test(low)) {
+      return { intent: "comparison_query", ideaCode: mem.lastIdeaCode || "I8", topicKey: null };
+    }
+
+    // 14. Dedicated Plain-Language Lab Concept & Variable Topics
     const matchedTopic = detectVariableOrConceptTopic(low);
     if (matchedTopic) {
-      const topicObj = CONCEPT_TUTOR_TOPICS[matchedTopic];
+      const topicObj = CONCEPT_TUTOR_TOPICS[matchedTopic] || MICRO_CONCEPT_ANSWERS[matchedTopic];
       return {
         intent: "concept_tutor",
         topicKey: matchedTopic,
@@ -2390,16 +2812,16 @@
       };
     }
 
-    // 10. General/Off-Topic Query OR unfamiliar biology lookup
-    if (!hasBiologyOrLabKeywords(low)) {
+    // 15. General Open-World OR Non-Lab Biology Questions -> Live Web Knowledge + Core Photosynthesis Bridge!
+    if (!isStrictlyLabProtocolQuery(low)) {
       return {
         intent: "general_knowledge_redirect",
-        ideaCode: state.conversationMemory.lastIdeaCode || "I1",
+        ideaCode: mem.lastIdeaCode || "I1",
         topicKey: null,
       };
     }
 
-    // 11. Core Idea Mapping I1–I9
+    // 16. Core Idea Mapping I1–I9 (only for explicit Hydrilla/simulation protocol queries)
     if (/\b(dark|night|ngitngit|dilim|0 lx|lamp off|palong|patay ang ilaw|control setup)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I4", topicKey: "dark_night_respiration" };
     }
@@ -2425,7 +2847,7 @@
       return { intent: "concept", ideaCode: "I2", topicKey: "equation_walkthrough" };
     }
     if (/\b(light|chlorophyll|photon|kahayag|liwanag|predict|photosynthesis)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I1", topicKey: "chloroplast_parts" };
+      return { intent: "concept", ideaCode: "I1", topicKey: "equation_walkthrough" };
     }
 
     const spDefaultMap = { sp1: "I1", sp2: "I7", sp3: "I3", sp4: "I5", sp5: "I8", sp6: "I9" };
@@ -2674,7 +3096,7 @@
       },
     };
     const pick = quizzes[state.supportPoint] || quizzes.sp1;
-    state.conversationMemory.pendingQuiz = {
+    ensureConversationMemoryDefaults().pendingQuiz = {
       ideaCode: (ACTIVITY_STEPS[state.currentStepIndex] && ACTIVITY_STEPS[state.currentStepIndex].sp === "sp2") ? "I7" : "I3",
       keywords: pick.keywords,
       ideal: pick.ideal,
@@ -2684,8 +3106,9 @@
   }
 
   function gradeStudentQuizReply(rawQuestion) {
-    const pq = state.conversationMemory.pendingQuiz;
-    state.conversationMemory.pendingQuiz = null;
+    const mem = ensureConversationMemoryDefaults();
+    const pq = mem.pendingQuiz;
+    mem.pendingQuiz = null;
     if (!pq) return "Awesome curiosity! Let's jump right back into the simulation—what would you like to explore?";
     const low = String(rawQuestion || "").toLowerCase();
     const hits = (pq.keywords || []).filter((kw) => low.includes(kw));
@@ -2699,64 +3122,93 @@
     let clean = String(rawQuestion || "").trim();
     clean = clean
       .replace(/[?!.]+$/g, "")
-      .replace(/^(?:hey\s+biovoice|biovoice|nova|please|can\s+you|could\s+you|tell\s+me|explain\s+to\s+me|help\s+me\s+understand)\s+/i, "")
-      .replace(/^(?:what\s+is\s+the\s+meaning\s+of|what\s+does\s+|what\s+is|what's|what\s+are|who\s+is|who\s+was|how\s+does|how\s+do|why\s+is|define|meaning\s+of|explain|ano\s+ang|ano\s+ibig\s+sabihin\s+ng|unsa\s+ang|unsay\s+pasabot\s+sa)\s+/i, "")
+      .replace(/^(?:hey\s+biovoice|biovoice|nova|please|can\s+you|could\s+you|tell\s+me|explain\s+to\s+me|help\s+me\s+understand|do\s+you\s+know|teach\s+me\s+about)\s+/i, "")
+      .replace(/^(?:what\s+is\s+the\s+meaning\s+of|what\s+does\s+|what\s+is|what's|what\s+are|who\s+is|who\s+was|who\s+invented|how\s+does|how\s+do|how\s+is|why\s+is|why\s+are|why\s+do|why\s+does|define|meaning\s+of|explain|about|ano\s+ang|ano\s+ibig\s+sabihin\s+ng|unsa\s+ang|unsay\s+pasabot\s+sa)\s+/i, "")
       .replace(/\b(?:mean|means|meaning|work|works)\s*$/i, "")
       .replace(/^(?:a|an|the)\s+/i, "")
       .trim();
     return clean;
   }
 
+  function cleanEncyclopediaExtract(rawText) {
+    const clean = String(rawText || "")
+      .replace(/\[[0-9]+\]/g, "")
+      .replace(/\s*\([^)]*(?:listen|pronunciation|\/[^/]+\/)[^)]*\)/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!clean) return "";
+    const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
+    let joined = "";
+    for (let i = 0; i < Math.min(3, sentences.length); i++) {
+      const next = (joined ? joined + " " : "") + sentences[i].trim();
+      if (joined && next.length > 360) break;
+      joined = next;
+    }
+    return joined.trim();
+  }
+
   async function lookupWikipediaSummary(topic) {
     if (!topic || typeof fetch !== "function") return null;
     const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timer = ctrl ? setTimeout(() => ctrl.abort(), 3500) : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
+    const sig = ctrl ? ctrl.signal : undefined;
     try {
-      const slug = encodeURIComponent(topic.replace(/\s+/g, "_"));
-      const directRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`, {
-        signal: ctrl ? ctrl.signal : undefined,
-      });
-      if (directRes.ok) {
-        const data = await directRes.json();
-        if (data && data.extract && data.type !== "disambiguation") {
-          const sentences = data.extract.match(/[^.!?]+[.!?]+/g) || [data.extract];
-          return sentences.slice(0, 2).join(" ").trim();
-        }
-      }
-      // Opensearch fallback
-      const searchRes = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(topic)}&limit=1&namespace=0&format=json&origin=*`,
-        { signal: ctrl ? ctrl.signal : undefined }
-      );
-      if (searchRes.ok) {
-        const arr = await searchRes.json();
-        const bestTitle = Array.isArray(arr) && Array.isArray(arr[1]) ? arr[1][0] : "";
-        if (bestTitle) {
-          const sumRes = await fetch(
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestTitle.replace(/\s+/g, "_"))}`,
-            { signal: ctrl ? ctrl.signal : undefined }
-          );
-          if (sumRes.ok) {
-            const sumData = await sumRes.json();
-            if (sumData && sumData.extract) {
-              const sentences = sumData.extract.match(/[^.!?]+[.!?]+/g) || [sumData.extract];
-              return sentences.slice(0, 2).join(" ").trim();
-            }
+      // 1. Single-shot Wikipedia full-query Search + Extracts API (handles full natural questions!)
+      const searchExtractUrl =
+        `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(topic)}` +
+        `&gsrlimit=1&prop=extracts&exintro=1&explaintext=1&exsentences=3&format=json&origin=*`;
+      const qRes = await fetch(searchExtractUrl, { signal: sig });
+      if (qRes.ok) {
+        const qJson = await qRes.json();
+        const pages = qJson && qJson.query && qJson.query.pages ? Object.values(qJson.query.pages) : [];
+        if (pages.length && pages[0].extract) {
+          const polished = cleanEncyclopediaExtract(pages[0].extract);
+          if (polished && !/may refer to:\s*$/i.test(polished)) {
+            return polished;
           }
         }
       }
-      // DuckDuckGo Instant Answer fallback (clean CORS JSON for definitions & quick facts)
+
+      // 2. Direct Wikimedia REST Page Summary
+      const slug = encodeURIComponent(topic.replace(/\s+/g, "_"));
+      const directRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`, { signal: sig });
+      if (directRes.ok) {
+        const data = await directRes.json();
+        if (data && data.extract && data.type !== "disambiguation") {
+          return cleanEncyclopediaExtract(data.extract);
+        }
+      }
+
+      // 3. Free Dictionary API (helpful for vocabulary words / phrases like idioms or terms)
+      if (topic.split(/\s+/).length <= 2) {
+        const dictRes = await fetch(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(topic.toLowerCase())}`,
+          { signal: sig }
+        );
+        if (dictRes.ok) {
+          const entries = await dictRes.json();
+          const firstDef =
+            Array.isArray(entries) &&
+            entries[0] &&
+            Array.isArray(entries[0].meanings) &&
+            entries[0].meanings[0] &&
+            Array.isArray(entries[0].meanings[0].definitions) &&
+            entries[0].meanings[0].definitions[0];
+          if (firstDef && firstDef.definition) {
+            return cleanEncyclopediaExtract(`${topic} (${entries[0].meanings[0].partOfSpeech || "term"}): ${firstDef.definition}`);
+          }
+        }
+      }
+
+      // 4. DuckDuckGo Instant Answer JSON fallback
       const ddgRes = await fetch(
         `https://api.duckduckgo.com/?q=${encodeURIComponent(topic)}&format=json&no_html=1&skip_disambig=1`,
-        { signal: ctrl ? ctrl.signal : undefined }
+        { signal: sig }
       );
       if (ddgRes.ok) {
         const ddg = await ddgRes.json();
         const abs = (ddg && (ddg.AbstractText || ddg.Definition || ddg.Answer)) || "";
-        if (abs) {
-          const sentences = abs.match(/[^.!?]+[.!?]+/g) || [abs];
-          return sentences.slice(0, 2).join(" ").trim();
-        }
+        if (abs) return cleanEncyclopediaExtract(abs);
       }
     } catch (_) {
       // Network offline or timeout
@@ -2766,34 +3218,74 @@
     return null;
   }
 
+  function buildTopicalPhotosynthesisBridge(rawQuestion, langKey, snapshot) {
+    const low = String(rawQuestion || "").toLowerCase();
+    const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+    const turn = (ensureConversationMemoryDefaults().turnCount || 0);
+
+    if (langKey === "fil") {
+      const opts = [
+        `Balik tayo sa lab natin sandali: sa photosynthesis, ganyan din ka-konektado ang liwanag, tubig, at CO₂ para makagawa ng oxygen at pagkain sa ${snapshot.selectedPlant} mo sa ${distLabel}!`,
+        `Ngayon, pag-usapan natin ulit ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C)—ano ang gusto mong i-test o itanong sa ${snapshot.currentStep}?`,
+      ];
+      return opts[turn % opts.length];
+    }
+    if (langKey === "ceb") {
+      const opts = [
+        `Karon balik ta sa core sa photosynthesis: sama sa imong gipangutana, nindot sab tan-awon giunsa pagbag-o sa ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C) ang kahayag ngadto sa preskong oxygen!`,
+        `Balik ta sa atong ${snapshot.currentStep}—naa ba kay gustong sulayan o ipasabot sa imong ${snapshot.selectedPlant} setup?`,
+      ];
+      return opts[turn % opts.length];
+    }
+
+    if (/\b(light|color|sky|sun|solar|star|rainbow|wavelength|photon|blue|red|green)\b/i.test(low)) {
+      return `Speaking of light—right here in photosynthesis, ${snapshot.selectedPlant} uses those exact red and blue light waves like tiny solar panels! Your lamp at ${distLabel} is testing how light brightness drives oxygen bubble speed.`;
+    }
+    if (/\b(food|eat|sugar|bread|cook|energy|calorie|fruit|glucose)\b/i.test(low)) {
+      return `Speaking of food energy—almost every calorie in our diet traces back to plants turning sunlight, water, and CO₂ into glucose sugar right inside the chloroplast's stroma! Want to see how ${snapshot.selectedPlant} at ${distLabel} is doing right now?`;
+    }
+    if (/\b(air|breath|lung|oxygen|co2|carbon|climate|ocean|water|fish|warm|earth)\b/i.test(low)) {
+      return `Notice the cool Earth link: every bubble escaping ${snapshot.selectedPlant} in your beaker is the same photosynthetic cycle keeping atmospheric oxygen breathable and pulling carbon dioxide out of air and water!`;
+    }
+
+    const rotatingBridges = [
+      `Connecting back to our core topic: photosynthesis powers life on Earth the same clean way—turning light + water + CO₂ into oxygen and food right inside ${snapshot.selectedPlant} (${distLabel}, ${snapshot.liveWaterTemp} °C)!`,
+      `Now tying that curiosity back into ${snapshot.currentStep}: want to test a variable, inspect what happens in Night mode, or check any concept from your Hydrilla beaker?`,
+      `Pretty fascinating, right? Whenever you're ready to jump back to photosynthesis—ask me why brightness plateaus at 10 cm, test a 'what-if' scenario, or ask another outside question!`,
+    ];
+    return rotatingBridges[turn % rotatingBridges.length];
+  }
+
   async function answerGeneralQuestionWithRedirect(rawQuestion, langKey, snapshot) {
     const topic = extractSearchTopicFromQuestion(rawQuestion);
     const topicLower = topic.toLowerCase();
 
     let factAnswer = GENERAL_KNOWLEDGE_MINI_KB[topicLower] || "";
     if (!factAnswer) {
-      const matchedKey = Object.keys(GENERAL_KNOWLEDGE_MINI_KB).find((k) => topicLower.includes(k));
+      const matchedKey = Object.keys(GENERAL_KNOWLEDGE_MINI_KB).find(
+        (k) => topicLower.includes(k) && k.length >= 3
+      );
       if (matchedKey) factAnswer = GENERAL_KNOWLEDGE_MINI_KB[matchedKey];
     }
     if (!factAnswer && topic.length >= 2) {
       factAnswer = (await lookupWikipediaSummary(topic)) || "";
+      if (!factAnswer && rawQuestion.trim().toLowerCase() !== topicLower) {
+        factAnswer = (await lookupWikipediaSummary(rawQuestion.trim())) || "";
+      }
+    }
+
+    const bridge = buildTopicalPhotosynthesisBridge(rawQuestion, langKey, snapshot);
+    if (factAnswer) {
+      const hooks = ["Ooh, great question!", "Oh, I've got you!", "Good one!", "Here's the clear scoop:"];
+      const hook = hooks[(ensureConversationMemoryDefaults().turnCount || 0) % hooks.length];
+      return `${hook} ${factAnswer} ${bridge}`;
     }
 
     const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
-    const coreRedirect = {
-      en: `Now let's jump right back into our lab! We've got ${snapshot.selectedPlant} at ${distLabel} (${snapshot.liveWaterTemp} °C) on ${snapshot.currentStep}—want to check how your variables work or run a trial?`,
-      fil: `Ngayon, balik tayo sa ating lab experiment! Naka-setup ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C) para sa ${snapshot.currentStep}—ano ang gusto mong i-test o itanong sunod?`,
-      ceb: `Karon, balik ta sa atong photosynthesis lab! Naa ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C) sa ${snapshot.currentStep}—unsay gusto nimong sulayan o pangutan-on sunod?`,
-    };
-
-    if (factAnswer) {
-      return `Ooh, good question! ${factAnswer} ${coreRedirect[langKey] || coreRedirect.en}`;
-    }
-
     const offlineBridges = {
-      en: `Love the curiosity! I can't reach a live web dictionary for "${topic || rawQuestion}" right this moment without a Gemini key or internet connection—though if you check back online I'll grab that right away! Meanwhile, let's dive back into ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel}—any variable or bubble count you'd like broken down simply?`,
-      fil: `Magandang tanong! Hindi ko maabot ang live lookup para sa "${topic || rawQuestion}" ngayon, pero habang nandito tayo sa lab—balikan natin ang ${snapshot.selectedPlant} sa ${distLabel}. Aling concept o variable ang gusto mong ipaliwanag ko nang mas simple?`,
-      ceb: `Nindot ang imong pagkamausisaon! Dili nako ma-access ang live dictionary alang sa "${topic || rawQuestion}" karon dayon, busa balik usa ta sa ${snapshot.selectedPlant} sa ${distLabel}—unsang variable o parte sa photosynthesis ang gusto nimong pasabton sa pinakasayon nga paagi?`,
+      en: `Ooh, you stumped my offline memory on "${topic || rawQuestion}" right this second! Once connected to the web (or when Gemini is enabled in Researcher Console), I can look up virtually any topic live. Meanwhile, let's explore photosynthesis together—want to run a 'what-if' experiment on ${snapshot.selectedPlant} at ${distLabel} or unpack how chloroplasts turn light into food?`,
+      fil: `Magandang tanong iyan tungkol sa "${topic || rawQuestion}"! Hindi ko pa maabot ang live web search ngayon, pero habang nasa lab tayo, itanong mo kahit ano tungkol sa photosynthesis, 'what-if' scenarios, o variables ng ${snapshot.selectedPlant} sa ${distLabel}!`,
+      ceb: `Nindot unta nang pangutanaha bahin sa "${topic || rawQuestion}"! Dili pa makakonek ang live search karon dayon, busa samtang naa ta sa lab—sulayi kog pangutana og 'what-if' bahin sa ${snapshot.selectedPlant} sa ${distLabel} o pasabton nato ang photosynthesis sa sayon nga paagi!`,
     };
     return offlineBridges[langKey] || offlineBridges.en;
   }
@@ -2817,8 +3309,21 @@
     return "";
   }
 
+  function ensureNonRepetitiveReply(candidateReply, langKey, snapshot) {
+    const mem = ensureConversationMemoryDefaults();
+    const norm = String(candidateReply || "").toLowerCase().replace(/\s+/g, " ").trim().slice(0, 140);
+    const isDuplicate = mem.recentReplies.some((prev) => prev === norm);
+    if (!isDuplicate) return candidateReply;
+
+    // Guarantee fresh response on rare exact duplicate collisions
+    const altStory = SIMPLER_ANALOGY_BANK[mem.lastIdeaCode] || SIMPLER_ANALOGY_BANK.I1;
+    const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+    return `Let me put that a totally fresh way so I'm not repeating myself! ${altStory} Looking at ${snapshot.selectedPlant} right now at ${distLabel} (${snapshot.liveWaterTemp} °C), want to test a 'what-if' change or try a 1-question check?`;
+  }
+
   async function generateConversationalBioVoiceReply(questionText, langCode) {
     const langKey = langCode === "fil-PH" ? "fil" : langCode === "ceb-PH" ? "ceb" : "en";
+    const mem = ensureConversationMemoryDefaults();
     const classification = classifyQuestionAndConversationalIntent(questionText);
     const ideaCode = classification.ideaCode;
     const reqMap = { hint: "H", clarification: "C", explanation: "E" };
@@ -2828,15 +3333,21 @@
     }
     const snapshot = buildFullSimulationSnapshot();
     const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+    const low = String(questionText || "").trim().toLowerCase();
 
-    const finishReply = (reply, usedIdeaCode, actualType, topicKey, hintFirst) => {
-      state.conversationMemory.turnCount += 1;
-      state.conversationMemory.lastIdeaCode = usedIdeaCode || ideaCode;
-      if (topicKey !== undefined) state.conversationMemory.lastTopicKey = topicKey;
-      state.conversationMemory.lastSupportPoint = state.supportPoint;
-      state.conversationMemory.lastSupportType = actualType;
-      state.conversationMemory.lastQuestion = questionText;
-      state.conversationMemory.lastReply = reply;
+    const finishReply = (rawReply, usedIdeaCode, actualType, topicKey, hintFirst) => {
+      const reply = ensureNonRepetitiveReply(rawReply, langKey, snapshot);
+      const sig = reply.toLowerCase().replace(/\s+/g, " ").trim().slice(0, 140);
+      mem.recentReplies.push(sig);
+      if (mem.recentReplies.length > 8) mem.recentReplies.shift();
+
+      mem.turnCount += 1;
+      mem.lastIdeaCode = usedIdeaCode || ideaCode;
+      if (topicKey !== undefined) mem.lastTopicKey = topicKey;
+      mem.lastSupportPoint = state.supportPoint;
+      mem.lastSupportType = actualType;
+      mem.lastQuestion = questionText;
+      mem.lastReply = reply;
       return { reply, ideaCode: usedIdeaCode || ideaCode, actualType, hintFirst: Boolean(hintFirst) };
     };
 
@@ -2847,37 +3358,43 @@
         fil: "Gusto kong makita na ikaw mismo ang nakakaintindi kaya hindi ako makapagbibigay ng sagot sa Pretest o Posttest! Sabihin mo na lang kung aling concept ang nakakalito at ipapaliwanag ko ito nang napakasimple!",
         ceb: "Gusto nako nga makat-on ka mismo maong dili ko makahatag og tubag sa Pretest o Posttest! Ingna lang ko unsang konsepto ang lisod sabton, ug ako ning pasimplehon para nimo!",
       };
-      return finishReply(refusals[langKey], ideaCode, "H", state.conversationMemory.lastTopicKey, true);
+      return finishReply(refusals[langKey], ideaCode, "H", mem.lastTopicKey, true);
     }
 
-    // 2. Smalltalk / Greeting (lively Nova personality)
+    // 2. BioVoice Self-Awareness
+    if (classification.intent === "self_inquiry") {
+      const selfText = handleSelfAwarenessQuery(low, langKey, snapshot);
+      return finishReply(selfText, mem.lastIdeaCode || "I1", "C", "__self", false);
+    }
+
+    // 3. Friendly Smalltalk / Greetings
     if (classification.intent === "conversational_smalltalk") {
       const nameTag = state.isSandbox ? "friend" : (state.participantCode || "friend");
       const greetings = {
-        en: `Hey ${nameTag}! I'm BioVoice—ready when you are! Right now we've got ${snapshot.selectedPlant} set at ${distLabel} in ${snapshot.dayNightMode} (${snapshot.liveWaterTemp} °C). Want me to break down the variables simply, walk through your numbers, or tackle a tricky concept?`,
-        fil: `Kumusta ${nameTag}! Ako si BioVoice, handang tumulong anumang oras! Naka-setup ngayon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Gusto mo bang ipaliwanag ko nang simple ang mga variables o pag-usapan ang resulta mo?`,
-        ceb: `Kumusta ${nameTag}! Ako si BioVoice, andam kanunay motabang! Naa karon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Gusto ka bang pasabton nako sa pinakasayon ang mga variables o tan-awon nato ang imong datos?`,
+        en: `Hey ${nameTag}! I'm BioVoice—ready when you are! Right now we've got ${snapshot.selectedPlant} set at ${distLabel} in ${snapshot.dayNightMode} (${snapshot.liveWaterTemp} °C). Ask me literally anything—variables, 'what-if' ideas, tough terms, or even an outside trivia question!`,
+        fil: `Kumusta ${nameTag}! Ako si BioVoice, handang tumulong anumang oras! Naka-setup ngayon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Magtanong ka ng kahit ano—tungkol sa variables, eksperimento, o iba pang paksa!`,
+        ceb: `Kumusta ${nameTag}! Ako si BioVoice, andam kanunay motabang! Naa karon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Pangutana lang bisan unsa—variables, 'what-if' ideas, o bisan unsang pangutana sa kalibutan!`,
       };
-      return finishReply(greetings[langKey], ideaCode, "C", state.conversationMemory.lastTopicKey, false);
+      return finishReply(greetings[langKey], ideaCode, "C", mem.lastTopicKey, false);
     }
 
-    // 3. Student Answer / Prediction Draft Checker
+    // 4. Student Answer / Prediction Draft Checker
     if (classification.intent === "check_my_work") {
       const checkReply = evaluateStudentWorkDraft(questionText, langKey, snapshot);
-      return finishReply(checkReply, ideaCode, "C", state.conversationMemory.lastTopicKey, false);
+      return finishReply(checkReply, ideaCode, "C", mem.lastTopicKey, false);
     }
 
-    // 4. Interactive Quiz Mode
+    // 5. Interactive Quiz Mode
     if (classification.intent === "quiz_request") {
       const qReply = generateQuizQuestion(snapshot);
-      return finishReply(qReply, ideaCode, "H", state.conversationMemory.lastTopicKey, true);
+      return finishReply(qReply, ideaCode, "H", mem.lastTopicKey, true);
     }
     if (classification.intent === "quiz_grade") {
       const gReply = gradeStudentQuizReply(questionText);
-      return finishReply(gReply, ideaCode, "E", state.conversationMemory.lastTopicKey, false);
+      return finishReply(gReply, ideaCode, "E", mem.lastTopicKey, false);
     }
 
-    // 5. Safe Arithmetic / Mean Calculator
+    // 6. Safe Arithmetic / Mean Calculator
     if (classification.intent === "math_eval") {
       const mathAns = tryEvaluateMathQuery(questionText);
       if (mathAns) {
@@ -2885,17 +3402,25 @@
       }
     }
 
-    // 6. Live Simulation Data & Quantitative Result Analysis
+    // 7. Live Simulation Data & Quantitative Result Analysis
     if (classification.intent === "sim_data_query") {
       const dataReply = analyzeSimulationDataQuestion(questionText, langKey, snapshot);
       return finishReply(dataReply, "I6", "E", "sim_data_query", false);
     }
 
-    // 7. Simplification / Everyday-Analogy Follow-up (builds dynamically on previous topic!)
+    // 8. Conversational Follow-up ("yes", "sure", "the first one", "explain differently")
+    if (classification.intent === "conversational_follow_up") {
+      const cont = handleConversationalFollowUp(low, langKey, snapshot);
+      if (cont) {
+        return finishReply(cont.reply, cont.ideaCode, cont.actualType || "E", cont.topicKey, false);
+      }
+    }
+
+    // 9. Simplification / Everyday-Analogy Follow-up
     if (classification.intent === "simplify_follow_up") {
-      const prevTopicKey = state.conversationMemory.lastTopicKey;
+      const prevTopicKey = mem.lastTopicKey;
       const prevTopic = prevTopicKey && CONCEPT_TUTOR_TOPICS[prevTopicKey];
-      state.conversationMemory.simplificationDepth = (state.conversationMemory.simplificationDepth || 0) + 1;
+      mem.simplificationDepth = (mem.simplificationDepth || 0) + 1;
       if (prevTopic && prevTopic[langKey] && prevTopic[langKey].analogy) {
         return finishReply(
           `Ooh, let's drop all the textbook words and make this crystal clear! ${prevTopic[langKey].analogy} Makes way more sense when you picture it like that, right?`,
@@ -2924,34 +3449,46 @@
       );
     }
 
-    // 8. Dedicated Thorough & Plain-Language Concept & Variable Tutor
+    // 10. Status, Progress & Fun Facts
+    if (classification.intent === "step_status_or_fact") {
+      const statusOut = tryAnswerStepOrStatusQuery(low, langKey, snapshot);
+      if (statusOut) return finishReply(statusOut.reply, statusOut.ideaCode, "C", mem.lastTopicKey, false);
+    }
+
+    // 11. Compositional "What-If" Causal Scenarios
+    if (classification.intent === "what_if_scenario") {
+      const whatIfOut = tryAnswerWhatIfScenario(low, langKey, snapshot);
+      if (whatIfOut) return finishReply(whatIfOut, "I7", "E", "what_if_scenario", false);
+      // General "what if" outside core lab falls through smoothly to open knowledge!
+      const openWhatIf = await answerGeneralQuestionWithRedirect(questionText, langKey, snapshot);
+      return finishReply(openWhatIf, ideaCode, "C", mem.lastTopicKey, false);
+    }
+
+    // 12. Side-by-Side Comparison / Contrast ("X vs Y", "difference between X and Y")
+    if (classification.intent === "comparison_query") {
+      const cmpOut = await tryAnswerComparisonQuery(questionText, low, langKey, snapshot);
+      if (cmpOut) return finishReply(cmpOut.reply, cmpOut.ideaCode, "E", "comparison", false);
+    }
+
+    // 13. Multi-Angle Granular Concept & Variable Tutor
     if (classification.intent === "concept_tutor" && classification.topicKey) {
-      state.conversationMemory.simplificationDepth = 0;
-      const topicObj = CONCEPT_TUTOR_TOPICS[classification.topicKey];
-      const localized = (topicObj && topicObj[langKey]) || (topicObj && topicObj.en);
-      if (localized) {
-        const asksForAnalogy = /\b(analogy|example|simple)\b/i.test(questionText);
-        const body = asksForAnalogy && localized.analogy
-          ? `${localized.summary} ${localized.analogy}`
-          : localized.summary;
-        const simAdd = classification.topicKey === "plant_comparison" ? "" : buildSimulationContextAddendum(langKey);
-        return finishReply(`${body}${simAdd}`.trim(), topicObj.ideaCode || ideaCode, "E", classification.topicKey, false);
+      mem.simplificationDepth = 0;
+      const picked = pickFreshTopicReply(classification.topicKey, langKey, snapshot, false);
+      if (picked) {
+        return finishReply(picked.reply, picked.ideaCode, picked.actualType, picked.topicKey, false);
       }
     }
 
-    // 9. Off-Topic / General Knowledge -> Accurate Answer + Warm Lab Redirect
+    // 14. Open-World & Non-Lab Biology Live Knowledge Lookup + Core Photosynthesis Bridge
     if (classification.intent === "general_knowledge_redirect") {
       const replyText = await answerGeneralQuestionWithRedirect(questionText, langKey, snapshot);
-      return finishReply(replyText, ideaCode, "C", state.conversationMemory.lastTopicKey, false);
+      return finishReply(replyText, ideaCode, "C", mem.lastTopicKey, false);
     }
 
-    // 10. Multi-turn escalation on core Idea I1–I9 (Hint -> Clarification -> Thorough Simple Explanation)
+    // 15. Multi-angle core Idea I1–I9 fallback for direct Hydrilla lab questions
     let followUpPrefix = "";
-    if (
-      classification.intent === "follow_up_expand" ||
-      (state.conversationMemory.turnCount > 0 && state.conversationMemory.lastIdeaCode === ideaCode && targetTier !== "E")
-    ) {
-      const prevTier = state.conversationMemory.lastSupportType || "H";
+    if (mem.turnCount > 0 && mem.lastIdeaCode === ideaCode && targetTier !== "E") {
+      const prevTier = mem.lastSupportType || "H";
       targetTier = prevTier === "H" ? "C" : "E";
       const prefixes = {
         en: "Let's dig a little deeper on that! ",
@@ -2966,7 +3503,7 @@
     const simAddendum = targetTier !== "H" ? buildSimulationContextAddendum(langKey) : "";
 
     const finalReply = `${followUpPrefix}${baseText}${simAddendum}`.trim();
-    return finishReply(finalReply, ideaCode, targetTier, classification.topicKey || state.conversationMemory.lastTopicKey, targetTier === "H");
+    return finishReply(finalReply, ideaCode, targetTier, classification.topicKey || mem.lastTopicKey, targetTier === "H");
   }
 
   function initBioVoiceGreeting() {
@@ -2981,6 +3518,9 @@
       lastSupportType: "hint",
       simplificationDepth: 0,
       pendingQuiz: null,
+      pendingOffer: null,
+      topicVisitCounts: {},
+      recentReplies: [],
       lastQuestion: "",
       lastReply: "",
       messages: [],
@@ -2988,10 +3528,10 @@
 
     const greeting =
       state.isSandbox
-        ? "Hey there! I'm BioVoice—your friendly lab partner! Ask me anything in plain words—like breaking down our variables, explaining tough biology terms with simple analogies, checking your trial numbers, or even everyday questions—and I'll talk you right through it!"
-        : `Hey ${state.participantCode}! I'm BioVoice, your Grade 11 Biology lab partner! Ask me in English, Filipino, or Cebuano—whether you want variables explained simply, help understanding your bubble counts, or a quick check on your prediction, I've got your back!`;
+        ? "Hey there! I'm BioVoice—your AI biology partner! Ask me literally anything—like what I am, 'what if we use green light?', breaking down variables simply, or any real-world question—and I'll talk it through clearly while tying it back to photosynthesis!"
+        : `Hey ${state.participantCode}! I'm BioVoice, your Grade 11 AI Biology partner! Ask me anything in English, Filipino, or Cebuano—variables, 'what-if' tests, simple analogies, your bubble numbers, or everyday curiosity—and I'll guide you step by step!`;
 
-    appendChatBubble("assistant", greeting, "BioVoice · Nova Companion Ready (Live Sim Aware)");
+    appendChatBubble("assistant", greeting, "BioVoice · Nova Companion Ready (Ask Anything · Photosynthesis Core)");
     renderPromptChips();
   }
 
@@ -4976,11 +5516,19 @@
           },
           body: JSON.stringify({ action, geminiApiKey, geminiModel })
         });
-        const data = await res.json();
+        const rawText = await res.text();
+        let data = {};
+        try {
+          data = rawText ? JSON.parse(rawText) : {};
+        } catch (_) {
+          data = {
+            error: `Backend returned non-JSON HTTP ${res.status}. Pull the latest server.py to PythonAnywhere and click Reload in the Web tab first.`
+          };
+        }
         if (!res.ok) {
           if (st) {
             st.hidden = false;
-            st.textContent = data.error || "Unable to update AI provider settings.";
+            st.textContent = data.error || `Unable to update AI provider settings (HTTP ${res.status}).`;
           }
           return;
         }
