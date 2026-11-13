@@ -331,6 +331,9 @@
     supportType: "hint", // "hint" | "clarification" | "explanation"
     voiceMuted: false,
     voiceSpeed: 1.0,
+    voicePersona: "nova", // "nova" | "mentor" | "studio"
+    speechSequenceId: 0,
+    speechTimers: [],
     lastSpokenText: "",
     lastSpokenLang: "en-PH",
     lastInteractionId: null,
@@ -1117,13 +1120,13 @@
     state.liveWaterTemp = temp;
 
     if ($("readout-water-temp")) {
-      let hint = "Daytime Sun & Buffer";
+      let hint = "Stabilized 0.2% NaHCO₃ · Active Enzymes";
       if (state.isNightTime) {
-        hint = "Cold Night · Slower Enzymes";
+        hint = "Cold Night · Slower Enzymes (0.2% NaHCO₃)";
       } else if (state.selectedDistance === "dark") {
-        hint = "Dark Control · Shielded";
+        hint = "Dark Control · 0.2% NaHCO₃ Buffer";
       } else if (temp > 26.2) {
-        hint = "Sun + Lamp Warmth · Active Enzymes";
+        hint = "Lamp Warmth · Active Enzymes (0.2% NaHCO₃)";
       }
       $("readout-water-temp").textContent = `${temp.toFixed(1)} °C (${hint})`;
     }
@@ -1950,17 +1953,17 @@
     I5: {
       title: "High-light leveling off",
       en: {
-        H: "Look closely at the curve between 20 cm and 10 cm: Even when light intensity more than doubles (1,100 lx to 2,500 lx), why doesn't the bubble count double forever?",
+        H: "Look closely at the curve between 20 cm and 10 cm: Even when light intensity jumps from 625 lx to 2,500 lx (4× brighter), why doesn't the bubble count quadruple?",
         C: "At high light intensity, chlorophyll is already working near capacity, so another factor—such as dissolved CO₂ supply or Calvin cycle enzyme speed (RuBisCO)—becomes the limiting factor, causing the curve to level off.",
         E: "This plateau is called light saturation. At 10 cm, the light-dependent reactions produce plenty of ATP and NADPH, but the overall rate of photosynthesis is limited by how fast Calvin cycle enzymes and dissolved CO₂ (from 0.2% NaHCO₃) can fix carbon in the stroma.",
       },
       fil: {
-        H: "Tingnan ang pagitan ng 20 cm at 10 cm sa graph: Kahit mahigit doble ang itinaas ng lux (1,100 lx tungong 2,500 lx), bakit hindi nag-doble nang tuloy-tuloy ang bilang ng bubbles?",
+        H: "Tingnan ang pagitan ng 20 cm at 10 cm sa graph: Kahit umakyat mula 625 lx tungong 2,500 lx ang liwanag, bakit hindi nito dinoble o ginawang apat na beses ang bilang ng bubbles?",
         C: "Sa napakataas na liwanag, halos puno na ang kapasidad ng chloroplast, kaya ibang salik na—tulad ng dissolved CO₂ o bilis ng enzymes sa Calvin cycle—ang nagiging limiting factor.",
         E: "Tinatawag itong light saturation. Sa 10 cm, sapat na ang liwanag para sa ATP at NADPH, ngunit nililimitahan na ng dami ng dissolved CO₂ at bilis ng Calvin cycle enzymes sa stroma ang kabuuang bilis ng photosynthesis kaya nagle-level off ang graph.",
       },
       ceb: {
-        H: "Tan-awa ang kalainan sa 20 cm ug 10 cm sa graph: Bisan og kapin sa doble ang pagsaka sa kahayag (1,100 lx ngadto sa 2,500 lx), nganong dili man mo-doble sa walay katapusan ang ihap sa bula?",
+        H: "Tan-awa ang kalainan sa 20 cm ug 10 cm sa graph: Bisan og nisaka gikan 625 lx ngadto sa 2,500 lx ang kahayag, nganong dili man mo-upat ka pilo ang ihap sa bula?",
         C: "Sa kusog kaayo nga kahayag, hapit na mapuno ang kapasidad sa chloroplast, busa laing factor—sama sa dissolved CO₂ o katulinon sa Calvin cycle enzymes—ang mahimong limiting factor.",
         E: "Gitawag kini og light saturation. Sa 10 cm, abunda na ang ATP ug NADPH gikan sa kahayag, apan ang kinatibuk-ang rate sa photosynthesis gilimitahan na sa suplay sa CO₂ ug sa enzymes sa Calvin cycle sulod sa stroma.",
       },
@@ -2039,99 +2042,360 @@
     },
   };
 
-  function classifyQuestionAndConversationalIntent(rawQuestion) {
-    const q = String(rawQuestion || "").toLowerCase();
+  // Built-in factual knowledge base for immediate general answers (always available offline)
+  const GENERAL_KNOWLEDGE_MINI_KB = {
+    "pro bono": "Pro bono (short for Latin 'pro bono publico', meaning 'for the public good') describes professional work—such as legal, medical, or educational services—undertaken voluntarily and without payment as a service to the community.",
+    "pro bono publico": "Pro bono publico is a Latin phrase meaning 'for the public good,' referring to professional work done voluntarily and free of charge to serve others.",
+    "quid pro quo": "Quid pro quo is a Latin phrase meaning 'something for something'—an equal exchange or favor where one thing is given in return for another.",
+    "status quo": "Status quo is a Latin term meaning the existing state of affairs, especially regarding social, political, or everyday conditions.",
+    "carpe diem": "Carpe diem is a Latin aphorism meaning 'seize the day,' encouraging you to make the most of the present moment.",
+    "empathy": "Empathy is the ability to understand and share another person's feelings or perspective.",
+    "osmosis": "Osmosis is the movement of water molecules across a selectively permeable membrane from a region of lower solute concentration to higher solute concentration.",
+    "diffusion": "Diffusion is the passive movement of molecules or ions from an area of higher concentration to an area of lower concentration until evenly spread.",
+    "gravity": "Gravity is the fundamental attractive force between objects that have mass, keeping planets in orbit and objects grounded on Earth.",
+    "dna": "DNA (deoxyribonucleic acid) is the molecule that carries the genetic instructions for the development, functioning, growth, and reproduction of living organisms.",
+    "rna": "RNA (ribonucleic acid) is a nucleic acid that translates genetic information from DNA to help cells synthesize proteins.",
+    "inflation": "Inflation is the general rise in prices across an economy over time, which reduces the purchasing power of a unit of currency.",
+    "artificial intelligence": "Artificial intelligence (AI) refers to computer systems designed to perform tasks that typically require human intelligence, such as reasoning, language understanding, and pattern recognition.",
+    "ai": "Artificial intelligence (AI) is technology that enables computers to understand language, recognize patterns, and solve problems alongside humans.",
+  };
 
-    // 1. Check if student is asking for direct test/quiz answers (Appendix H strict guardrail)
+  function buildFullSimulationSnapshot() {
+    const activeTbl = getActiveSimTable();
+    const recordedConditions = {};
+    LIGHT_CONDITIONS.forEach((c) => {
+      const trials = activeTbl[c.key] || [null, null, null];
+      recordedConditions[c.key] = {
+        label: c.label,
+        lux: state.isNightTime ? 0 : c.lux,
+        trials: trials.slice(),
+        mean: computeMean(trials),
+      };
+    });
+
+    const physicalConditions = {};
+    LIGHT_CONDITIONS.forEach((c) => {
+      const entry = (state.physicalTable && state.physicalTable[c.key]) || { trials: [null, null, null], temp: "26.0" };
+      physicalConditions[c.key] = {
+        trials: (entry.trials || [null, null, null]).slice(),
+        mean: computeMean(entry.trials),
+        tempC: entry.temp || "26.0",
+      };
+    });
+
+    const stepObj = ACTIVITY_STEPS[state.currentStepIndex] || ACTIVITY_STEPS[0];
+    const currentCond = LIGHT_CONDITIONS.find((c) => c.key === state.selectedDistance) || LIGHT_CONDITIONS[0];
+
+    return {
+      participantCode: state.participantCode || "Student",
+      selectedPlant: state.selectedPlant,
+      selectedDistance: state.selectedDistance,
+      currentLux: state.isNightTime ? 0 : currentCond.lux,
+      dayNightMode: state.isNightTime ? "Night (Lamp OFF · Cold)" : "Day (Lamp ON)",
+      isNightTime: state.isNightTime,
+      liveWaterTemp: Number((state.liveWaterTemp || 26.0).toFixed(1)),
+      chemicalBuffer: "0.2% NaHCO3 (Dissolved CO2 Source)",
+      tableMode: state.tableMode,
+      recordedConditions,
+      physicalConditions,
+      currentStep: stepObj.partTitle,
+      supportPoint: stepObj.spCode,
+      studentStepNotes: (state.stepNotes && state.stepNotes[state.currentStepIndex]) || "",
+    };
+  }
+
+  function hasBiologyOrLabKeywords(q) {
+    return /\b(photosynth|chloroplast|chlorophyll|thylakoid|granum|grana|stroma|calvin|rubisco|photolysis|atp|nadph|glucose|oxygen|o2|co2|carbon dioxide|h2o|water|light|photon|wavelength|lamp|bulb|lux|dark|night|day|cold|warm|temp|temperature|enzyme|nahco3|bicarbonate|buffer|bubble|bubbles|bula|hydrilla|elodea|hyacinth|eichhornia|plant|leaf|leaves|stomata|mitochondria|respiration|limiting|saturat|level off|plateau|trial|mean|average|table|graph|setup|apparatus|variable|fair test|control|distance|cm|beaker|thermometer|timer|60 second|ecosystem|food web|food chain|variegated|starch|iodine|cellular|microscopic|experiment|lab|biovoice|kahayag|liwanag|tubig|init|ngitngit|dilim|tanom|dahon|duol|layo|malapit|malayo|naglutaw|lutang|predict|hypothes|conclu)\b/i.test(
+      q
+    );
+  }
+
+  function classifyQuestionAndConversationalIntent(rawQuestion) {
+    const q = String(rawQuestion || "").trim();
+    const low = q.toLowerCase();
+
+    // 1. Strict Assessment Guardrail: refuse direct quiz/test answer keys
     if (
       /\b(test answer|quiz answer|form a|form b|pretest|posttest|what is the letter|correct letter|choose a b c d|answer key|sagot sa test|tubag sa test)\b/i.test(
-        q
+        low
       )
     ) {
       return { intent: "test_refusal", ideaCode: state.conversationMemory.lastIdeaCode || "I1" };
     }
 
-    // 2. Check if completely off-topic (unrelated to biology / photosynthesis / experiment)
-    if (
-      /\b(basketball|valorant|mobile legends|tiktok|celebrity|movie|weather tomorrow|crypto|homework in math|calculus|world war)\b/i.test(
-        q
-      )
-    ) {
-      return { intent: "off_topic", ideaCode: state.conversationMemory.lastIdeaCode || "I1" };
+    // 2. Live Simulation Data & Quantitative Result Queries ("why is my mean in trial 1 30 bubble count", etc.)
+    const hasMetricNumber = /\b\d+(?:\.\d+)?\b/.test(low);
+    const asksOwnData =
+      /\b(my|our|i got|we got|did i|trial\s*[123]|in trial|bubble count|why is my|mean is|mean in|explain my|my table|my graph|my data|current temp|water temp)\b/i.test(
+        low
+      ) ||
+      (hasMetricNumber && /\b(bubble|bubbles|mean|average|trial|count|rate|temp|celsius|why)\b/i.test(low));
+    if (asksOwnData) {
+      return { intent: "sim_data_query", ideaCode: "I6" };
     }
 
-    // 3. Check if question is specifically about the 3 aquatic plants (Water Hyacinth vs Hydrilla vs Elodea)
-    if (/\b(hyacinth|water hyacinth|eichhornia|floating|lutang|naglutaw|elodea|compare plant|roots)\b/i.test(q)) {
+    // 3. Friendly Smalltalk / Greetings / Acknowledgements
+    if (
+      /^(hi|hello|hey|yo|good morning|good afternoon|good evening|kumusta|kamusta|thank you|thanks|ty|salamat|ok|okay|got it|cool|awesome|who are you|what is your name|how are you)[!.?,\s]*$/i.test(
+        low
+      )
+    ) {
+      return { intent: "conversational_smalltalk", ideaCode: state.conversationMemory.lastIdeaCode || "I1" };
+    }
+
+    // 4. Aquatic Plant Comparison (Hydrilla vs Elodea vs Water Hyacinth)
+    if (/\b(hyacinth|water hyacinth|eichhornia|floating|lutang|naglutaw|elodea|compare plant|roots)\b/i.test(low)) {
       return { intent: "plant_comparison", ideaCode: "I2" };
     }
 
-    // 4. Check if conversational follow-up ("Why does that happen?", "Explain in simpler words", "Tell me more", "Ngano man?", "Bakit ganun?")
-    const isShortFollowUp =
-      q.split(/\s+/).length <= 8 &&
-      /\b(why|how come|explain more|simpler|again|what do you mean|elaborate|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)\b/i.test(
-        q
+    // 5. Cellular Structures, Chlorophyll Wavelength Reflection, Enzymes & Limiting Variables
+    if (/\b(green|wavelength|absorb|reflect|thylakoid|granum|grana|stroma|rubisco|stomata|mitochondria|respiration|variegated|white edge|green center|cellular|chloroplast)\b/i.test(low)) {
+      return { intent: "cellular_deep_dive", ideaCode: "I8" };
+    }
+
+    // 6. Short vague Conversational Follow-up ("Why?", "How come?", "Explain more", "Simpler please")
+    const isVagueFollowUp =
+      low.split(/\s+/).length <= 5 &&
+      /^(?:why|why is that|why does that happen|how come|explain more|tell me more|simpler|in simpler words|again|what do you mean|elaborate|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)[?!.\s]*$/i.test(
+        low
       );
-    if (isShortFollowUp && state.conversationMemory.turnCount > 0) {
+    if (isVagueFollowUp && state.conversationMemory.turnCount > 0) {
       return {
         intent: "follow_up_expand",
         ideaCode: state.conversationMemory.lastIdeaCode || "I1",
       };
     }
 
-    // 5. Map question keywords to Idea Codes I1–I9
-    if (/\b(dark|ngitngit|dilim|0 lx|lamp off|palong|patay ang ilaw|control setup)\b/i.test(q)) {
+    // 7. Off-topic / General Knowledge Query -> Answer accurately first, then redirect back to core!
+    if (!hasBiologyOrLabKeywords(low)) {
+      return {
+        intent: "general_knowledge_redirect",
+        ideaCode: state.conversationMemory.lastIdeaCode || "I1",
+      };
+    }
+
+    // 8. Map core Biology/Experiment keywords to Idea Codes I1–I9
+    if (/\b(dark|night|ngitngit|dilim|0 lx|lamp off|palong|patay ang ilaw|control setup)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I4" };
     }
-    if (
-      /\b(level off|plateau|saturat|limiting|double|10 cm and 20 cm|stop increasing|limit)\b/i.test(
-        q
-      )
-    ) {
+    if (/\b(level off|plateau|saturat|limiting|double|10 cm and 20 cm|stop increasing|limit)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I5" };
     }
-    if (
-      /\b(trial|3 trials|three trials|mean|average|vary|variation|magkaiba|lahi-lahi)\b/i.test(q)
-    ) {
+    if (/\b(trial|3 trials|three trials|mean|average|vary|variation|magkaiba|lahi-lahi)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I6" };
     }
-    if (
-      /\b(constant|fair test|temperature|26|thermometer|heat|nahco3|bicarbonate|init)\b/i.test(q)
-    ) {
+    if (/\b(constant|fair test|temperature|temp|cold|warm|26|thermometer|heat|nahco3|bicarbonate|buffer|enzyme|init)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I7" };
     }
-    if (/\b(calvin|stroma|atp|nadph|glucose|sugar|chemical energy|thylakoid)\b/i.test(q)) {
+    if (/\b(calvin|stroma|atp|nadph|glucose|sugar|chemical energy|thylakoid)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I8" };
     }
-    if (
-      /\b(ecosystem|food web|food chain|environment|important|value|organisme|halaga|hinungdanon)\b/i.test(
-        q
-      )
-    ) {
+    if (/\b(ecosystem|food web|food chain|environment|important|value|organisme|halaga|hinungdanon)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I9" };
     }
-    if (/\b(distance|10 cm|20 cm|30 cm|40 cm|farther|closer|duol|layo|malapit|malayo|lux)\b/i.test(q)) {
+    if (/\b(distance|10 cm|20 cm|30 cm|40 cm|farther|closer|duol|layo|malapit|malayo|lux)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I3" };
     }
-    if (/\b(bubble|bula|oxygen|o2|gas|count|rate)\b/i.test(q)) {
+    if (/\b(bubble|bula|oxygen|o2|gas|count|rate)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I2" };
     }
-    if (/\b(light|chlorophyll|photon|sunlight|kahayag|liwanag|predict)\b/i.test(q)) {
+    if (/\b(light|chlorophyll|photon|kahayag|liwanag|predict)\b/i.test(low)) {
       return { intent: "concept", ideaCode: "I1" };
     }
 
-    // Fallback to Support Point default Idea Code
-    const spDefaultMap = {
-      sp1: "I1",
-      sp2: "I7",
-      sp3: "I3",
-      sp4: "I5",
-      sp5: "I8",
-      sp6: "I9",
+    const spDefaultMap = { sp1: "I1", sp2: "I7", sp3: "I3", sp4: "I5", sp5: "I8", sp6: "I9" };
+    return { intent: "concept", ideaCode: spDefaultMap[state.supportPoint] || "I1" };
+  }
+
+  function analyzeSimulationDataQuestion(rawQuestion, langKey, snapshot) {
+    const q = String(rawQuestion || "").toLowerCase();
+    const trialMatch = q.match(/\btrial\s*([123])\b|\bt([123])\b/i);
+    const trialNum = trialMatch ? Number(trialMatch[1] || trialMatch[2]) : null;
+    const distMatch = q.match(/\b(10|20|30|40)\s*cm\b|\b(dark)\b/i);
+    let targetDist = distMatch ? (distMatch[1] || distMatch[2]).toLowerCase() : null;
+
+    // Extract any bubble count number mentioned (ignoring 10/20/30/40 cm if tied to cm, and ignoring trial 1/2/3)
+    const cleanedForNum = q
+      .replace(/\btrial\s*[123]\b/g, "")
+      .replace(/\b(10|20|30|40)\s*cm\b/g, "")
+      .replace(/\b60\s*s(?:ec(?:onds)?)?\b/g, "");
+    const numMatch = cleanedForNum.match(/\b(\d+(?:\.\d+)?)\b/);
+    const mentionedVal = numMatch ? parseFloat(numMatch[1]) : null;
+
+    // Search recorded table for a matching condition if targetDist wasn't explicitly specified
+    if (!targetDist && mentionedVal !== null) {
+      let bestKey = null;
+      let bestDiff = Infinity;
+      Object.entries(snapshot.recordedConditions).forEach(([k, info]) => {
+        const candidates = [...info.trials.filter((v) => typeof v === "number"), info.mean].filter((v) => v !== null);
+        candidates.forEach((v) => {
+          const diff = Math.abs(v - mentionedVal);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestKey = k;
+          }
+        });
+      });
+      if (bestKey && bestDiff <= 4) {
+        targetDist = bestKey;
+      }
+    }
+
+    // If still unrecorded, map typical value (e.g. 30 bubbles matches 20 cm for Hydrilla) or use active distance
+    if (!targetDist) {
+      if (mentionedVal !== null && snapshot.selectedPlant === "Hydrilla") {
+        if (mentionedVal >= 36) targetDist = "10";
+        else if (mentionedVal >= 22) targetDist = "20";
+        else if (mentionedVal >= 11) targetDist = "30";
+        else if (mentionedVal >= 3) targetDist = "40";
+        else targetDist = "dark";
+      } else {
+        targetDist = snapshot.selectedDistance;
+      }
+    }
+
+    const condData = snapshot.recordedConditions[targetDist] || snapshot.recordedConditions[snapshot.selectedDistance];
+    const distLabel = targetDist === "dark" ? "Dark Control (0 lx)" : `${targetDist} cm (${condData.lux.toLocaleString()} lx)`;
+    const recordedT1 = condData.trials[0];
+    const recordedMean = condData.mean;
+    const asksMeanAndTrial = trialNum !== null && /\b(mean|average)\b/i.test(q);
+    const activeTemp = snapshot.liveWaterTemp;
+
+    let observedSummary = "";
+    if (recordedMean !== null) {
+      const doneList = condData.trials
+        .map((v, idx) => (typeof v === "number" ? `Trial ${idx + 1}: ${v}` : null))
+        .filter(Boolean)
+        .join(", ");
+      observedSummary = `Looking at your live table for ${snapshot.selectedPlant} at ${distLabel}, you have ${doneList} (current Mean: ${recordedMean.toFixed(1)} bubbles/60s). `;
+    } else if (mentionedVal !== null) {
+      observedSummary = `You haven't saved all runs for ${distLabel} yet, and a reading around ${mentionedVal} bubbles in 60s fits ${snapshot.selectedPlant} at ${distLabel}. `;
+    } else {
+      observedSummary = `Right now your simulation is set to ${snapshot.selectedPlant} at ${distLabel} in ${snapshot.dayNightMode} mode at ${activeTemp} °C. `;
+    }
+
+    const trialVsMeanNote = asksMeanAndTrial
+      ? `One quick note on terms: Trial ${trialNum} is a single 60-second run, whereas your Mean averages all recorded runs—so if only Trial ${trialNum} is filled in right now (for instance ${mentionedVal !== null ? mentionedVal : (recordedT1 !== null ? recordedT1 : "one run")}), the Mean equals that single value until Trials 2 and 3 are recorded. `
+      : "";
+
+    let mechanismReason = "";
+    if (snapshot.isNightTime || targetDist === "dark") {
+      mechanismReason = snapshot.isNightTime
+        ? `Because the simulation is in Night mode (Lamp OFF, 0 lx) and water cooled to ${activeTemp} °C, chlorophyll captures zero photons and colder temperatures slow active enzymes, so bubble count stays 0.`
+        : `In the Dark Control (0 lx), zero photons reach the thylakoids, so water photolysis stops (leaving only 0–1 trapped dissolved gas bubbles).`;
+    } else if (targetDist === "10") {
+      mechanismReason = `At 10 cm (2,500 lx), high photon flux plus lamp warmth (${activeTemp} °C in the 0.2% NaHCO₃ buffer) drives active Calvin-cycle enzymes near capacity—so counts reach their highest range (~39–45 bubbles), leveling off slightly due to CO₂ and enzyme limits.`;
+    } else if (targetDist === "20") {
+      mechanismReason = `At 20 cm (625 lx—four times less light intensity than 10 cm by the inverse-square law), your ${snapshot.selectedPlant} receives moderate-high light inside the 0.2% NaHCO₃ buffer at ${activeTemp} °C, which naturally yields around 30–35 bubbles in 60s instead of about 42 at 10 cm. Natural biological variations around 10% between trials explain why we average 3 trials!`;
+    } else {
+      mechanismReason = `At ${distLabel} and ${activeTemp} °C in 0.2% NaHCO₃, fewer photons reach the thylakoid membranes per second (inverse-square law), so photolysis releases oxygen bubbles more slowly. Natural biological variations around 10% make repeated 3-trial averaging essential.`;
+    }
+
+    if (langKey === "fil") {
+      const filNote = asksMeanAndTrial
+        ? `Tandaan na ang Trial ${trialNum} ay isang 60-second run pa lang, at ang Mean ay average ng 3 trials kapag kumpleto na. `
+        : "";
+      return `Magandang tanong! ${observedSummary}${filNote}Sa ${distLabel} at ${activeTemp} °C na may 0.2% NaHCO₃ buffer, nakasalalay ang dami ng bula sa lakas ng ilaw (inverse-square law) at bilis ng active enzymes sa chloroplast—kaya natural na ganito ang nakita mong bilang.`;
+    }
+    if (langKey === "ceb") {
+      const cebNote = asksMeanAndTrial
+        ? `Timan-i nga ang Trial ${trialNum} usa pa ka 60-second run, ug ang Mean mao ang average sa tanang 3 ka trials. `
+        : "";
+      return `Maayong pagpangutana! ${observedSummary}${cebNote}Sa ${distLabel} ug ${activeTemp} °C sulod sa 0.2% NaHCO₃ buffer, ang kadaghanon sa bula nagdepende sa kusog sa kahayag sa lamp ug katulinon sa active enzymes sa chloroplast.`;
+    }
+
+    return `${observedSummary}${trialVsMeanNote}${mechanismReason}`.trim();
+  }
+
+  function extractSearchTopicFromQuestion(rawQuestion) {
+    let clean = String(rawQuestion || "").trim();
+    clean = clean
+      .replace(/[?!.]+$/g, "")
+      .replace(/^(?:hey\s+biovoice|biovoice|please|can\s+you|could\s+you|tell\s+me|explain\s+to\s+me)\s+/i, "")
+      .replace(/^(?:what\s+is\s+the\s+meaning\s+of|what\s+does\s+|what\s+is|what's|what\s+are|who\s+is|who\s+was|define|meaning\s+of|explain|ano\s+ang|ano\s+ibig\s+sabihin\s+ng|unsa\s+ang|unsay\s+pasabot\s+sa)\s+/i, "")
+      .replace(/\b(?:mean|means|meaning)\s*$/i, "")
+      .replace(/^(?:a|an|the)\s+/i, "")
+      .trim();
+    return clean;
+  }
+
+  async function lookupWikipediaSummary(topic) {
+    if (!topic || typeof fetch !== "function") return null;
+    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 3200) : null;
+    try {
+      const slug = encodeURIComponent(topic.replace(/\s+/g, "_"));
+      const directRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`, {
+        signal: ctrl ? ctrl.signal : undefined,
+      });
+      if (directRes.ok) {
+        const data = await directRes.json();
+        if (data && data.extract && data.type !== "disambiguation") {
+          const sentences = data.extract.match(/[^.!?]+[.!?]+/g) || [data.extract];
+          return sentences.slice(0, 2).join(" ").trim();
+        }
+      }
+      // Fallback opensearch title lookup
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(topic)}&limit=1&namespace=0&format=json&origin=*`,
+        { signal: ctrl ? ctrl.signal : undefined }
+      );
+      if (searchRes.ok) {
+        const arr = await searchRes.json();
+        const bestTitle = Array.isArray(arr) && Array.isArray(arr[1]) ? arr[1][0] : "";
+        if (bestTitle) {
+          const sumRes = await fetch(
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestTitle.replace(/\s+/g, "_"))}`,
+            { signal: ctrl ? ctrl.signal : undefined }
+          );
+          if (sumRes.ok) {
+            const sumData = await sumRes.json();
+            if (sumData && sumData.extract) {
+              const sentences = sumData.extract.match(/[^.!?]+[.!?]+/g) || [sumData.extract];
+              return sentences.slice(0, 2).join(" ").trim();
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Network offline or timeout -> clean fallback below
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+    return null;
+  }
+
+  async function answerGeneralQuestionWithRedirect(rawQuestion, langKey, snapshot) {
+    const topic = extractSearchTopicFromQuestion(rawQuestion);
+    const topicLower = topic.toLowerCase();
+
+    let factAnswer = GENERAL_KNOWLEDGE_MINI_KB[topicLower] || "";
+    if (!factAnswer) {
+      // Partial match in mini KB (e.g. "what is pro bono work")
+      const matchedKey = Object.keys(GENERAL_KNOWLEDGE_MINI_KB).find((k) => topicLower.includes(k));
+      if (matchedKey) factAnswer = GENERAL_KNOWLEDGE_MINI_KB[matchedKey];
+    }
+    if (!factAnswer && topic.length >= 2) {
+      factAnswer = (await lookupWikipediaSummary(topic)) || "";
+    }
+
+    const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+    const coreRedirect = {
+      en: `Now let's bring that back to our photosynthesis investigation! We're currently on ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel} (${snapshot.liveWaterTemp} °C)—what would you like to examine next about its bubble rate or variables?`,
+      fil: `Ngayon, balik tayo sa ating photosynthesis experiment! Nasa ${snapshot.currentStep} tayo gamit ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C)—ano ang gusto mong tuklasin tungkol sa bilang ng oxygen bubbles?`,
+      ceb: `Karon, balik ta sa atong photosynthesis investigation! Anaa ta karon sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C)—unsay gusto nimong susihon bahin sa bula sa oxygen?`,
     };
-    return {
-      intent: "concept",
-      ideaCode: spDefaultMap[state.supportPoint] || "I1",
+
+    if (factAnswer) {
+      return `Sure thing! ${factAnswer} ${coreRedirect[langKey] || coreRedirect.en}`;
+    }
+
+    const offlineBridges = {
+      en: `Good curiosity! Even outside our biology lab I love questions like that—though I don't have a live definition lookup for "${topic || rawQuestion}" right this second without a server/web connection. Let's channel that curiosity back to ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel}: what pattern are you noticing in the bubbles?`,
+      fil: `Magandang tanong! Bagamat nakapokus ang offline knowledge ko sa Biology at walang koneksyon para sa "${topic || rawQuestion}" ngayon, balik muna tayo sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant}—ano ang napapansin mong pagbabago sa bubbles?`,
+      ceb: `Maayong pangutana! Bisan og nakapokus ang akong offline mode sa Biology karon, balik ta sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant}—unsay imong naobserbahan sa mga bula sa oxygen?`,
     };
+    return offlineBridges[langKey] || offlineBridges.en;
   }
 
   function buildSimulationContextAddendum(langKey) {
@@ -2143,65 +2407,92 @@
 
     if (mean !== null) {
       if (langKey === "fil") {
-        return ` Sa iyong kasalukuyang data para sa ${state.selectedPlant} sa ${distLabel}, ang iyong Mean ay ${mean.toFixed(1)} bubbles/60s.`;
+        return ` Sa iyong live data para sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang Mean mo ay ${mean.toFixed(1)} bubbles/60s.`;
       }
       if (langKey === "ceb") {
-        return ` Sa imong kasamtangang data alang sa ${state.selectedPlant} sa ${distLabel}, ang imong Mean kay ${mean.toFixed(1)} bubbles/60s.`;
+        return ` Sa imong live data alang sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang imong Mean kay ${mean.toFixed(1)} bubbles/60s.`;
       }
-      return ` Looking at your recorded data for ${state.selectedPlant} at ${distLabel}, your current Mean is ${mean.toFixed(1)} bubbles/60s.`;
+      return ` Looking at your live table for ${state.selectedPlant} at ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), your current Mean is ${mean.toFixed(1)} bubbles/60s.`;
     }
     return "";
   }
 
-  function generateConversationalBioVoiceReply(questionText, langCode) {
+  async function generateConversationalBioVoiceReply(questionText, langCode) {
     const langKey = langCode === "fil-PH" ? "fil" : langCode === "ceb-PH" ? "ceb" : "en";
     const classification = classifyQuestionAndConversationalIntent(questionText);
     const ideaCode = classification.ideaCode;
     const reqMap = { hint: "H", clarification: "C", explanation: "E" };
     let targetTier = reqMap[state.supportType] || "H";
+    const snapshot = buildFullSimulationSnapshot();
+    const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
 
-    // Guardrail 1: Direct test/quiz answer refusal
+    // 1. Guardrail: Direct test/quiz answer refusal
     if (classification.intent === "test_refusal") {
       const refusals = {
-        en: "I can't give direct test or worksheet answers, but let's reason through the biology together! Tell me which light condition or chloroplast process you are comparing, and I'll give you a helpful hint.",
-        fil: "Hindi ako maaaring magbigay ng direktang sagot sa pagsusulit o worksheet, ngunit pwede nating pag-isipan nang magkasama! Sabihin mo kung aling light condition ang sinusuri mo para mabigyan kita ng hint.",
-        ceb: "Dili ko makahatag og direktang tubag sa test o worksheet, apan mahimo natong tun-an ang konsepto! Sultihi ko kung unsang light condition ang imong gi-analisar aron mahatagan tika og hint.",
+        en: "I want you to shine on your own, so I can't give away direct test or worksheet answers—but let's think it through together! Which light condition or chloroplast variable are you comparing right now?",
+        fil: "Gusto kong matutunan mo ito nang totoo kaya hindi ako pwedeng magbigay ng sagot sa pagsusulit—pero pag-isipan natin nang magkasama! Aling light condition o bahagi ng chloroplast ang sinusuri mo?",
+        ceb: "Gusto nako nga makat-on ka mismo maong dili ko makahatag og tubag sa test—pero sabuton nato ni dungan! Unsang light condition o parte sa chloroplast ang imong gitan-aw karon?",
       };
-      return {
-        reply: refusals[langKey],
-        ideaCode,
-        actualType: "H",
-        hintFirst: true,
-      };
+      return { reply: refusals[langKey], ideaCode, actualType: "H", hintFirst: true };
     }
 
-    // Guardrail 2: Off-topic redirect
-    if (classification.intent === "off_topic") {
-      const redirects = {
-        en: "I'm your BioVoice Biology companion, so I focus on our photosynthesis investigation! Right now you're on " +
-          ACTIVITY_STEPS[state.currentStepIndex].partTitle +
-          ". Would you like a hint about how lamp distance affects oxygen bubble production?",
-        fil: "Ako ang iyong BioVoice Biology companion kaya nakatuon tayo sa photosynthesis experiment! Nasa " +
-          ACTIVITY_STEPS[state.currentStepIndex].partTitle +
-          " ka ngayon. Gusto mo ba ng hint kung paano nakakaapekto ang distansya ng lamp sa oxygen bubbles?",
-        ceb: "Ako ang imong BioVoice Biology companion busa nakapokus ta sa atong photosynthesis investigation! Anaa ka karon sa " +
-          ACTIVITY_STEPS[state.currentStepIndex].partTitle +
-          ". Gusto ba ka og hint kung giunsa pag-apekto sa gilay-on sa suga ang bula sa oxygen?",
+    // 2. Smalltalk / Greeting (warm Gemini Nova persona)
+    if (classification.intent === "conversational_smalltalk") {
+      const nameTag = state.isSandbox ? "there" : (state.participantCode || "friend");
+      const greetings = {
+        en: `Hey ${nameTag}! Always happy to help. Right now we've got ${snapshot.selectedPlant} set at ${distLabel} in ${snapshot.dayNightMode} (${snapshot.liveWaterTemp} °C). Want to test a distance or ask about what you're seeing?`,
+        fil: `Kumusta ${nameTag}! Lagi akong handang tumulong. Naka-setup ngayon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Ano ang gusto mong itanong o subukan?`,
+        ceb: `Kumusta ${nameTag}! Andam ko motabang kanimo. Naka-setup karon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Unsay gusto nimong pangutan-on o sulayan?`,
       };
-      return {
-        reply: redirects[langKey],
-        ideaCode,
-        actualType: "H",
-        hintFirst: true,
-      };
+      return { reply: greetings[langKey], ideaCode, actualType: "C", hintFirst: false };
     }
 
-    // Special Contextual Topic: Comparing Hydrilla, Elodea, and Floating Water Hyacinth
+    // 3. Simulation Data & Quantitative Result Explanation ("why is my mean in trial 1 30 bubble count")
+    if (classification.intent === "sim_data_query") {
+      const dataReply = analyzeSimulationDataQuestion(questionText, langKey, snapshot);
+      state.conversationMemory.turnCount += 1;
+      state.conversationMemory.lastIdeaCode = "I6";
+      state.conversationMemory.lastSupportType = "E";
+      state.conversationMemory.lastQuestion = questionText;
+      state.conversationMemory.lastReply = dataReply;
+      return { reply: dataReply, ideaCode: "I6", actualType: "E", hintFirst: false };
+    }
+
+    // 4. General / Off-Topic Knowledge -> Exact Answer + Warm Redirect Back to Core
+    if (classification.intent === "general_knowledge_redirect") {
+      const replyText = await answerGeneralQuestionWithRedirect(questionText, langKey, snapshot);
+      state.conversationMemory.turnCount += 1;
+      state.conversationMemory.lastQuestion = questionText;
+      state.conversationMemory.lastReply = replyText;
+      return { reply: replyText, ideaCode, actualType: "C", hintFirst: false };
+    }
+
+    // 5. Cellular, Pigment Wavelength & Enzymatic Deep-Dive
+    if (classification.intent === "cellular_deep_dive") {
+      const asksGreenOrWavelength = /\b(green|wavelength|absorb|reflect|color|variegated|white edge)\b/i.test(questionText);
+      const cellReplies = asksGreenOrWavelength
+        ? {
+            en: `Plants appear green because chlorophyll a and chlorophyll b strongly absorb blue-violet and red photons to drive photosynthesis, while reflecting green wavelengths (~500–550 nm) back to our eyes. White leaf edges lack chlorophyll altogether, which is why they can't capture light for photolysis even under a bright lamp!`,
+            fil: `Kulay berde ang mga dahon dahil masigasig na sinisipsip ng chlorophyll a at b ang blue-violet at red light para sa photosynthesis, habang nirereflect nila ang green light papunta sa ating mata. Ang puting bahagi ng dahon ay walang chlorophyll kaya hindi ito makakahuli ng sikat ng ilaw para sa photolysis!`,
+            ceb: `Berde tan-awon ang mga dahon tungod kay ang chlorophyll a ug b kusog mosuyop sa blue-violet ug red light para sa photosynthesis, samtang ilang gi-reflect ang green wavelengths balik sa atong mata. Ang puting kilid sa dahon walay chlorophyll maong dili kini makahimo og photolysis!`,
+          }
+        : {
+            en: `Inside the chloroplast, light hits the thylakoid grana first to split H₂O into oxygen bubbles, ATP, and NADPH. Then in the surrounding stroma fluid, active RuBisCO enzymes use dissolved CO₂ (from 0.2% NaHCO₃) to build glucose—which is why warmer lamp heat (~${snapshot.liveWaterTemp} °C) speeds reactions up while cold Night water (~18.5 °C) slows them down!`,
+            fil: `Sa loob ng chloroplast, unang tumatama ang liwanag sa thylakoid grana upang hatiin ang H₂O at maglabas ng oxygen bubbles, ATP, at NADPH. Pagkatapos, sa stroma, ginagamit ng active enzymes tulad ng RuBisCO ang dissolved CO₂ mula sa 0.2% NaHCO₃ para makabuo ng glucose—kaya mas mabilis ito sa mainit-init na tubig mula sa lamp kaysa sa malamig na gabi!`,
+            ceb: `Sulod sa chloroplast, una nga moigo ang kahayag sa thylakoid grana aron bahion ang H₂O ngadto sa oxygen bubbles, ATP, ug NADPH. Dayon sa stroma, mogamit ang active enzymes sama sa RuBisCO og dissolved CO₂ gikan sa 0.2% NaHCO₃ aron makahimo og glucose—mao nga mas paspas kini sa init-init nga tubig gikan sa suga kaysa bugnaw nga gabii!`,
+          };
+      state.conversationMemory.turnCount += 1;
+      state.conversationMemory.lastIdeaCode = "I8";
+      state.conversationMemory.lastSupportType = "E";
+      return { reply: cellReplies[langKey], ideaCode: "I8", actualType: "E", hintFirst: false };
+    }
+
+    // 6. Special Contextual Topic: Comparing Hydrilla, Elodea, and Floating Water Hyacinth
     if (classification.intent === "plant_comparison") {
       const plantReplies = {
-        en: "Great observation comparing the three aquatic plants! Hydrilla and Elodea are fully submerged macrophytes, so the oxygen (O₂) produced in their leaves escapes into the water as countable bubbles. Water Hyacinth (*Eichhornia crassipes*), however, floats at the water surface with aerial leaves—so most of its oxygen diffuses directly into the air through stomata rather than forming underwater bubbles!",
-        fil: "Magandang obserbasyon sa paghahambing ng tatlong halaman! Ang Hydrilla at Elodea ay nakalubog sa tubig (submerged), kaya ang oxygen (O₂) mula sa kanilang dahon ay lumalabas bilang mga bula sa tubig. Ang Water Hyacinth (*Eichhornia crassipes*) naman ay nakalutang sa ibabaw at nasa hangin ang mga dahon, kaya sa stomata sa hangin lumalabas ang karamihan ng oxygen nito!",
-        ceb: "Nindot kaayo nga obserbasyon sa pagtandi sa tulo ka tanom! Ang Hydrilla ug Elodea kay nakalunod sa tubig (submerged), mao nga ang oxygen (O₂) gikan sa ilang dahon mogawas isip maihap nga bula sa tubig. Apan ang Water Hyacinth (*Eichhornia crassipes*) naglutaw sa ibabaw sa tubig ug ang iyang dahon naa sa hangin—mao nga sa stomata sa hangin mogawas ang kadaghanang oxygen niini!",
+        en: "Great eye comparing the three plants! Hydrilla and Elodea grow fully submerged, so oxygen produced inside their leaves escapes right into the water as countable bubbles. Water Hyacinth floats on top with leaves in the air—so most of its oxygen diffuses straight out through aerial stomata rather than making underwater bubbles!",
+        fil: "Magandang obserbasyon! Ang Hydrilla at Elodea ay lubog sa tubig kaya lumalabas ang oxygen bilang bula. Ang Water Hyacinth naman ay nakalutang sa ibabaw at nasa hangin ang mga dahon, kaya sa stomata sa hangin lumalabas ang karamihan ng oxygen nito sa halip na maging bula sa ilalim ng tubig!",
+        ceb: "Nindot kaayo nga obserbasyon! Ang Hydrilla ug Elodea nakalubog sa tubig maong mogawas isip bula ang ilang oxygen. Apan ang Water Hyacinth naglutaw sa ibabaw ug naa sa hangin ang iyang dahon—mao nga sa aerial stomata mogawas ang kadaghanang oxygen niini imbes mahimong bula sa tubig!",
       };
       state.conversationMemory.turnCount += 1;
       state.conversationMemory.lastIdeaCode = "I2";
@@ -2214,21 +2505,18 @@
       };
     }
 
-    // Multi-turn follow-up escalation: if asking a follow-up ("Why does that happen?") or repeating the same concept, step up H -> C -> E
+    // 7. Multi-turn follow-up escalation: H -> C -> E
     let followUpPrefix = "";
     if (
       classification.intent === "follow_up_expand" ||
       (state.conversationMemory.turnCount > 0 && state.conversationMemory.lastIdeaCode === ideaCode)
     ) {
       const prevTier = state.conversationMemory.lastSupportType || "H";
-      if (prevTier === "H") targetTier = "C";
-      else if (prevTier === "C") targetTier = "E";
-      else targetTier = "E";
-
+      targetTier = prevTier === "H" ? "C" : "E";
       const prefixes = {
-        en: "Building on your previous question: ",
-        fil: "Karugtong ng tanong mo kanina: ",
-        ceb: " Sumpay sa imong pangutana ganina: ",
+        en: "Building on that idea: ",
+        fil: "Karugtong ng pinag-usapan natin: ",
+        ceb: "Sumpay sa atong gihisgutan ganina: ",
       };
       followUpPrefix = prefixes[langKey];
     }
@@ -2270,10 +2558,10 @@
 
     const greeting =
       state.isSandbox
-        ? "Hi! I'm BioVoice in Sandbox Demonstration Mode. Ask me any question or follow-up about the photosynthesis setup in English, Filipino, or Cebuano—I'll automatically detect your language and guide you step by step!"
-        : `Hi ${state.participantCode}! I'm BioVoice, your Grade 11 Biology voice companion. Ask me anything about the photosynthesis experiment in English, Filipino, or Cebuano—I'll start with a helpful hint and we can talk through your observations together!`;
+        ? "Hey there! I'm BioVoice—your interactive lab partner in Sandbox Mode. Ask me anything about your photosynthesis setup, your trial counts, or even general questions in English, Filipino, or Cebuano, and I'll walk through it right alongside you!"
+        : `Hey ${state.participantCode}! I'm BioVoice, your Grade 11 Biology lab partner. Talk to me naturally about your bubble counts, temperature, or light distances in English, Filipino, or Cebuano—I can see your live simulation and guide you step by step!`;
 
-    appendChatBubble("assistant", greeting, "BioVoice · Ready (Auto Language Detection)");
+    appendChatBubble("assistant", greeting, "BioVoice · Nova Voice Ready (Live Sim Aware)");
     renderPromptChips();
   }
 
@@ -2392,8 +2680,9 @@
 
     state.conversationMemory.messages.push({ role: "user", text: question });
 
-    // 2. Query /api/chat (supports live LLM if configured + conversational Appendix H engine)
+    // 2. Query /api/chat with full live simulation snapshot (supports live Gemini + smart local engine)
     let finalReplyObj = null;
+    const fullSnapshot = buildFullSimulationSnapshot();
     try {
       const res = await fetch(resolveApiUrl("/api/chat"), {
         method: "POST",
@@ -2406,11 +2695,7 @@
           languageMode: state.languageMode,
           question,
           messages: state.conversationMemory.messages,
-          simulationContext: {
-            selectedPlant: state.selectedPlant,
-            selectedDistance: state.selectedDistance,
-            currentStep: stepObj.partTitle,
-          },
+          simulationContext: fullSnapshot,
         }),
       });
       const data = await res.json();
@@ -2433,11 +2718,11 @@
         };
       }
     } catch (_) {
-      // Offline / static host uses local conversational engine
+      // Offline / static host uses smart local simulation + knowledge engine
     }
 
     if (!finalReplyObj) {
-      finalReplyObj = generateConversationalBioVoiceReply(question, state.lastDetectedLanguage);
+      finalReplyObj = await generateConversationalBioVoiceReply(question, state.lastDetectedLanguage);
     }
 
     state.conversationMemory.messages.push({ role: "assistant", text: finalReplyObj.reply });
@@ -2527,16 +2812,71 @@
       .replace(/H₂O|H2O/g, "water")
       .replace(/O₂|O2/g, "oxygen")
       .replace(/C₆H₁₂O₆|C6H12O6/g, "glucose")
+      .replace(/0\.2%\s*NaHCO₃|0\.2%\s*NaHCO3/gi, "0.2 percent sodium bicarbonate")
       .replace(/NaHCO₃|NaHCO3/g, "sodium bicarbonate")
-      .replace(/26\.0\s*°C/g, "26 degrees Celsius")
-      .replace(/0\.2%/g, "0.2 percent")
-      .replace(/60\s*seconds/g, "60 seconds")
+      .replace(/(\d+(?:\.\d+)?)\s*°C/g, "$1 degrees Celsius")
+      .replace(/\blx\b/gi, "lux")
+      .replace(/(\d+)\s*cm\b/gi, "$1 centimeters")
+      .replace(/bubbles\/60s/gi, "bubbles per 60 seconds")
+      .replace(/\b60s\b/gi, "60 seconds")
+      .replace(/~(\d)/g, "about $1")
+      .replace(/\bQ₁₀\b|Q10/g, "temperature Q10 factor")
+      .replace(/(\d+(?:\.\d+)?)%/g, "$1 percent")
+      .replace(/\be\.g\.,?/gi, "for example,")
+      .replace(/\bi\.e\.,?/gi, "that is,")
       .replace(/\\text\{([^}]+)\}/g, "$1")
-      .replace(/[\$\\*_`~]/g, "")
+      .replace(/[\$\\*_`~•]/g, "")
       .replace(/&rarr;|→/g, " yields ")
       .replace(/&uarr;|↑/g, " gas ")
+      .replace(/÷/g, " divided by ")
+      .replace(/—/g, ", ")
       .replace(/\s+/g, " ")
       .trim();
+  }
+
+  function scoreVoiceForPersona(voice, langCode, persona) {
+    const name = (voice.name || "").toLowerCase();
+    const lang = (voice.lang || "").toLowerCase();
+    let score = 0;
+
+    // Penalize legacy/robotic voices strongly
+    if (/fred|albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|organ|trinoids|whisper|zarvox|kathy|ralph|junior|bruce|victoria|agnes|vicki|espeak|compact/i.test(name)) {
+      score -= 120;
+    }
+
+    // Huge boost for neural / enhanced / premium natural synthesis voices
+    if (/natural|neural|online|wavenet|studio|enhanced|premium|siri/i.test(name)) {
+      score += 140;
+    }
+
+    // Warm Nova-like expressive voice preferences
+    if (/ava|emma|aria|jenny|nova|samantha|serena|zoe|nicky|allison|stephanie|joanna|salli|google uk english female|google us english/i.test(name)) {
+      score += persona === "nova" ? 95 : 70;
+    } else if (/google|microsoft|apple|daniel|arthur|oliver|guy|andrew/i.test(name)) {
+      score += persona === "studio" ? 75 : 40;
+    }
+
+    // Language alignment
+    if (langCode === "fil-PH" || langCode === "ceb-PH") {
+      if (/fil|tl|ph/.test(lang) || /filipino|tagalog|philippines|blessica|angelo/i.test(name)) {
+        score += 110;
+      } else if (/en/.test(lang)) {
+        score += 20;
+      }
+    } else {
+      if (lang === "en-us" || lang === "en-gb" || lang === "en-ph" || lang === "en-au") {
+        score += 80;
+      } else if (/^en/.test(lang)) {
+        score += 55;
+      } else {
+        score -= 50;
+      }
+    }
+
+    if (voice.localService === false) {
+      score += 20; // Cloud neural voices sound notably smoother
+    }
+    return score;
   }
 
   function selectBestVoice(langCode) {
@@ -2544,16 +2884,34 @@
     const voices = window.speechSynthesis.getVoices() || [];
     if (!voices.length) return null;
 
-    if (langCode === "fil-PH" || langCode === "ceb-PH") {
-      const phVoice = voices.find((v) => /fil|tl|ph/i.test(v.lang) || /filipino|tagalog|philippines/i.test(v.name));
-      if (phVoice) return phVoice;
+    const persona = state.voicePersona || "nova";
+    let bestVoice = voices[0];
+    let bestScore = -Infinity;
+    for (let i = 0; i < voices.length; i++) {
+      const sc = scoreVoiceForPersona(voices[i], langCode, persona);
+      if (sc > bestScore) {
+        bestScore = sc;
+        bestVoice = voices[i];
+      }
     }
-    const naturalEn = voices.find(
-      (v) =>
-        /en/i.test(v.lang) &&
-        /natural|samantha|ava|allison|google|microsoft|neural|aria|jenny/i.test(v.name)
-    );
-    return naturalEn || voices.find((v) => /en/i.test(v.lang)) || voices[0];
+    return bestVoice;
+  }
+
+  function splitIntoNaturalSentences(text) {
+    const raw = String(text || "").trim();
+    if (!raw) return [];
+    const parts = raw.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [raw];
+    const merged = [];
+    for (let i = 0; i < parts.length; i++) {
+      const cur = parts[i].trim();
+      if (!cur) continue;
+      if (merged.length > 0 && cur.length < 18) {
+        merged[merged.length - 1] += " " + cur;
+      } else {
+        merged.push(cur);
+      }
+    }
+    return merged;
   }
 
   function speakBioVoiceResponse(text, langCode) {
@@ -2563,28 +2921,74 @@
 
     if (state.voiceMuted || !("speechSynthesis" in window) || !clean) return;
 
-    window.speechSynthesis.cancel();
+    stopSpeechOutput();
+    const seqId = state.speechSequenceId;
     const orb = $("bv-orb-indicator");
     if (orb) orb.classList.add("is-speaking");
 
-    const utterance = new SpeechSynthesisUtterance(clean);
+    const persona = state.voicePersona || "nova";
+    const baseRateMult = persona === "nova" ? 1.02 : persona === "mentor" ? 0.96 : 1.0;
+    const basePitch = persona === "nova" ? 1.06 : persona === "mentor" ? 1.01 : 0.99;
+    const userRate = Number(state.voiceSpeed) || 1.0;
     const chosenVoice = selectBestVoice(state.lastSpokenLang);
-    if (chosenVoice) utterance.voice = chosenVoice;
-    utterance.lang = state.lastSpokenLang === "en-PH" ? "en-US" : "fil-PH";
-    utterance.rate = Number(state.voiceSpeed) || 1.0;
-    utterance.pitch = 1.02;
+    const sentences = splitIntoNaturalSentences(clean);
+    const resolvedLang = chosenVoice && chosenVoice.lang
+      ? chosenVoice.lang
+      : state.lastSpokenLang === "en-PH"
+      ? "en-US"
+      : "fil-PH";
 
-    utterance.onend = () => {
-      if (orb) orb.classList.remove("is-speaking");
-    };
-    utterance.onerror = () => {
-      if (orb) orb.classList.remove("is-speaking");
-    };
+    function speakSentenceAt(idx) {
+      if (seqId !== state.speechSequenceId || state.voiceMuted) return;
+      if (idx >= sentences.length) {
+        if (orb) orb.classList.remove("is-speaking");
+        return;
+      }
 
-    window.speechSynthesis.speak(utterance);
+      const line = sentences[idx];
+      const utterance = new SpeechSynthesisUtterance(line);
+      if (chosenVoice) utterance.voice = chosenVoice;
+      utterance.lang = resolvedLang;
+
+      // Expressive Nova prosody contour across warm openings, questions, and closing thoughts
+      let pitchMod = 0;
+      let rateMod = 1.0;
+      if (/\?$/.test(line)) {
+        pitchMod += 0.04;
+        rateMod *= 0.98;
+      } else if (idx === 0 && /^(hey|hi|sure thing|great|good|maayong|magandang|kumusta)/i.test(line)) {
+        pitchMod += 0.03;
+      } else if (idx === sentences.length - 1 && sentences.length > 1) {
+        pitchMod -= 0.02;
+      }
+
+      utterance.rate = Math.max(0.7, Math.min(1.45, userRate * baseRateMult * rateMod));
+      utterance.pitch = Math.max(0.85, Math.min(1.25, basePitch + pitchMod));
+
+      utterance.onend = () => {
+        if (seqId !== state.speechSequenceId) return;
+        const pauseMs = /[,;:]$/.test(line) ? 75 : 105;
+        const tid = setTimeout(() => speakSentenceAt(idx + 1), pauseMs);
+        state.speechTimers.push(tid);
+      };
+      utterance.onerror = () => {
+        if (seqId === state.speechSequenceId && orb) {
+          orb.classList.remove("is-speaking");
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    speakSentenceAt(0);
   }
 
   function stopSpeechOutput() {
+    state.speechSequenceId = (state.speechSequenceId || 0) + 1;
+    if (Array.isArray(state.speechTimers)) {
+      state.speechTimers.forEach((tid) => clearTimeout(tid));
+      state.speechTimers = [];
+    }
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -3150,9 +3554,9 @@
     }
 
     // Gather active step text
-    const activeText = $("step-response-text") ? $("step-response-text").value.trim() : "";
-    if (activeText && state.stepResponses) {
-      state.stepResponses[state.currentStepIndex] = activeText;
+    const activeText = $("stepper-response-input") ? $("stepper-response-input").value.trim() : "";
+    if (activeText && state.stepNotes) {
+      state.stepNotes[state.currentStepIndex] = activeText;
     }
 
     const payload = {
@@ -3160,9 +3564,10 @@
       participantGroup: state.participantGroup || "",
       sessionCode: state.sessionCode || "",
       activeStepIndex: state.currentStepIndex,
-      stepResponses: state.stepResponses || {},
-      simulatedDataHydrilla: state.officialSimTable || {},
-      manualDataHydrilla: state.manualTable || {},
+      stepNotes: state.stepNotes || [],
+      stepCompleted: state.stepCompleted || [],
+      simTable: state.officialSimTable || {},
+      physicalTable: state.physicalTable || {},
       timestamp: new Date().toISOString()
     };
 
@@ -3235,7 +3640,7 @@
     },
     stroma: {
       title: "Stroma Fluid Matrix — Calvin Cycle, CO₂ & Water Temperature",
-      body: "Variables acting here: Dissolved Carbon Dioxide (from 0.2% NaHCO₃) enters the Calvin cycle, where the enzyme RuBisCO fixes carbon into glucose. Water Temperature strongly regulates enzyme activity here: warmer Day water (~26.0–28.6 °C from sun + lamp) speeds catalysis, whereas cold Night water (~18.5 °C) slows enzyme reactions."
+      body: "Variables acting here: Dissolved Carbon Dioxide (from 0.2% NaHCO₃) enters the Calvin cycle, where active RuBisCO enzymes fix carbon into glucose. Water Temperature strongly regulates enzyme activity here: warmer lamp-heated water (~26.0–28.6 °C) speeds catalysis, whereas cold Night water (~18.5 °C) slows enzyme reactions."
     },
     photons: {
       title: "Light Photons & Chlorophyll Pigments — Wavelength Absorption",
@@ -3335,7 +3740,7 @@
           "<strong>Night Condition (Lamp OFF · Cold Water ~18.5 °C):</strong> At night the lamp is turned OFF (0 lx) and cold water temperatures slow enzyme activity. Photolysis ceases completely (0 O₂ bubbles) while cooler mitochondria still consume dissolved O₂ in cellular respiration.";
       } else {
         expEl.innerHTML =
-          "<strong>Day Condition (Lamp ON · Warm Water ~26.0–28.6 °C):</strong> Bright daylight &amp; lamp radiation provide photons and warmth that accelerate Calvin-cycle enzyme kinetics. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>";
+          "<strong>Day Condition (Lamp ON · Warm Water ~26.0–28.6 °C):</strong> Lamp light &amp; radiant warmth energize active enzymes inside the 0.2% NaHCO₃ water bath. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>";
       }
     }
 
@@ -3848,10 +4253,24 @@
     if ($("voice-stop-btn")) {
       $("voice-stop-btn").addEventListener("click", stopSpeechOutput);
     }
+    if ($("voice-persona-select")) {
+      $("voice-persona-select").addEventListener("change", (e) => {
+        state.voicePersona = e.target.value || "nova";
+        if (state.lastSpokenText && !state.voiceMuted) {
+          speakBioVoiceResponse(state.lastSpokenText, state.lastSpokenLang);
+        }
+      });
+    }
     if ($("voice-speed-select")) {
       $("voice-speed-select").addEventListener("change", (e) => {
         state.voiceSpeed = Number(e.target.value) || 1.0;
       });
+    }
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
     }
 
     if ($("mic-btn")) $("mic-btn").addEventListener("click", toggleVoiceRecording);

@@ -52,7 +52,7 @@
 
   /**
    * Equilibrium temperature rise dT_eq(d) = H * (10 / d)^2
-   * Models combined solar + lamp radiant warmth during Day runs.
+   * Models lamp radiant warmth during Day runs.
    */
   function getHeatConstant(lampType, heatFilter) {
     const isLED = (lampType || "LED").toUpperCase() === "LED";
@@ -65,7 +65,7 @@
 
   /**
    * Water temperature T(t) given elapsed time, distance, and Day/Night condition:
-   * - Day + lamp ON: starts at 26.0 °C (solar ambient) and warms with lamp proximity
+   * - Day + lamp ON: starts at 26.0 °C (0.2% NaHCO3 buffer) and warms with lamp proximity
    * - Day + Dark Covered: stays shielded near 26.0 °C
    * - Night (lamp OFF): starts at 18.5 °C (cold night water) and cools slightly toward 17.8 °C
    */

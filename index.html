@@ -643,7 +643,7 @@
               </div>
             </div>
             <div id="day-night-explanation" class="day-night-explanation">
-              <strong>Day Condition (Lamp ON · ~26.0–28.6 °C):</strong> Bright daylight &amp; lamp radiation provide photons and warmth that accelerate Calvin-cycle enzyme kinetics. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>
+              <strong>Day Condition (Lamp ON · ~26.0–28.6 °C):</strong> Lamp light &amp; radiant warmth energize active enzymes inside the 0.2% NaHCO₃ water bath. Photosynthesis produces oxygen bubbles &amp; glucose while mitochondria respire 24/7. <em>Net oxygen balance is positive!</em>
             </div>
           </div>
 
@@ -768,7 +768,7 @@
                   fill="none"
                 />
                 <text id="sim-lamp-radiant-text" x="486" y="106" fill="#9a3412" font-size="9.5" font-weight="700" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">
-                  Solar + Lamp Warmth (plays enzyme kinetic role)
+                  Lamp Radiant Warmth · Active Enzymes (0.2% NaHCO₃)
                 </text>
               </g>
 
@@ -975,7 +975,7 @@
             </div>
             <div class="env-pill">
               <span class="env-label">Measured Water Bath Temp</span>
-              <strong id="readout-water-temp">26.0 °C (Stabilized Buffer)</strong>
+              <strong id="readout-water-temp">26.0 °C (Stabilized 0.2% NaHCO₃ · Active Enzymes)</strong>
             </div>
             <div class="env-pill">
               <span class="env-label">Dissolved CO₂ Source</span>
@@ -1313,6 +1313,11 @@
                 <button id="voice-stop-btn" class="voice-ctrl-btn" type="button" title="Stop Speaking Immediately">
                   ■ Stop
                 </button>
+                <select id="voice-persona-select" class="voice-speed-select" aria-label="BioVoice Tone Persona" title="Voice Tone & Style">
+                  <option value="nova" selected>✨ Nova</option>
+                  <option value="mentor">🌿 Warm</option>
+                  <option value="studio">🎙️ Crisp</option>
+                </select>
                 <select id="voice-speed-select" class="voice-speed-select" aria-label="Voice Playback Speed" title="Voice Playback Speed">
                   <option value="0.85">0.85×</option>
                   <option value="0.95">0.95×</option>

@@ -3111,3 +3111,20 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+/* BioVoice Nova Persona & Compact Voice Bar Fit */
+.bv-voice-bar {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bv-voice-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.voice-speed-select {
+  max-width: 112px;
+}
