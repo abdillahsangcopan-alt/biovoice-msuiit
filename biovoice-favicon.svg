@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#bgGrad)" stroke="#34d399" stroke-width="2"/>
+  <path d="M31 12 C18 12 11 23 13 35 C15 47 26 55 39 53 C37 44 40 36 46 30 C51 25 51 17 31 12 Z" fill="url(#leafGrad)"/>
+  <path d="M19 39 C22 33 28 27 36 22" stroke="#ecfdf5" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="44" cy="20" r="4.5" fill="#facc15"/>
+  <path d="M46 11 C52 14 56 20 56 27" stroke="url(#waveGrad)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <path d="M50 7 C57 11 60 19 60 28" stroke="url(#waveGrad)" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.72"/>
+</svg>
