@@ -27,6 +27,7 @@ import random
 import re
 import socketserver
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -65,11 +66,86 @@ MONITORING_FILE = os.path.join(PRIVATE_DIR, "monitoring_logs.json")
 CONFIG_FILE = os.path.join(PRIVATE_DIR, "study_config.json")
 PROGRESS_FILE = os.path.join(PRIVATE_DIR, "student_progress.json")
 SESSIONS_FILE = os.path.join(PRIVATE_DIR, "class_sessions.json")
+AI_CONFIG_FILE = os.path.join(PRIVATE_DIR, "ai_runtime_config.json")
+
+LAST_GEMINI_ERROR = ""
 
 # Rate-limiting state against brute-force / code enumeration
 LOGIN_ATTEMPTS = {}
 MAX_FAILED_ATTEMPTS = 6
 LOCKOUT_WINDOW_SECONDS = 45
+
+
+def get_gemini_settings():
+    """Returns (api_key, model_name, source) without ever exposing key in logs."""
+    env_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    env_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+    if env_key:
+        return env_key, env_model, "environment"
+    stored = read_json(AI_CONFIG_FILE, {})
+    stored_key = str(stored.get("geminiApiKey", "")).strip()
+    stored_model = str(stored.get("geminiModel", env_model)).strip() or env_model
+    if stored_key:
+        return stored_key, stored_model, "researcher_console"
+    return "", env_model, "none"
+
+
+def call_gemini_generate(api_key, preferred_model, sys_prompt, contents, timeout_sec=10):
+    """Calls Gemini REST API with automatic model fallback and captures clean diagnostics."""
+    global LAST_GEMINI_ERROR
+    models_to_try = []
+    for candidate in (preferred_model, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"):
+        if candidate and candidate not in models_to_try:
+            models_to_try.append(candidate)
+
+    last_err = ""
+    for model_name in models_to_try:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{urllib.parse.quote(model_name)}:generateContent?key={urllib.parse.quote(api_key)}"
+        )
+        req_payload = {
+            "system_instruction": {"parts": [{"text": sys_prompt}]},
+            "contents": contents,
+            "generationConfig": {
+                "temperature": 0.72,
+                "maxOutputTokens": 480,
+            },
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(req_payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
+                resp_data = json.loads(resp.read().decode("utf-8"))
+                parts = (
+                    resp_data.get("candidates", [{}])[0]
+                    .get("content", {})
+                    .get("parts", [])
+                )
+                ai_text = " ".join(
+                    str(p.get("text", "")).strip() for p in parts if isinstance(p, dict)
+                ).strip()
+                if ai_text:
+                    LAST_GEMINI_ERROR = ""
+                    return ai_text, model_name, ""
+                last_err = f"{model_name}: empty candidate response"
+        except urllib.error.HTTPError as err:
+            try:
+                err_body = err.read().decode("utf-8", errors="ignore")[:240]
+            except Exception:
+                err_body = ""
+            last_err = f"{model_name}: HTTP {err.code} {err_body}".strip()
+            # If auth key is invalid/rejected, don't retry extra models unnecessarily
+            if err.code in (400, 401, 403) and "API key" in err_body:
+                break
+        except Exception as exc:
+            last_err = f"{model_name}: {type(exc).__name__} ({str(exc)[:140]})"
+    LAST_GEMINI_ERROR = last_err
+    return "", preferred_model, last_err
 
 
 def now_iso():
@@ -369,6 +445,23 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
+        if path == "/api/health" or path == "/api/public-state":
+            gemini_key, gemini_model, key_source = get_gemini_settings()
+            cfg = read_json(CONFIG_FILE, {})
+            return self.send_json(
+                200,
+                {
+                    "ok": True,
+                    "service": "BioVoice Research API",
+                    "studyPhase": cfg.get("studyPhase", "Implementation"),
+                    "activeSession": cfg.get("activeSession", "Session 1"),
+                    "geminiConfigured": bool(gemini_key),
+                    "geminiModel": gemini_model,
+                    "geminiSource": key_source,
+                    "lastGeminiError": LAST_GEMINI_ERROR[:180] if LAST_GEMINI_ERROR else "",
+                },
+            )
+
         if path == "/api/session/active-codes":
             sessions_data = read_json(SESSIONS_FILE, {"activeSessions": []})
             return self.send_json(200, sessions_data)
@@ -466,6 +559,11 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
             codes_data = read_json(CODES_FILE, {"codes": []})
             report = validate_200_codes(codes_data.get("codes", []))
             return self.send_json(200, report)
+        if path == "/api/researcher/ai-config":
+            user = self.get_auth_user()
+            if not user or user.get("role") != "Researcher/Admin":
+                return self.send_json(403, {"error": "Researcher/Admin access required."})
+            return self.handle_researcher_ai_config(user, body)
 
         return self.send_json(404, {"error": "Endpoint not found."})
 
@@ -734,67 +832,45 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
         lang_mode = str(body.get("languageMode", "auto")).strip()
         detected_lang, detected_label = detect_language_utterance(last_msg, lang_mode)
 
-        # Optional Gemini API integration if GEMINI_API_KEY is configured in .env
-        gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        # Gemini API integration (via .env OR Researcher Console runtime config)
+        gemini_key, model, key_source = get_gemini_settings()
         if gemini_key:
-            try:
-                model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
-                sp = body.get("supportPoint", "sp1").upper()
-                sup_type = body.get("supportType", "hint")
-                sim_ctx = body.get("simulationContext", {})
-                sys_prompt = (
-                    "You are BioVoice, speaking with the warm, natural, expressive conversational voice and personality of Nova in Gemini. "
-                    "You are a Grade 11 Biology lab partner helping students investigate photosynthesis with Hydrilla verticillata in 0.2% NaHCO3. "
-                    "Speak naturally like a warm, helpful human mentor—avoid stiff textbook templates, markdown bullets, or LaTeX symbols so speech synthesis sounds fluid and lifelike. "
-                    "1) SIMULATION AWARENESS: Read `simulationContext` carefully (active species, distance/lux, Day/Night state, live water temp °C, recorded trial counts & means in simulated and physical tables, and current step response). If the student asks about their specific numbers (e.g., why Trial 1 or their mean is 30 bubbles, why temp changed, or comparing distances), explain the exact biology and physics behind their live numbers! Note gently when Trial 1 is a single run vs. the 3-trial Mean. "
-                    "2) OFF-TOPIC / GENERAL QUESTIONS WITH GROUNDED REDIRECT: If the student asks an everyday or non-biology question (for example 'what is pro bono' or history/vocab/tech), FIRST give a brief, exact, accurate 1–2 sentence answer to their question, THEN warmly and naturally redirect them back to our photosynthesis investigation and their current simulation step! "
-                    "3) INTEGRITY: Never give away A/B/C/D answer keys to Pretest/Posttest questions. Scaffold Hint -> Clarification -> Explanation as requested. Keep core biology terms clear and accurate. "
-                    f"Respond in {detected_label} ({detected_lang}). Keep Cebuano (Bisaya) distinct from Filipino (Tagalog). "
-                    f"Current Support Point: {sp}. Requested support type: {sup_type}. "
-                    f"Live Simulation Context: {json.dumps(sim_ctx)}."
-                )
-                contents = []
-                for m in messages[-6:]:
-                    role_label = "model" if m.get("role") == "assistant" else "user"
-                    contents.append({"role": role_label, "parts": [{"text": str(m.get("text", ""))}]})
-                if not contents:
-                    contents = [{"role": "user", "parts": [{"text": last_msg}]}]
+            sp = body.get("supportPoint", "sp1").upper()
+            sup_type = body.get("supportType", "hint")
+            sim_ctx = body.get("simulationContext", {})
+            sys_prompt = (
+                "You are BioVoice—a brilliant, warm, lively Grade 11 Biology lab partner speaking with the charismatic, natural, expressive voice personality of Nova. "
+                "Your mission is to make complex biology concepts AND experimental variables feel crystal clear, simple, relatable, and exciting for a 16-year-old student experimenting with Hydrilla verticillata in 0.2% NaHCO3! "
+                "1) SIMPLE, THOROUGH & CRYSTAL-CLEAR TEACHING: Never dump unexplained science jargon (like 'photon flux', 'thylakoid lumen', 'RuBisCO catalysis', 'photolysis', or 'light saturation') by itself! Always lead with an everyday real-life analogy first (e.g., solar panels on a roof, rechargeable power banks ATP/NADPH, flashlight spreading out, bakery workers/enzymes slowing down in cold water), walk through the 'why' step by step, and explain EVERY variable (Independent = what you change, Dependent = bubbles counted, Controlled = kept identical for a fair test) in plain words. Give thorough, clear answers (about 4–7 flowing spoken sentences when explaining, shorter when giving a Hint). "
+                "2) SPOKEN NOVA PERSONALITY (NO ROBOTIC TEXTBOOK PROSE!): Write the way a warm, expressive human talks aloud! Start with a lively reaction or hook ('Ooh, great question!', 'Oh, nice catch!', 'Wait—think of it like this!'), use contractions ('it's', 'you'll', 'here's', 'don't'), weave in gentle dashes or pauses ('—', '...') and friendly check-ins ('Pretty cool, right?', 'Makes sense so far?'), and NEVER use markdown bullets, asterisks, or raw LaTeX ($...$). Spell chemical symbols comfortably or naturally (water, carbon dioxide, 0.2% sodium bicarbonate). "
+                "3) LIVE SIMULATION & STUDENT DRAFT AWARENESS: Carefully inspect `simulationContext` (active plant species, distance/lux, Day/Night state, live water temp °C, Trial 1–3 counts and Means in simulated & physical tables, and `studentStepNotes`). When the student asks about their specific numbers (e.g., why Trial 1 or Mean is 30, comparing 10 cm vs 40 cm, or checking their prediction/answer), reference their exact numbers, gently clarify single Trial 1 vs 3-trial Mean when relevant, and explain the simple science behind them! "
+                "4) SMART GENERAL KNOWLEDGE + WARM REDIRECT: If asked ANY general/off-topic question (e.g. 'what is pro bono', trivia, vocab, math), give a thorough, clear, accurate 2–3 sentence answer right away in simple words, then warmly connect or guide them back to their active photosynthesis step! "
+                "5) RESEARCH INTEGRITY: Never leak A/B/C/D answer keys for Pretest/Posttest questions. Follow Hint -> Clarification -> Explanation requested level while staying grounded in accurate science. "
+                f"Respond fluently in {detected_label} ({detected_lang}). Keep Cebuano (Bisaya) natural and distinct from Filipino (Tagalog). "
+                f"Current Support Point: {sp}. Requested Support Mode: {sup_type}. "
+                f"Live Simulation Context: {json.dumps(sim_ctx)}."
+            )
+            contents = []
+            for m in messages[-8:]:
+                role_label = "model" if m.get("role") == "assistant" else "user"
+                contents.append({"role": role_label, "parts": [{"text": str(m.get("text", ""))}]})
+            if not contents:
+                contents = [{"role": "user", "parts": [{"text": last_msg}]}]
 
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
-                req_payload = {
-                    "system_instruction": {"parts": [{"text": sys_prompt}]},
-                    "contents": contents,
-                }
-                req = urllib.request.Request(
-                    url,
-                    data=json.dumps(req_payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                    method="POST",
+            ai_text, used_model, gemini_err = call_gemini_generate(gemini_key, model, sys_prompt, contents)
+            if ai_text:
+                return self.send_json(
+                    200,
+                    {
+                        "authorized": True,
+                        "useCuratedEngine": False,
+                        "reply": ai_text,
+                        "detectedLanguage": detected_lang,
+                        "detectedLanguageLabel": detected_label,
+                        "isSandbox": is_sandbox,
+                        "provider": f"gemini:{used_model}",
+                    },
                 )
-                with urllib.request.urlopen(req, timeout=8) as resp:
-                    resp_data = json.loads(resp.read().decode("utf-8"))
-                    ai_text = (
-                        resp_data.get("candidates", [{}])[0]
-                        .get("content", {})
-                        .get("parts", [{}])[0]
-                        .get("text", "")
-                        .strip()
-                    )
-                    if ai_text:
-                        return self.send_json(
-                            200,
-                            {
-                                "authorized": True,
-                                "useCuratedEngine": False,
-                                "reply": ai_text,
-                                "detectedLanguage": detected_lang,
-                                "detectedLanguageLabel": detected_label,
-                                "isSandbox": is_sandbox,
-                                "provider": "gemini-api-guardrailed",
-                            },
-                        )
-            except Exception:
-                pass
 
         return self.send_json(
             200,
@@ -808,7 +884,10 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "detectedLanguageLabel": detected_label,
                 "studyPhase": study_phase,
                 "activeSession": cfg.get("activeSession", "Session 1"),
-                "provider": "conversational-appendix-h-engine",
+                "provider": "biovoice-cognitive-tutor",
+                "geminiConfigured": bool(gemini_key),
+                "geminiSource": key_source,
+                "geminiFallbackReason": LAST_GEMINI_ERROR[:140] if LAST_GEMINI_ERROR else "",
             },
         )
 
@@ -1220,6 +1299,10 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         progress_data = read_json(PROGRESS_FILE, {"savedRecords": []})
         sessions_data = read_json(SESSIONS_FILE, {"activeSessions": []})
+        gemini_key, gemini_model, key_source = get_gemini_settings()
+        masked_key = (
+            f"{gemini_key[:4]}...{gemini_key[-4:]}" if len(gemini_key) >= 10 else ("Configured" if gemini_key else "")
+        )
 
         return self.send_json(
             200,
@@ -1234,6 +1317,13 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "monitoringLogs": monitoring_logs,
                 "savedProgress": progress_data.get("savedRecords", []),
                 "activeSessions": sessions_data.get("activeSessions", []),
+                "aiStatus": {
+                    "configured": bool(gemini_key),
+                    "model": gemini_model,
+                    "source": key_source,
+                    "maskedKey": masked_key if is_admin else "",
+                    "lastError": LAST_GEMINI_ERROR[:180] if (is_admin and LAST_GEMINI_ERROR) else "",
+                },
             },
         )
 
@@ -1378,6 +1468,69 @@ class BioVoiceRequestHandler(http.server.SimpleHTTPRequestHandler):
         cfg["updatedBy"] = user.get("username", "researcher_admin")
         write_json(CONFIG_FILE, cfg)
         return self.send_json(200, {"updated": True, "studyConfig": cfg})
+
+    def handle_researcher_ai_config(self, user, body):
+        """Stores optional Gemini API key server-side in private_data and tests live connectivity."""
+        action = str(body.get("action", "save")).strip().lower()
+        model_name = str(body.get("geminiModel", "gemini-2.5-flash")).strip() or "gemini-2.5-flash"
+
+        if action == "clear":
+            if os.path.exists(AI_CONFIG_FILE):
+                os.remove(AI_CONFIG_FILE)
+            return self.send_json(
+                200,
+                {
+                    "saved": True,
+                    "configured": bool(os.environ.get("GEMINI_API_KEY", "").strip()),
+                    "message": "Cleared console Gemini key. Built-in BioVoice Cognitive Tutor remains active.",
+                },
+            )
+
+        raw_key = str(body.get("geminiApiKey", "")).strip()
+        existing = read_json(AI_CONFIG_FILE, {})
+        key_to_use = raw_key or str(existing.get("geminiApiKey", "")).strip() or os.environ.get("GEMINI_API_KEY", "").strip()
+        if not key_to_use:
+            return self.send_json(400, {"saved": False, "error": "Please enter a valid Gemini API key."})
+
+        test_reply, used_model, test_err = call_gemini_generate(
+            key_to_use,
+            model_name,
+            "You are BioVoice. Reply in 6 words confirming you are ready.",
+            [{"role": "user", "parts": [{"text": "Ping"}]}],
+            timeout_sec=10,
+        )
+        if not test_reply:
+            return self.send_json(
+                400,
+                {
+                    "saved": False,
+                    "configured": False,
+                    "error": f"Gemini test failed: {test_err or 'Unable to reach Gemini API from server.'}",
+                },
+            )
+
+        if raw_key:
+            write_json(
+                AI_CONFIG_FILE,
+                {
+                    "geminiApiKey": raw_key,
+                    "geminiModel": used_model,
+                    "updatedBy": user.get("username", "researcher_admin"),
+                    "updatedAt": now_iso(),
+                },
+            )
+        masked = f"{key_to_use[:4]}...{key_to_use[-4:]}" if len(key_to_use) >= 10 else "Configured"
+        return self.send_json(
+            200,
+            {
+                "saved": True,
+                "configured": True,
+                "model": used_model,
+                "maskedKey": masked,
+                "testReply": test_reply,
+                "message": f"✓ Gemini ({used_model}) connected and verified!",
+            },
+        )
 
     def handle_save_monitoring(self, user, body):
         mon_data = read_json(

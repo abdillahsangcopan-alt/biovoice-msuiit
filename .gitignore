@@ -9,6 +9,10 @@
 private_data/participant_codes.json
 private_data/interaction_logs.json
 private_data/monitoring_logs.json
+private_data/ai_runtime_config.json
+private_data/student_progress.json
+private_data/class_sessions.json
+private_data/study_config.json
 *.xlsx
 *.csv
 

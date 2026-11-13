@@ -334,6 +334,8 @@
     voicePersona: "nova", // "nova" | "mentor" | "studio"
     speechSequenceId: 0,
     speechTimers: [],
+    activeUtterance: null,
+    activeVoiceName: "",
     lastSpokenText: "",
     lastSpokenLang: "en-PH",
     lastInteractionId: null,
@@ -342,8 +344,11 @@
     conversationMemory: {
       turnCount: 0,
       lastIdeaCode: "I1",
+      lastTopicKey: "",
       lastSupportPoint: "sp1",
       lastSupportType: "hint",
+      simplificationDepth: 0,
+      pendingQuiz: null,
       lastQuestion: "",
       lastReply: "",
       messages: [],
@@ -1875,189 +1880,330 @@
   }
 
   // ==========================================================================
-  // 12. MULTI-TURN CONVERSATIONAL BIOVOICE DIALOGUE MANAGER (APPENDIX H)
+  // 12. MULTI-TURN CONVERSATIONAL BIOVOICE COGNITIVE TUTOR (APPENDIX H)
   // ==========================================================================
   const IDEA_KNOWLEDGE_BASE = {
     I1: {
-      title: "Need for light in photosynthesis",
+      title: "Why Plants Need Light",
       en: {
-        H: "Think about what chlorophyll inside the chloroplasts captures from the lamp. Without light energy, can the light-dependent reactions split water (H₂O) to start photosynthesis?",
-        C: "Light energy is absorbed by chlorophyll in the thylakoid membranes to excite electrons and split water molecules (photolysis). That is why illuminated plants actively release bubbles while unlit plants barely do.",
-        E: "Photosynthesis begins with the light-dependent reactions in the thylakoid membranes. Chlorophyll absorbs photons from the lamp to split water (H₂O) into oxygen gas (O₂), protons, and electrons, while generating ATP and NADPH. Compare your lit trials with your activity sheet!",
+        H: "Think of green chlorophyll like tiny solar panels inside the plant's leaves. When the lamp is switched off, do those solar panels have any energy coming in to split water apart?",
+        C: "Here's the simple idea: inside green plant cells, chlorophyll works like tiny solar panels. When light hits them, it gives them the kick of energy needed to snap water molecules apart—and that's what starts the whole food-making process!",
+        E: "Think of photosynthesis like a solar-powered kitchen! First, green chlorophyll acts like tiny solar panels inside the leaves. When lamp light hits those panels, it supplies the energy to snap water molecules apart—a step called photolysis, which literally means 'light splitting.' That releases oxygen bubbles you can see, while charging up energy for making glucose sugar. Without light, the solar panels shut off right away!",
       },
       fil: {
-        H: "Isipin kung ano ang sinasagap ng chlorophyll sa loob ng chloroplast mula sa lamp. Kapag walang light energy, mahahati ba ang tubig (H₂O) sa light-dependent reactions?",
-        C: "Kailangan ng chlorophyll ang light energy sa thylakoid membrane upang hatiin ang water molecules (photolysis) at makagawa ng ATP at NADPH. Kaya kapag may ilaw, tuloy-tuloy ang paglabas ng oxygen bubbles.",
-        E: "Sa light-dependent reactions sa thylakoid, sinasagap ng chlorophyll ang light energy upang hatiin ang H₂O at maglabas ng oxygen gas (O₂) habang bumubuo ng ATP at NADPH. Ikumpara ito sa iyong Student Activity Sheet!",
+        H: "Isipin mong parang maliliit na solar panel ang green chlorophyll sa loob ng dahon. Kapag patay ang lamp, may enerhiya ba itong makukuha para hatiin ang tubig?",
+        C: "Ganito lang kasimple: ang chlorophyll ay parang solar panel ng halaman. Kapag tinamaan ito ng liwanag mula sa lamp, nagkakaroon ito ng sapat na enerhiya para hatiin ang tubig—at diyan nagsisimula ang paggawa ng pagkain at oxygen!",
+        E: "Isipin mong parang solar-powered na kusina ang photosynthesis! Ang green chlorophyll sa dahon ang nagsisilbing maliliit na solar panel. Kapag tumama ang liwanag ng lamp dito, binibigyan nito ng lakas ang halaman para hatiin ang tubig—ang prosesong tinatawag na photolysis. Dito lumalabas ang nakikita mong oxygen bubbles, habang nag-iipon ito ng enerhiya para makagawa ng glucose!",
       },
       ceb: {
-        H: "Hunahunaa unsay ginadakop sa chlorophyll sulod sa chloroplast gikan sa suga. Kon walay light energy, mabahin ba ang tubig (H₂O) sa light-dependent reactions?",
-        C: "Gikinahanglan sa chlorophyll ang light energy sa thylakoid membrane aron mabahin ang water molecules (photolysis) ug makahimo og ATP ug NADPH. Mao nga adunay bula sa oxygen kon hayag ang suga.",
-        E: "Sa light-dependent reactions sulod sa thylakoid, ginadakop sa chlorophyll ang light energy aron mabahin ang H₂O ug mopagawas og oxygen gas (O₂) samtang naghimo og ATP ug NADPH. I-tandi kini sa imong Activity Sheet!",
+        H: "Hunahunaa nga ang green chlorophyll murag gagmayng solar panel sulod sa dahon. Kon palong ang suga, naa bay enerhiya nga mosulod aron mabahin ang tubig?",
+        C: "Ingon ani lang ni kasayon: ang chlorophyll murag solar panel sa tanom. Kon maigo kini sa kahayag gikan sa lamp, makakuha kini og kusog aron mapikas ang tubig—ug diha magsugod ang paghimo og oxygen ug pagkaon!",
+        E: "Hunahunaa nga murag solar-powered kitchen ang photosynthesis! Ang green chlorophyll mao ang gagmayng solar panel sa dahon. Kon moigo ang kahayag, gamiton niini ang enerhiya aron pikas-pikason ang tubig—gitawag ni og photolysis. Mao na ang mopagawas og oxygen bubbles nga imong makita, samtang magtigom og kusog para makahimo og asukar nga glucose!",
       },
     },
     I2: {
-      title: "Bubble count as sign of rate",
+      title: "Why Counting Bubbles Shows the Rate",
       en: {
-        H: "When water (H₂O) is split during the light-dependent reactions, which gas escapes from the cut stem as visible underwater bubbles?",
-        C: "Each rising bubble is mostly oxygen gas (O₂), a direct by-product of water photolysis in the thylakoids. Counting bubbles over 60 seconds gives us an observable indicator of how fast photosynthesis is running.",
-        E: "Because oxygen gas (O₂) is released whenever water molecules are split in the light-dependent reactions, a higher number of bubbles counted in 60 seconds indicates a faster rate of photosynthesis. Check how your bubble counts change across rows in your table!",
+        H: "Watch the little gas bubbles floating up from the cut stem! Since the plant releases one specific gas every time it splits water with light, counting them for 60 seconds tells you how fast what process is happening?",
+        C: "Every bubble rising from the Hydrilla shoot is oxygen gas escaping as a side product when light splits water inside the leaves. So more bubbles in 60 seconds simply means photosynthesis is running faster!",
+        E: "Great question! When chlorophyll captures light, the leaf uses that energy to split water into building blocks it needs—and oxygen gas is left over. Underwater, that leftover oxygen forms tiny visible bubbles rising from the cut stem! By timing exactly 60 seconds and counting those bubbles, we turn an invisible cellular reaction into something easy to measure and compare across lamp distances!",
       },
       fil: {
-        H: "Kapag hinati ang tubig (H₂O) sa light-dependent reactions, anong gas ang lumalabas sa tangkay ng halaman bilang mga bula?",
-        C: "Ang bawat bula ay oxygen gas (O₂) na by-product ng photolysis ng tubig sa thylakoid. Ang bilang ng bula sa loob ng 60 seconds ang nagsisilbing sukatan ng bilis (rate) ng photosynthesis.",
-        E: "Dahil oxygen gas (O₂) ang direktang produkto kapag hinahati ang H₂O sa light-dependent reactions, mas maraming bubbles sa 60 seconds ay nangangahulugang mas mabilis ang photosynthesis rate. Suriin ang iyong data table!",
+        H: "Panoorin ang maliliit na bula na umaakyat mula sa pinutol na tangkay! Dahil lumalabas ang gas na ito tuwing hinahati ang tubig gamit ang ilaw, ano ang ipinapakita ng bilang ng bula sa 60 seconds?",
+        C: "Bawat bulang umaakyat mula sa Hydrilla ay oxygen gas na nabubuo kapag hinati ng liwanag ang tubig. Kaya mas maraming bula sa 60 seconds, ibig sabihin ay mas mabilis tumatakbo ang photosynthesis!",
+        E: "Magandang obserbasyon! Kapag ginagamit ng dahon ang liwanag para hatiin ang tubig, may sobrang oxygen gas na lumalabas. Sa ilalim ng tubig, nagiging maliliit na bula ito mula sa tangkay! Kaya kapag binilang natin ito sa loob ng 60 seconds, madali nating nasusukat kung gaano kabilis nagaganap ang photosynthesis sa bawat distansya.",
       },
       ceb: {
-        H: "Kon mabahin ang tubig (H₂O) sa light-dependent reactions, unsang gas ang mogawas sa tangkay sa tanom isip mga bula sa tubig?",
-        C: "Ang matag bula mao ang oxygen gas (O₂) nga by-product sa photolysis sa tubig sulod sa thylakoid. Ang ihap sa bula sulod sa 60 seconds nagpakita kung unsa kapaspas ang rate sa photosynthesis.",
-        E: "Tungod kay oxygen gas (O₂) ang mogawas matag bahin sa H₂O sa light-dependent reactions, ang mas daghang bula sulod sa 60 seconds nagpasabot nga mas paspas ang photosynthesis rate. Tan-awa ang imong data table!",
+        H: "Tan-awa ang gagmayng bula nga mosaka gikan sa putol nga tangkay! Matag higayon nga mapikas ang tubig tungod sa kahayag, usa ka gas ang mogawas. Unsa man ang gipakita sa kadaghanon sa bula sulod sa 60 seconds?",
+        C: "Ang matag bula nga mosaka gikan sa Hydrilla kay oxygen gas nga sobra inig pikas sa tubig. Busa, kon mas daghang bula sulod sa 60 seconds, pasabot ana mas paspas ang photosynthesis!",
+        E: "Nindot nga pangutana! Kon gamiton sa tanom ang kahayag aron pikason ang tubig, naay sobrang oxygen gas nga mogawas. Ilawom sa tubig, mahimo kining gagmayng bula sa tangkay! Pinaagi sa pag-ihap sa bula sulod sa 60 seconds, dali nato masukod ug matandi kon unsa kapaspas ang photosynthesis sa matag gilay-on sa suga.",
       },
     },
     I3: {
-      title: "Lamp distance and light strength",
+      title: "Why Lamp Distance Changes Bubble Speed",
       en: {
-        H: "Compare the light beam at 10 cm versus 40 cm. As the lamp moves farther from the beaker, does the light energy reaching the leaves become more concentrated or more spread out?",
-        C: "Moving the lamp from 10 cm to 40 cm spreads the photons over a wider area, reducing light intensity (from 2,500 lx down to 280 lx). Fewer photons hitting chlorophyll mean slower photolysis and fewer oxygen bubbles.",
-        E: "Light intensity decreases rapidly as lamp distance increases. At 10 cm (2,500 lx), chlorophyll receives abundant photons to drive electron transport and release ~39–45 bubbles/60s, whereas at 40 cm (280 lx) photon supply drops sharply, producing only ~6–10 bubbles/60s.",
+        H: "Picture a flashlight shining on a wall: when you step back from 10 cm to 40 cm, does the light stay tightly focused on the plant, or does it spread out thinner?",
+        C: "Think of a flashlight! At 10 cm (2,500 lx), light hits the plant in a tight, super-bright beam. When you slide the lamp back to 40 cm (156 lx), that same light spreads wide and thin—so fewer light packets hit the leaves each second, making bubbles slow way down!",
+        E: "Picture shining a flashlight onto your notebook. Hold it close at 10 cm (2,500 lux), and all the brightness hits one small spot—giving chlorophyll plenty of energy to churn out roughly 39 to 45 bubbles per minute! Now pull that lamp back to 20 cm (625 lux) or all the way to 40 cm (156 lux). Because light spreads outward in two directions—wider AND taller—doubling the distance drops brightness to one-fourth! With way dimmer light hitting the leaf, water splits slower and bubble count drops cleanly.",
       },
       fil: {
-        H: "ikumpara ang sinag ng lamp sa 10 cm at sa 40 cm. Kapag inilalayo ang lamp sa beaker, lumalakas ba o humihina ang light intensity na tumatama sa dahon?",
-        C: "Kapag inilayo ang lamp mula 10 cm papuntang 40 cm, kumakalat ang liwanag kaya bumababa ang illuminance (mula 2,500 lx hanggang 280 lx). Mas kaunting photons ang nasasagap ng chlorophyll kaya bumababa ang bilang ng bubbles.",
-        E: "Bumababa ang light intensity kapag lumalayo ang lamp. Sa 10 cm (2,500 lx), maraming photons ang nagpapagana sa thylakoid (~39–45 bubbles/60s), samantalang sa 40 cm (280 lx) ay mahina na ang liwanag kaya ~6–10 bubbles/60s na lang ang lumalabas.",
+        H: "Isipin mong may hawak kang flashlight: kapag inilayo mo ito mula 10 cm papuntang 40 cm, naiipon ba ang liwanag sa dahon o kumakalat ito at humihina?",
+        C: "Parang flashlight lang iyan! Sa 10 cm (2,500 lx), tutok na tutok ang malakas na ilaw sa halaman. Pagdating sa 40 cm (156 lx), kumakalat na nang malawak ang ilaw kaya mas kaunting liwanag ang nakakaabot sa dahon—at bumabagal din ang paglabas ng mga bula!",
+        E: "Isipin mong tumututok ka ng flashlight sa papel. Kapag malapit sa 10 cm (2,500 lux), siksik ang liwanag sa isang lugar kaya nakakagawa ito ng mga 39 hanggang 45 bubbles kada 60 seconds! Pero kapag inilayo sa 20 cm (625 lux) hanggang 40 cm (156 lux), kumakalat ang liwanag sa mas malaking espasyo kaya nagiging mas mahina ang sikat sa bawat dahon—at bumababa nang malinaw ang bilang ng bula.",
       },
       ceb: {
-        H: "Itandi ang kahayag sa suga sa 10 cm ug sa 40 cm. Kon ipalayo ang suga gikan sa beaker, magkakusog ba o magkahinay ang light intensity nga moigo sa dahon?",
-        C: "Kon ipalayo ang suga gikan sa 10 cm ngadto sa 40 cm, mokatag ang kahayag ug moubos ang illuminance (gikan 2,500 lx ngadto sa 280 lx). Mas gamay nga photons ang madawat sa chlorophyll mao nga mokunhod ang bula.",
-        E: "Magkahinay ang light intensity samtang magkalayo ang suga. Sa 10 cm (2,500 lx), daghang photons ang modasig sa thylakoid (~39–45 bubbles/60s), apan sa 40 cm (280 lx) hinay na ang kahayag (~6–10 bubbles/60s). I-tandi kini sa imong graph!",
+        H: "Hunahunaa ang flashlight nga gitutok sa bungbong: kon imong ilayo gikan sa 10 cm ngadto sa 40 cm, magpabilin bang kusog ang kahayag o mokatag ug mohinay na?",
+        C: "Murag flashlight ra gyud na! Sa 10 cm (2,500 lx), nakapokus kaayo ang hayag sa tanom. Kon ilayo sa 40 cm (156 lx), mokatag ang kahayag sa dako nga lugar maong mas gamay nga hayag ang moigo sa dahon—ug mohinay pud ang bula!",
+        E: "Hunahunaa nga nagtutok ka og flashlight sa notebook. Kon duol sa 10 cm (2,500 lux), tipon kaayo ang kahayag sa usa ka lugar maong makahimo og mga 39 hangtod 45 ka bula sa usa ka minuto! Kon ilayo ngadto sa 20 cm (625 lux) o 40 cm (156 lux), mokatag ang kahayag sa gilapdon ug gitas-on maong mokunhod dayon ang kusog niini ngadto sa dahon ug mogamay ang bula.",
       },
     },
     I4: {
-      title: "Dark setup as comparison",
+      title: "Why We Need the Dark Control",
       en: {
-        H: "Why do scientists include a Dark Control (0 lx) where the lamp is completely off? What does that prove about the bubbles you counted in the lit trials?",
-        C: "The Dark Control (0 lx) serves as our baseline comparison. Because bubble production drops to nearly zero (0–2 bubbles/60s) in the dark, it confirms that the bubbles in the lit trials are caused by light-driven photosynthesis.",
-        E: "In an experiment, a Dark Control (0 lx) isolates the effect of light. When the lamp is off while temperature (26.0 °C) and NaHCO₃ stay constant, photolysis stops and oxygen bubbles drop to 0–2 per 60 seconds—proving light is essential for oxygen release.",
+        H: "If everything else—the plant, water temperature, and baking soda water—stays identical when the lamp goes completely off, what does getting 0 bubbles in the dark prove?",
+        C: "The Dark Control (0 lx) is our 'just-to-be-sure' baseline check! When the lamp shuts off and bubbles stop right away even though water and carbon dioxide are still there, it proves the bubbles in your lit runs really came from light-driven photosynthesis!",
+        E: "Every good science test needs a baseline comparison—that's what our Dark Control (0 lux) does! Here we keep the same Hydrilla shoot, the same 0.2% sodium bicarbonate solution, and the exact same 60-second timer, and ONLY turn off the light. Immediately, bubble production drops to 0 to 2 bubbles per minute! That proves those rising bubbles weren't just random fizzing from the water—they truly depend on light energy.",
       },
       fil: {
-        H: "Bakit kaya mahalagang magsama ng Dark Control (0 lx) kung saan patay ang lamp? Ano ang pinatutunayan nito tungkol sa mga bubbles na nabilang mo noong may ilaw?",
-        C: "Ang Dark Control (0 lx) ang ating baseline comparison. Dahil halos zero (0–2 bubbles/60s) ang lumalabas sa dilim, pinatutunayan nitong ang mga bula ay talagang bunga ng light-dependent reactions.",
-        E: "Ginagamit ang Dark Control (0 lx) upang patunayan na liwanag ang sanhi ng paglabas ng oxygen. Kapag patay ang ilaw habang pareho pa rin ang 26.0 °C at NaHCO₃, humihinto ang photolysis kaya 0–2 bubbles na lang ang lumalabas.",
+        H: "Kung pareho pa rin ang halaman, tubig, at NaHCO₃ pero patay na ang lamp, ano ang pinapatunayan kung biglang maging halos zero ang bubbles?",
+        C: "Ang Dark Control (0 lx) ang nagsisilbing baseline comparison natin! Dahil humihinto ang mga bula pagkatay ng ilaw kahit nariyan pa ang tubig at CO₂, siguradong liwanag talaga ang nagpapagana sa paggawa ng oxygen bubbles!",
+        E: "Sa anumang eksperimento, kailangan ng baseline comparison—iyon ang trabaho ng Dark Control (0 lux). Pareho pa rin ang halaman, ang 0.2% NaHCO₃ na tubig, at ang 60 seconds, pero pinatay natin ang ilaw. Agad bumabagsak sa 0 hanggang 2 bubbles lang! Pinatutunayan nito na ang nakitang bula ay hindi basta bula ng tubig kundi dulot talaga ng liwanag.",
       },
       ceb: {
-        H: "Ngano man nga importante ang Dark Control (0 lx) diin palong ang suga? Unsay gipamatud-an niini bahin sa mga bula nga imong naihap sa dihang nagsiga ang suga?",
-        C: "Ang Dark Control (0 lx) mao ang atong baseline comparison. Tungod kay halos sero (0–2 bubbles/60s) ang bula sa ngitngit, nagpamatuod kini nga ang bula nagagikan gyud sa light-driven photosynthesis.",
-        E: "Ang Dark Control (0 lx) gigamit aron ipakita nga kahayag ang hinungdan sa pagpagawas og oxygen. Kon palong ang suga samtang pareho ang 26.0 °C ug NaHCO₃, mohunong ang photolysis ug mahimong 0–2 bubbles na lang.",
+        H: "Kon pareho ra gihapon ang tanom, tubig, ug NaHCO₃ pero gipalong ang suga, unsay mapamatud-an kon mohunong o halos mawala ang mga bula?",
+        C: "Ang Dark Control (0 lx) mao ang atong baseline test! Tungod kay mohunong man ang bula inig palong sa suga bisan naa gihapon ang tubig ug CO₂, nagpamatuod ni nga kahayag gyud ang nagpadagan sa paghimo og oxygen bubbles!",
+        E: "Ang matag maayong eksperimento nanginahanglan og baseline comparison—mao kana ang Dark Control (0 lux). Pareho ra ang Hydrilla, ang 0.2% NaHCO₃ sa tubig, ug ang 60 seconds, apan walay suga. Inig ka ngitngit, mahimong 0 hangtod 2 na lang ang bula—nga nagpamatuod nga gikan gyud sa kahayag ang mga bula nga imong naihap!",
       },
     },
     I5: {
-      title: "High-light leveling off",
+      title: "Why the Graph Levels Off at High Light (Bottleneck)",
       en: {
-        H: "Look closely at the curve between 20 cm and 10 cm: Even when light intensity jumps from 625 lx to 2,500 lx (4× brighter), why doesn't the bubble count quadruple?",
-        C: "At high light intensity, chlorophyll is already working near capacity, so another factor—such as dissolved CO₂ supply or Calvin cycle enzyme speed (RuBisCO)—becomes the limiting factor, causing the curve to level off.",
-        E: "This plateau is called light saturation. At 10 cm, the light-dependent reactions produce plenty of ATP and NADPH, but the overall rate of photosynthesis is limited by how fast Calvin cycle enzymes and dissolved CO₂ (from 0.2% NaHCO₃) can fix carbon in the stroma.",
+        H: "Think about a busy burger kitchen: even if you turn on four times brighter ceiling lights, can the cooks flip burgers four times faster if they only have so many buns or hands?",
+        C: "Even when light jumps 4 times brighter from 20 cm (625 lx) to 10 cm (2,500 lx), the leaf's food-making workers (enzymes) and carbon dioxide supply already reach top speed! Whatever runs out or hits max capacity first acts as a bottleneck—called a limiting factor.",
+        E: "Picture a tiny bakery! Between 20 cm (625 lux) and 10 cm (2,500 lux), light energy becomes four times stronger—yet bubbles don't jump four times higher! Why? Because the chlorophyll 'solar panels' are already working at full blast! Now the overall speed is bottlenecked by other ingredients: how fast dissolved carbon dioxide reaches the cells and how quickly helper enzymes inside the leaf can assemble sugar. Scientists call that flattening plateau 'light saturation,' and the bottleneck item is the limiting factor!",
       },
       fil: {
-        H: "Tingnan ang pagitan ng 20 cm at 10 cm sa graph: Kahit umakyat mula 625 lx tungong 2,500 lx ang liwanag, bakit hindi nito dinoble o ginawang apat na beses ang bilang ng bubbles?",
-        C: "Sa napakataas na liwanag, halos puno na ang kapasidad ng chloroplast, kaya ibang salik na—tulad ng dissolved CO₂ o bilis ng enzymes sa Calvin cycle—ang nagiging limiting factor.",
-        E: "Tinatawag itong light saturation. Sa 10 cm, sapat na ang liwanag para sa ATP at NADPH, ngunit nililimitahan na ng dami ng dissolved CO₂ at bilis ng Calvin cycle enzymes sa stroma ang kabuuang bilis ng photosynthesis kaya nagle-level off ang graph.",
+        H: "Isipin mong parang kusina: kahit gawin mong apat na beses mas maliwanag ang ilaw sa kisame, bibilis din ba nang apat na beses ang luto kung limitado lang ang kamay ng tagaluto at sangkap?",
+        C: "Kahit lumakas nang apat na beses ang liwanag mula 20 cm (625 lx) tungong 10 cm (2,500 lx), umaabot na sa pinakamabilis nilang kaya ang mga helper enzymes at suplay ng dissolved CO₂! Iyon ang bottleneck o tinatawag nating limiting factor.",
+        E: "Parang panaderya lang iyan! Mula 20 cm (625 lux) papuntang 10 cm (2,500 lux), sobrang dami nang ilaw ang dumating, pero hindi na tumataas nang apat na beses ang bula. Puno na kasi ang kapasidad ng solar panels sa dahon, kaya nagkakaroon ng bottleneck sa dami ng dissolved CO₂ at bilis ng enzymes sa loob—iyan ang tinatawag nating light saturation at limiting factor!",
       },
       ceb: {
-        H: "Tan-awa ang kalainan sa 20 cm ug 10 cm sa graph: Bisan og nisaka gikan 625 lx ngadto sa 2,500 lx ang kahayag, nganong dili man mo-upat ka pilo ang ihap sa bula?",
-        C: "Sa kusog kaayo nga kahayag, hapit na mapuno ang kapasidad sa chloroplast, busa laing factor—sama sa dissolved CO₂ o katulinon sa Calvin cycle enzymes—ang mahimong limiting factor.",
-        E: "Gitawag kini og light saturation. Sa 10 cm, abunda na ang ATP ug NADPH gikan sa kahayag, apan ang kinatibuk-ang rate sa photosynthesis gilimitahan na sa suplay sa CO₂ ug sa enzymes sa Calvin cycle sulod sa stroma.",
+        H: "Hunahunaa ang usa ka kusina: bisan pag pil-on nimo og ka-upat kakusog ang suga, mopaspas ba og ka-upat ang pagluto kon limitado ra ang kamot sa kusinero ug ang sagol?",
+        C: "Bisan og ni-upat ka pilo ang kahayag gikan 20 cm (625 lx) ngadto sa 10 cm (2,500 lx), puno na sa ilang kinapaspasan ang enzymes sa tanom ug ang suplay sa dissolved CO₂! Kana nga limitasyon mao ang gitawag nga limiting factor.",
+        E: "Murag panaderya ra gyud! Gikan sa 20 cm (625 lux) padulong sa 10 cm (2,500 lux), sobra na kadaghan ang kahayag, apan dili mo-upat ka pilo ang bula. Ngano man? Kay abot na sa kinatumyan ang trabaho sa chlorophyll, busa ang suplay sa CO₂ ug ang katulinon sa enzymes na ang mahimong bottleneck—gitawag ni sa science nga light saturation!",
       },
     },
     I6: {
-      title: "Repeated trials and mean",
+      title: "Why We Repeat 3 Trials & Use the Mean",
       en: {
-        H: "Notice that Trial 1, Trial 2, and Trial 3 at the same distance vary slightly (for example, 41, 44, and 40 bubbles). Why do we average 3 trials instead of trusting just 1 run?",
-        C: "Biological specimens naturally fluctuate slightly from minute to minute. Conducting 3 repeated trials and calculating the Mean reduces random counting variation and gives a more reliable rate.",
-        E: "Living shoots like Hydrilla show small natural variations in bubble nucleation (e.g., 40 vs. 43 bubbles in 60 seconds). Recording 3 trials per condition and computing the Mean ($(\\text{T1}+\\text{T2}+\\text{T3})\\div 3$) ensures your graph reflects the true biological trend.",
+        H: "If you measure a friend's basketball free throws, would you trust just 1 shot or average 3 rounds? Why might a living Hydrilla plant vary a little from minute to minute?",
+        C: "Living plants aren't identical robots—one minute 40 bubbles pop off the stem, the next minute 43 pop off! Taking 3 trials and averaging them (T1 + T2 + T3, divided by 3) smooths out random blips so your graph shows the real pattern.",
+        E: "Because Hydrilla is a living plant, tiny random things happen every minute—like a couple of bubbles sticking briefly to a leaf before floating up, giving 40 bubbles once and 43 the next time! If you only trusted 1 trial, you might get fooled by a lucky or slow minute. Running 3 repeated trials and finding the Mean—adding Trial 1 plus Trial 2 plus Trial 3 and dividing by 3—gives a fair, steady score you can trust on your graph!",
       },
       fil: {
-        H: "Pansinin na bahagyang nagkakaiba ang Trial 1, Trial 2, at Trial 3 sa iisang distansya (hal. 41, 44, at 40 bubbles). Bakit kaya kailangang kumuha ng 3 trials at kunin ang Mean?",
-        C: "Normal sa buhay na halaman ang bahagyang pagbabago-bago ng bula bawat minuto. Ang pagkuha ng 3 trials at pagkwenta ng Mean ay nagpapababa ng random error upang maging mas maaasahan ang iyong data.",
-        E: "May natural na biological variation ang paglabas ng bula sa Hydrilla. Sa pamamagitan ng 3 repeated trials at pagkuha ng Mean ($(\\text{T1}+\\text{T2}+\\text{T3})\\div 3$), nagiging mas tumpak at siyentipiko ang iyong paghahambing sa bawat distansya.",
+        H: "Kung titignan mo ang score ng basketball player, sapat na ba ang 1 tira lang o mas mainam ang average ng 3 subok? Bakit nagbabago nang konti ang bula ng buhay na halaman bawat minuto?",
+        C: "Hindi robot ang buhay na Hydrilla—minsan 40 bubbles sa isang minuto, minsan 43! Kaya kumukuha tayo ng 3 trials at kinukwenta ang Mean (T1 + T2 + T3, divided by 3) para mawala ang tsamba at makita ang totoong trend.",
+        E: "Dahil buhay na halaman ang Hydrilla, natural lang na magbago nang konti ang labas ng bula—halimbawa, may ilang bulang dumidikit saglit sa dahon bago umakyat! Kaya kung 1 trial lang, pwedeng malinlang tayo ng konting swerte o bagal. Sa pagkuha ng 3 trials at pag-average gamit ang Mean—(T1 + T2 + T3) ÷ 3—mas tumpak at patas ang ipapakita ng ating graph!",
       },
       ceb: {
-        H: "ikamatikod nga adunay gamayng kalainan ang Trial 1, Trial 2, ug Trial 3 sa parehong distansya (pananglitan 41, 44, ug 40 ka bula). Nganong magbuhat man ta og 3 ka trials ug kuhaon ang Mean?",
-        C: "Normal sa buhing tanom ang gamay nga kausaban matag minuto. Ang paghimo og 3 ka repeated trials ug pagkuha sa Mean makapakunhod sa random error aron mas kasaligan ang imong resulta.",
-        E: "Ang buhing tanom sama sa Hydrilla adunay natural nga biological variation sa pagpagawas og bula. Ang pagrekord og 3 ka trials ug pagkuwenta sa Mean ($(\\text{T1}+\\text{T2}+\\text{T3})\\div 3$) naghatag og mas tukma nga representante sa rate sa photosynthesis.",
+        H: "Kon mosukod ka og basketball free throws, mosalig ka ba sa 1 ka itsa ra o sa average sa 3 ka suway? Nganong maglahi-lahi man og gamay ang ihap sa bula sa buhing Hydrilla matag minuto?",
+        C: "Dili robot ang buhing tanom—usahay 40 ka bula, sunod minuto 43! Mao nga maghimo ta og 3 ka trials ug kuhaon ang Mean (T1 + T2 + T3, divided by 3) aron makuha ang tinuod nga pattern sa imong graph.",
+        E: "Tungod kay buhing tanom ang Hydrilla, normal ang gamay nga kalainan matag minuto—pananglitan naay bula nga mopilit una kadiyot sa dahon sa dili pa molutaw! Kon usa ra ka trial, basin matsansingan og taas o ubos ra kaayo. Pero kon 3 ka trials ug kuhaon ang Mean gamit ang (T1 + T2 + T3) ÷ 3, lig-on ug kasaligan ang atong resulta!",
       },
     },
     I7: {
-      title: "Constant variables / fair test",
+      title: "Understanding Your Experimental Variables (Fair Test)",
       en: {
-        H: "If water bath temperature or NaHCO₃ concentration changed at the same time as lamp distance, would we know which variable caused the bubble count to change?",
-        C: "To make this a fair test, we change only the independent variable (lamp distance) while keeping water temperature (26.0 °C), NaHCO₃ (0.2%), plant shoot, and observation time (60 seconds) constant.",
-        E: "Notice the radiant warmth waves near the lamp versus the submerged thermometer reading (26.0 °C). By stabilizing water temperature at 26.0 °C and NaHCO₃ at 0.2%, we ensure changes in bubble rate are caused solely by light intensity.",
+        H: "Suppose you moved the lamp farther AND made the water way colder at the same time—could you tell which one caused the bubbles to drop? Let's keep only ONE thing changing!",
+        C: "Here's an easy way to remember all three variables: Independent = what YOU change (lamp distance); Dependent = what YOU count (bubbles per 60s); Controlled/Constant = everything kept the same (plant, 0.2% sodium bicarbonate water, 60 seconds, and temperature tracking) so the test stays fair!",
+        E: "Let's break down the three variables super simply! First, the Independent Variable is the ONE knob you turn on purpose—how far the lamp is (10, 20, 30, 40 cm, or Dark). Second, the Dependent Variable is the outcome you measure—how many oxygen bubbles float up in 60 seconds, because it 'depends' on the light! Third, Controlled Variables are everything kept steady for a fair test: the exact same plant shoot, 0.2% sodium bicarbonate (which supplies steady carbon dioxide), and the 60-second timer. Keeping them fair lets us be 100% sure light caused the change!",
       },
       fil: {
-        H: "Kung sabay na nagbago ang temperatura ng tubig at ang distansya ng lamp, malalaman ba natin kung alin talaga ang nagpabago sa dami ng bubbles?",
-        C: "Para maging fair test ang eksperimento, distansya lang ng lamp (independent variable) ang binabago habang pinananatiling constant ang temperatura (26.0 °C), $0.2\\%\\text{ NaHCO}_3$, halaman, at 60 seconds timer.",
-        E: "Kahit may visual heat waves malapit sa lamp, nananatiling 26.0 °C ang water bath at 0.2% ang NaHCO₃. Dahil constant ang mga ito, sigurado tayong light intensity lang ang dahilan ng pagbabago sa bubble count.",
+        H: "Isipin mong binago mo na ang distansya ng lamp, tapos pinalamig mo pa ang tubig nang sabay—malalaman mo pa ba kung alin ang nagpababa ng bubbles?",
+        C: "Madali lang tandaan ang tatlong variables: Independent Variable = ang BINABAGO mo (distansya ng lamp); Dependent Variable = ang SINUSUKAT mo (bilang ng oxygen bubbles); Constant Variables = ang HINDI PINAPALITAN (halaman, 0.2% NaHCO₃, 60 seconds, at kontroladong temperatura) para patas ang eksperimento!",
+        E: "Hatiin natin nang simple ang tatlong variables! Una, Independent Variable ang iisang bagay na ikaw ang pumipili o nagbabago—dito, ang distansya ng lamp (10 hanggang 40 cm o Dark). Pangalawa, Dependent Variable ang resultang binibilang mo—ang oxygen bubbles sa 60 seconds, dahil nakadepende ito sa liwanag! Pangatlo, Constant Variables ang lahat ng pinanatiling pareho tulad ng halaman, 0.2% NaHCO₃ (pinagkukunan ng dissolved CO₂), at 60 seconds timer para maging patas at malinaw ang test.",
       },
       ceb: {
-        H: "Kon dungan nga mausab ang temperatura sa tubig ug ang gilay-on sa suga, mahibal-an ba nato kung unsa gyud ang nakapausab sa ihap sa bula?",
-        C: "Aron mahimong fair test ang eksperimento, ang gilay-on ra sa suga (independent variable) ang usbon samtang kanunay nga constant ang temperatura (26.0 °C), $0.2\\%\\text{ NaHCO}_3$, tanom, ug 60 seconds nga oras.",
-        E: "Bisan og adunay visual heat waves duol sa suga, nagpabilin nga 26.0 °C ang water bath ug 0.2% ang NaHCO₃. Tungod kay constant kini, segurado kita nga ang light intensity ra ang nakaapekto sa rate sa bula.",
+        H: "Hunahunaa kon imong gilayo ang suga UNYA gipabugnaw pa gyud nimo ang tubig sa parehong higayon—mahibal-an pa ba nimo kon asa anang duha ang nakapahinay sa bula?",
+        C: "Sayon ra kaayo hinumdoman ang tulo ka variables: Independent = imong GIUSAB (gilay-on sa suga); Dependent = imong GISUKOD (ihap sa oxygen bubbles); Constant = GIPABILIN NGA PAREHO (tanom, 0.2% NaHCO₃, 60 seconds, ug kontroladong temperatura) aron patas ang eksperimento!",
+        E: "Atong sabton sa pinakasayon nga paagi ang tulo ka variables! Una, Independent Variable ang usa ra ka butang nga imong tuyoon og usab—ang gilay-on sa suga (10, 20, 30, 40 cm, o Dark). Ikaduha, Dependent Variable ang resulta nga imong giihap—ang kadaghanon sa oxygen bubbles sulod sa 60 seconds. Ikatulo, Constant Variables ang tanang gipabilin nga pareho: ang parehong tanom, 0.2% NaHCO₃ (tinubdan sa CO₂), ug 60 seconds timer aron seguradong kahayag ra ang hinungdan sa kalainan!",
       },
     },
     I8: {
-      title: "Light energy to chemical energy (glucose)",
+      title: "How Light Turns Into Plant Food (2 Stages)",
       en: {
-        H: "While oxygen bubbles leave the thylakoids, what happens to the ATP and NADPH produced during the light-dependent reactions?",
-        C: "ATP and NADPH carry chemical energy from the thylakoid membranes into the stroma, where the Calvin cycle uses them to fix carbon dioxide (CO₂) into glucose (C₆H₁₂O₆).",
-        E: "Photosynthesis links two stages inside the chloroplast: (1) Light-dependent reactions in the thylakoids capture light to split H₂O (releasing O₂ bubbles) and make ATP and NADPH; (2) The Calvin cycle in the stroma uses that ATP and NADPH to build glucose from CO₂.",
+        H: "Photosynthesis works like a two-room workshop inside the chloroplast! Stage 1 catches light to charge up tiny energy batteries—what happens in Stage 2 inside the surrounding fluid?",
+        C: "Think of a chloroplast as a two-part kitchen! Stage 1 (in coin-shaped stacks called thylakoids) catches light, splits water to release oxygen bubbles, and charges up two tiny energy batteries (ATP and NADPH). Stage 2 (Calvin cycle in the surrounding fluid, the stroma) uses those charged batteries to snap carbon dioxide into glucose sugar!",
+        E: "Here's the cleanest way to picture what happens inside every green chloroplast cell—it's a two-step workshop! Step 1 happens on stacked green solar discs called thylakoids: light hits chlorophyll, snaps water apart so oxygen bubbles float out, and charges two tiny energy batteries called ATP and NADPH. Step 2 happens in the watery workspace around them—the stroma—and scientists call it the Calvin cycle. There, helper enzymes take those charged batteries plus dissolved carbon dioxide from the water and build real glucose sugar!",
       },
       fil: {
-        H: "Habang lumalabas ang oxygen bubbles mula sa thylakoid, saan naman ginagamit ng halaman ang ATP at NADPH na nabuo sa light-dependent reactions?",
-        C: "Dinadala ang ATP at NADPH papunta sa stroma, kung saan ginagamit ang mga ito ng Calvin cycle upang gawing glucose (C₆H₁₂O₆) ang carbon dioxide (CO₂).",
-        E: "May dalawang magkaugnay na yugto sa chloroplast: (1) Sa thylakoid, hinahati ng light-dependent reactions ang H₂O (kaya may O₂ bubbles) at bumubuo ng ATP at NADPH; (2) Sa stroma, ginagamit ng Calvin cycle ang ATP at NADPH upang makabuo ng glucose mula sa CO₂.",
+        H: "Parang dalawang kwartong pagawaan ang loob ng chloroplast! Sa Unang Kwarto, nangunguha ng liwanag para mag-charge ng energy batteries—ano naman ang ginagawa sa Pangalawang Kwarto?",
+        C: "Isipin mong two-part kitchen ang chloroplast! Sa Stage 1 (sa thylakoids), hinahati ng liwanag ang tubig para lumabas ang oxygen bubbles at mag-charge ng maliliit na energy batteries (ATP at NADPH). Sa Stage 2 (Calvin cycle sa fluid na tinatawag na stroma), ginagamit ang mga batteries na iyon para buuin ang CO₂ tungong glucose sugar!",
+        E: "Ganito ang pinakasimpleng kwento ng dalawang yugto sa loob ng chloroplast! Una, sa mga patong-patong na berdeng disc na thylakoids: sinasagap ang ilaw para hatiin ang tubig (kaya may oxygen bubbles!) at mag-charge ng dalawang energy power banks na ATP at NADPH. Pangalawa, sa likidong tinatawag na stroma: ginagamit ng Calvin cycle ang enerhiya ng ATP at NADPH para pagsama-samahin ang carbon dioxide at makabuo ng glucose na pagkain ng halaman!",
       },
       ceb: {
-        H: "Samtang nagagawas ang oxygen bubbles gikan sa thylakoid, asa man gamiton sa tanom ang ATP ug NADPH nga naporma sa light-dependent reactions?",
-        C: "Ang ATP ug NADPH dad-on ngadto sa stroma aron gamiton sa Calvin cycle sa paghimo og glucose (C₆H₁₂O₆) gikan sa carbon dioxide (CO₂).",
-        E: "Duha ka hugna ang nagkonektar sulod sa chloroplast: (1) Sa thylakoid, ang light-dependent reactions nagbahin sa H₂O (nga mopagawas og O₂ bubbles) ug naghimo og ATP ug NADPH; (2) Sa stroma, ang Calvin cycle mogamit sa ATP ug NADPH aron makahimo og glucose.",
+        H: "Murag duha ka kwarto nga factory ang sulod sa chloroplast! Sa Unang Kwarto, nag-charge og gagmayng energy batteries gamit ang kahayag—unsa may buhaton sa Ikaduhang Kwarto?",
+        C: "Murag duha ka bahin nga kusina ang chloroplast! Sa Stage 1 (sulod sa thylakoids), gamiton ang kahayag aron pikason ang tubig (ug mogawas ang oxygen bubbles!) samtang mag-charge og energy batteries nga ATP ug NADPH. Sa Stage 2 (Calvin cycle sa likidong stroma), gamiton kadtong batteries ug CO₂ aron makahimo og asukar nga glucose!",
+        E: "Ingon ani kasayon sabton ang duha ka lakang sulod sa chloroplast! Una, sa green solar stacks nga thylakoids: kuhaon sa chlorophyll ang kahayag, pikason ang tubig aron mogawas ang oxygen bubbles, ug mag-charge og gagmayng baterya nga ATP ug NADPH. Ikaduha, sa likido palibot niini nga gitawag og stroma: gamiton sa Calvin cycle kadtong baterya ug carbon dioxide gikan sa tubig aron makaluto og tinuod nga glucose sugar!",
       },
     },
     I9: {
-      title: "Value of photosynthesis to organisms",
+      title: "Why Photosynthesis Keeps Earth Alive",
       en: {
-        H: "Think beyond the beaker: How do the two main products of photosynthesis—oxygen gas (O₂) and glucose (C₆H₁₂O₆)—support nearly all living organisms on Earth?",
-        C: "Photosynthesis provides the organic food (glucose) at the base of food webs and replenishes the dissolved and atmospheric oxygen (O₂) needed for aerobic cellular respiration.",
-        E: "Every oxygen bubble rising from Hydrilla or Elodea represents the process that oxygenates aquatic habitats and Earth's atmosphere, while the glucose synthesized in the Calvin cycle stores solar energy as biomass for food chains and ecosystems.",
+        H: "Look outside our little beaker for a moment: what two gifts do plants produce during photosynthesis that fish, humans, and whole ecosystems depend on every single second?",
+        C: "Every oxygen bubble you counted in the beaker is part of how plants keep water and air breathable—and the glucose sugar they build becomes the foundation of nearly every food chain on Earth!",
+        E: "Each tiny oxygen bubble rising from Hydrilla tells a giant story! Photosynthesis hands almost every living creature on Earth two essential gifts: first, fresh oxygen gas dissolved into rivers for fish and released into the sky for humans and animals to breathe; second, stored chemical food energy (glucose) inside leaves, stems, and fruits that feeds plant-eaters, predators, and entire food webs!",
       },
       fil: {
-        H: "Isipin ang labas ng laboratoryo: Paano sinusuportahan ng dalawang produkto ng photosynthesis—oxygen (O₂) at glucose (C₆H₁₂O₆)—ang halos lahat ng may buhay sa mundo?",
-        C: "Ang photosynthesis ang gumagawa ng glucose na pundasyon ng food web at nagbibigay ng oxygen (O₂) sa tubig at hangin na kailangan sa cellular respiration.",
-        E: "Ang bawat oxygen bubble mula sa Hydrilla ay mahalaga sa mga isda at iba pang organismo para sa aerobic respiration, habang ang glucose na binubuo nito ay nagsisilbing pangunahing pinagkukunan ng enerhiya sa buong ecosystem.",
+        H: "Isipin ang labas ng beaker sandali: anong dalawang regalong ibinibigay ng mga halaman mula sa photosynthesis na kailangan ng mga isda, tao, at buong kalikasan?",
+        C: "Bawat oxygen bubble na nabilang mo ang nagbibigay ng hininga sa tubig at hangin—at ang glucose na binubuo ng halaman ang pinakapundasyon ng pagkain sa halos lahat ng food webs sa mundo!",
+        E: "Ang bawat munting oxygen bubble mula sa Hydrilla ay may napakalaking papel sa buhay! Nagbibigay ang photosynthesis ng dalawang pangunahing biyaya sa buong mundo: una, oxygen na kailangan ng mga isda sa tubig at ng mga tao at hayop sa paghinga; pangalawa, pagkaing glucose na nagiging enerhiya ng lahat ng halaman at hayop sa buong food chain!",
       },
       ceb: {
-        H: "Hunahunaa gawas sa beaker: Giunsa pagsuporta sa duha ka produkto sa photosynthesis—oxygen (O₂) ug glucose (C₆H₁₂O₆)—ang halos tanang buhing organismo sa kalibutan?",
-        C: "Ang photosynthesis mao ang naghimo sa glucose nga pundasyon sa food web ug naghatag og oxygen (O₂) sa tubig ug kahanginan alang sa cellular respiration.",
-        E: "Ang matag bula sa oxygen gikan sa Hydrilla naghatag og hangin sa mga organismo sa tubig ug kalibutan, samtang ang glucose nga naporma sa Calvin cycle mao ang tinubdan sa enerhiya sa tanang food chains.",
+        H: "Hunahunaa ang kalibutan gawas sa beaker: unsang duha ka kinahanglanon nga gas ug pagkaon ang gihatag sa tanom gikan sa photosynthesis nga gisaligan sa isda, hayop, ug katawhan?",
+        C: "Matag oxygen bubble nga imong naihap mao ang naghatag og ginhawa sa tubig ug kahanginan—ug ang glucose nga nahimo sa tanom mao ang sinugdanan sa enerhiya sa halos tanang food chain sa kalibutan!",
+        E: "Ang matag gamayng bula gikan sa Hydrilla usa ka dakong regalo sa kinaiyahan! Duha ka kinahanglanon kaayo ang gihatag sa photosynthesis sa kalibutan: una, preskong oxygen nga gihanggab sa mga isda sa tubig ug sa katawhan sa yuta; ikaduha, pagkaon nga glucose nga mosulod sa dahon ug bunga aron pakan-on ang tibuok food web sa ecosystem!",
       },
     },
   };
 
-  // Built-in factual knowledge base for immediate general answers (always available offline)
+  // Deep Plain-Language Concept & Variable Tutor Bank (covers specific student pain points!)
+  const CONCEPT_TUTOR_TOPICS = {
+    variables_all: {
+      ideaCode: "I7",
+      en: {
+        summary: "Let's make experimental variables super easy! Think of running an experiment like testing which shoe makes you run fastest. First, the Independent Variable is the ONE thing YOU change on purpose—in our lab, that's the lamp distance (10 cm, 20 cm, 30 cm, 40 cm, or Dark/Night). Second, the Dependent Variable is what you watch and measure because it depends on what you changed—here, that's how many oxygen bubbles come out in 60 seconds! Third, Constant (Controlled) Variables are everything you lock identical so the test is fair: the exact same Hydrilla shoot, 0.2% baking soda solution (NaHCO₃) for steady carbon dioxide, the 60-second timer, and controlled baseline temperature. Want me to explain any one of those three even more simply?",
+        analogy: "Here's an easy everyday picture for variables: imagine baking cookies! If you want to test whether oven temperature changes crunchiness, the Independent Variable is the temperature knob YOU turn; the Dependent Variable is how crunchy the cookie turns out; and Controlled Variables are keeping the exact same dough recipe, tray, and baking time so nothing else tricks your result!"
+      },
+      fil: {
+        summary: "Gawin nating sobrang dali ang tatlong variables! Una, Independent Variable ang iisang bagay na IKAW ang sadyang nagbabago—sa lab natin, iyan ang distansya ng lamp (10 hanggang 40 cm, o Dark/Night). Pangalawa, Dependent Variable ang binabantayan at binibilang mo bilang resulta—ang dami ng oxygen bubbles sa 60 seconds! Pangatlo, Constant o Controlled Variables ang lahat ng pare-pareho para maging fair test: parehong halaman, 0.2% NaHCO₃ na tubig para sa CO₂, 60 seconds timer, at kontroladong baseline na temperatura.",
+        analogy: "Isipin mong nagtitimpla ka ng kape! Kung gusto mong i-test kung nakakatamis ang dami ng asukal: Independent Variable ang kutsara ng asukal na binabago mo; Dependent Variable ang lasa; at Constant Variables ang parehong baso, tubig, at kape para patas ang test!"
+      },
+      ceb: {
+        summary: "Atong himuong sayon kaayo sabton ang mga variables! Una, Independent Variable ang usa ra ka butang nga IKAW ang mag-ilis-ilis—diri sa lab, kana ang gilay-on sa suga (10 hangtod 40 cm, o Dark/Night). Ikaduha, Dependent Variable ang imong sukdon o ihapon isip resulta—ang oxygen bubbles sulod sa 60 seconds! Ikatulo, Constant o Controlled Variables ang tanang pareho aron patas: parehong tanom, 0.2% NaHCO₃ para sa CO₂, 60 seconds timer, ug kontroladong temperatura.",
+        analogy: "Murag magtimpla ka og juice! Kon i-test nimo ang katam-is depende sa kutsara sa asukar: ang gidaghanon sa asukar nga imong giusab mao ang Independent Variable; ang lasa mao ang Dependent Variable; ug ang parehong tubig ug baso mao ang Constant Variables!"
+      }
+    },
+    independent_variable: {
+      ideaCode: "I7",
+      en: {
+        summary: "The Independent Variable starts with 'I'—think 'I change this!' It's the single condition you purposely adjust in an experiment to see what happens. In our photosynthesis simulation, YOUR Independent Variable is the Light Condition—sliding the lamp to 10 cm, 20 cm, 30 cm, 40 cm, or shutting it off in Dark/Night mode!",
+        analogy: "Think of it like adjusting the volume knob on a speaker—you turn the knob (Independent Variable) to see how loud the music gets!"
+      }
+    },
+    dependent_variable: {
+      ideaCode: "I2",
+      en: {
+        summary: "The Dependent Variable is the 'Data' you collect—it DEPENDS on the change you just made! In this Hydrilla experiment, your Dependent Variable is the number of oxygen bubbles released in 60 seconds (your photosynthesis rate). When light gets stronger, that bubble count climbs; when light dims, it drops!",
+        analogy: "If Independent is turning the gas pedal in a car, Dependent is watching the speedometer needle react!"
+      }
+    },
+    constant_variable: {
+      ideaCode: "I7",
+      en: {
+        summary: "Controlled—or Constant—Variables are all the conditions we keep steady so nothing else sneaks in and messes up our data! Here we keep the same aquatic plant shoot, the same 0.2% sodium bicarbonate (NaHCO₃) solution supplying carbon dioxide, a stabilized 26.0 °C baseline water bath (with heat tracking), and the exact 60-second counting clock. Why? Because if you changed plant species AND light at once, you wouldn't know which one caused the bubbles to change!",
+        analogy: "It's like two runners racing—both start at the exact same line with the same 60-second stopwatch so the race stays 100% fair!"
+      }
+    },
+    nahco3_co2: {
+      ideaCode: "I7",
+      en: {
+        summary: "Great question! Plants need carbon dioxide gas (CO₂) as a raw building block to make glucose sugar—just like you need flour to bake bread! Since Hydrilla lives completely underwater, it can't grab CO₂ from the air. So we mix a small 0.2% pinch of sodium bicarbonate—everyday baking soda!—into the water bath. That dissolves gently to give the plant a steady, unlimited supply of dissolved CO₂ all throughout your trials so CO₂ doesn't run out halfway.",
+        analogy: "Think of 0.2% sodium bicarbonate like an underwater pantry stocked with plenty of flour (carbon dioxide), so whenever the plant gets light, it always has ingredients ready to bake sugar!"
+      },
+      fil: {
+        summary: "Magandang tanong! Kailangan ng halaman ng carbon dioxide (CO₂) para makabuo ng pagkaing glucose. Dahil nakalubog sa tubig ang Hydrilla, hindi ito nakakahigop ng CO₂ mula sa hangin—kaya naghahalo tayo ng 0.2% sodium bicarbonate (baking soda!) sa tubig. Nagbibigay ito ng tuloy-tuloy na dissolved CO₂ para hindi maubusan ang halaman habang nag-eeksperimento!",
+        analogy: "Parang laging punong pantry ng harina ang 0.2% NaHCO₃ sa ilalim ng tubig—laging handa ang CO₂ na sangkap basta may sikat ng ilaw!"
+      },
+      ceb: {
+        summary: "Maayong pangutana! Kinahanglan sa tanom ang carbon dioxide (CO₂) isip sangkap sa paghimo og pagkaon. Tungod kay nakalubog man ang Hydrilla, dili ni makakuha og CO₂ sa hangin—maong gibutangan nato ang tubig og 0.2% sodium bicarbonate (baking soda!). Kini naghatag og steady nga dissolved CO₂ sulod sa tubig aron dili mahutdan ang tanom samtang mag-ihap ta og bula!",
+        analogy: "Murag puno nga kusina sa harina ang 0.2% NaHCO₃—naay kanunay nga suplay sa CO₂ kon moigo na ang kahayag!"
+      }
+    },
+    temperature_enzymes: {
+      ideaCode: "I7",
+      en: {
+        summary: "Awesome observation about temperature! Inside every leaf, tiny helper proteins called enzymes—like RuBisCO—are the workers assembling carbon dioxide into sugar. Here's the trick: those workers are super sensitive to temperature! At Night in our simulation, the lamp turns OFF and the water cools to ~18.5 °C—cold water makes those helper enzymes sluggish and slow, PLUS 0 light means 0 oxygen bubbles! During Day mode, gentle warmth from the lamp (~26.0–28.6 °C inside the 0.2% NaHCO₃ bath) keeps enzymes active and energetic, while the thermometer & water bath prevent overheating so light intensity stays the true star variable.",
+        analogy: "Imagine your fingers trying to button a shirt in freezing cold water versus comfortable warm room temperature—helper enzymes work smoothly in mild warmth (~26–28 °C) and slow way down in chilly Night water (~18.5 °C)!"
+      },
+      fil: {
+        summary: "Magandang tanong tungkol sa temperatura! Sa loob ng dahon, may maliliit na helper workers na tinatawag na enzymes (tulad ng RuBisCO) na bumubuo ng glucose. Kapag malamig ang tubig sa Night mode (~18.5 °C) at patay ang lamp, bumabagal ang galaw ng mga enzymes na ito kaya zero bubbles din. Sa Day mode, tinutulungan ng banayad na init ng lamp (~26.0–28.6 °C sa 0.2% NaHCO₃) na manatiling aktibo ang enzymes habang binabantayan ng thermometer para hindi sumobra ang init!",
+        analogy: "Parang kamay na giniginaw sa yelo vs kamay sa katamtamang init—mas mabilis gumalaw ang helper enzymes sa banayad na init kaysa sa malamig na tubig!"
+      },
+      ceb: {
+        summary: "Nindot nga pangutana bahin sa temperatura! Sulod sa dahon, naay gagmayng helper workers nga gitawag og enzymes (sama sa RuBisCO) nga naghimo og glucose. Sa bugnaw nga gabii (~18.5 °C, palong ang lamp), mohinay ni sila ug walay bula nga mahimo. Sa adlaw, ang banayad nga init gikan sa lamp (~26.0–28.6 °C sulod sa 0.2% NaHCO₃) makapabaskog sa ilang trabaho samtang gibantayan sa thermometer aron patas gihapon ang eksperimento!",
+        analogy: "Murag tudlo nga nikurog sa katugnaw kumpara sa komportableng kainit—mas abtik motrabaho ang enzymes sa 26–28 °C kaysa bugnaw nga 18.5 °C!"
+      }
+    },
+    chloroplast_parts: {
+      ideaCode: "I8",
+      en: {
+        summary: "Let's make the inside of a chloroplast cell super simple—think of it as a two-part solar bakery! Part 1 happens inside green coin stacks called thylakoids: chlorophyll grabs light energy to snap water (H₂O) apart, letting oxygen bubbles escape while charging up two tiny biological batteries named ATP and NADPH. Part 2 happens in the clear surrounding liquid called the stroma (this stage is the Calvin cycle): helper enzymes take those charged ATP and NADPH batteries and combine them with carbon dioxide from the water to bake glucose sugar! Two stages, one connected assembly line.",
+        analogy: "Stage 1 (Thylakoids) = Solar panels on the roof charging power banks (ATP & NADPH) and letting spare oxygen vent out. Stage 2 (Calvin cycle in Stroma) = Bakers inside using those charged power banks plus CO₂ flour to make glucose!"
+      }
+    },
+    chlorophyll_green: {
+      ideaCode: "I8",
+      en: {
+        summary: "Sunlight actually carries all the colors of the rainbow mixed together! Inside plant leaves, green chlorophyll a and chlorophyll b pigments are picky light-eaters: they eagerly drink in blue-violet and red light energy to power photosynthesis, while bouncing green light straight off back to your eyes—that's why healthy leaves look green! That also explains why white patches on variegated leaves can't make oxygen or food: they have no chlorophyll solar panels to catch those red and blue rays.",
+        analogy: "Think of a red basketball jersey—it absorbs other colors and bounces red back to your eyes! Chlorophyll drinks red and blue energy for work and lets green bounce off."
+      }
+    },
+    inverse_square_lux: {
+      ideaCode: "I3",
+      en: {
+        summary: "Ever wonder why 20 cm gets 625 lux instead of half of 2,500 lux? It's because light doesn't just spread side-to-side when you back a lamp away—it spreads side-to-side AND up-and-down in two dimensions! So when you double the distance from 10 cm to 20 cm, the beam covers 2 × 2 = 4 times more space. Dividing 2,500 lux by 4 gives 625 lux! Triple the distance to 30 cm, and it spreads over 3 × 3 = 9 times more area (~278 lux); four times farther at 40 cm gives 1/16th brightness (~156 lux)!",
+        analogy: "Imagine stretching a square piece of stretchy dough twice as wide AND twice as tall—its thickness becomes 1/4 as thick, not 1/2! Light energy thins out the exact same way."
+      }
+    },
+    limiting_factor_plateau: {
+      ideaCode: "I5",
+      en: {
+        summary: "Look at your graph between 20 cm and 10 cm—even though 10 cm is four times brighter (2,500 lux vs 625 lux), bubbles don't jump four times higher (~42 instead of 120)! Why? Think about a cashier line at a store: you can send 4× more shoppers through the door, but if there's only 1 cashier scanning items, checkout speed levels off! Inside Hydrilla at 10 cm, light is already overflowing—so the leaf's carbon dioxide supply (CO₂) and Calvin-cycle enzyme speed (RuBisCO) become the bottleneck, called the limiting factor. Scientists name this flat top 'light saturation.'",
+        analogy: "You can plug a toaster into a power plant, but it still only toasts two slices at a time—at 10 cm, the plant's sugar-making machinery is simply running at full speed!"
+      }
+    },
+    dark_night_respiration: {
+      ideaCode: "I4",
+      en: {
+        summary: "Great question—plants don't actually 'sleep' or turn off living at night! Just like animals and humans, plants stay alive 24 hours a day through cellular respiration inside tiny cell powerhouses called mitochondria, which gently use a little oxygen to turn sugar into cell energy. During the Day (Lamp ON), chloroplasts make SO much fresh oxygen that extra O₂ streams out as bubbles. At Night (Lamp OFF, cold ~18.5 °C), photosynthesis stops completely—so 0 oxygen bubbles come out, while cooler mitochondria slowly sip dissolved oxygen in the water!",
+        analogy: "Think of photosynthesis like a daytime solar charger pouring extra electricity into the grid, while cellular respiration is the tiny nightlight that stays quietly running 24/7!"
+      }
+    },
+    equation_walkthrough: {
+      ideaCode: "I2",
+      en: {
+        summary: "Let's read the photosynthesis formula without any scary symbols! On the left are the two raw ingredients: Carbon Dioxide (from 0.2% NaHCO₃ in the water) plus Water, powered by Light Energy inside green Chlorophyll. On the right are the two finished goods: Glucose Sugar (plant food!) plus Oxygen Gas—those rising bubbles you count! Put together: Water + Carbon Dioxide + Light inside Chlorophyll makes Glucose + Oxygen.",
+        analogy: "Ingredients in the bowl (Water + CO₂) + Stove heat (Light in Chlorophyll) = Fresh baked bread (Glucose) + Steam rising out (Oxygen bubbles)!"
+      }
+    },
+    plant_comparison: {
+      ideaCode: "I2",
+      en: {
+        summary: "Such a cool comparison! Both Hydrilla and Elodea spend their entire lives completely submerged underwater—so when their leaves make oxygen, that gas gets squeezed out underwater from cut stems and leaves as bubbles you can easily count! Water Hyacinth is different: it has swollen air-filled petioles that float it RIGHT on top of the water, holding glossy leaves out in the open air. Because its photosynthetic leaves sit in the air, almost all of its oxygen drifts straight into the sky through microscopic leaf pores called stomata instead of making underwater bubbles!",
+        analogy: "Hydrilla and Elodea exhale underwater like scuba divers making bubbles, while floating Water Hyacinth breathes straight into the open air above the pool!"
+      }
+    },
+    ecosystem_value: {
+      ideaCode: "I9",
+      en: {
+        summary: "Every bubble you count shows photosynthesis keeping our planet alive in two huge ways! First, it makes glucose sugar—the stored food energy inside leaves, stems, fruits, and roots that starts almost every food chain on Earth (from pond snails and insects all the way to us!). Second, it continuously refills oxygen in rivers for fish AND in the sky for people and animals to breathe while absorbing carbon dioxide.",
+        analogy: "Without photosynthetic plants, Earth would lose both its global grocery store (glucose food) and its oxygen tank at the exact same time!"
+      }
+    }
+  };
+
+  // Super-simple ELIF analogy stories when student says "simpler / I don't understand / analogy"
+  const SIMPLER_ANALOGY_BANK = {
+    I1: "Let's make it super simple! Imagine a solar-powered fan: shine a bright lamp on its panel, and the fan spins right away; turn the lamp off, and it stops. Chlorophyll inside a green leaf works just like that solar panel—it needs light energy to wake up and split water into oxygen bubbles!",
+    I2: "Super simple version: imagine a tiny soda bottle fizzing only when you shine a light on it! Each bubble popping out of the cut Hydrilla stem is pure oxygen gas left over when the leaf makes food—so counting more bubbles in 60 seconds just means the leaf is making food faster!",
+    I3: "Imagine standing close to a campfire versus walking ten steps away—the closer you stand, the stronger the warmth hits you! Similarly, at 10 cm the plant gets slammed with bright light (2,500 lux), while at 40 cm the beam spreads way out and gets weak (156 lux), so photosynthesis slows down.",
+    I4: "Super simple: the Dark Control is our 'light-off test.' By leaving the plant in the exact same water and temperature with zero light, seeing bubbles drop to 0 proves those bubbles weren't random fizz—light truly caused them!",
+    I5: "Imagine pouring water into a bottle through a narrow funnel: pouring 4× faster doesn't make the bottle fill 4× faster if the funnel neck can only let a trickle through! At 10 cm, light is super strong, so CO₂ supply and leaf helper enzymes become that narrow funnel neck!",
+    I6: "Think of flipping a coin or shooting 3 basketball free throws! One try can be unusually high or low by chance—taking 3 tries and finding the middle average (Mean) gives a fair score you can rely on.",
+    I7: "Easy 3-word trick for variables: YOU change Independent (lamp distance); YOU count Dependent (bubbles); YOU freeze Constant variables (same plant, baking soda water, time, and temp control) so nobody can blame anything else for your results!",
+    I8: "Two easy steps inside a leaf cell: Step 1 (Thylakoids) uses sunlight + water to release oxygen bubbles and charge up tiny battery packs. Step 2 (Calvin cycle in Stroma) uses those battery packs + carbon dioxide to build sweet glucose sugar!",
+    I9: "Every plant is like nature's free bakery and oxygen pump combined: it creates glucose (food energy for animals and humans) and pumps out fresh oxygen for fish in water and us on land!"
+  };
+
+  // Built-in factual knowledge base for instant general Q&A (always available offline)
   const GENERAL_KNOWLEDGE_MINI_KB = {
-    "pro bono": "Pro bono (short for Latin 'pro bono publico', meaning 'for the public good') describes professional work—such as legal, medical, or educational services—undertaken voluntarily and without payment as a service to the community.",
-    "pro bono publico": "Pro bono publico is a Latin phrase meaning 'for the public good,' referring to professional work done voluntarily and free of charge to serve others.",
-    "quid pro quo": "Quid pro quo is a Latin phrase meaning 'something for something'—an equal exchange or favor where one thing is given in return for another.",
-    "status quo": "Status quo is a Latin term meaning the existing state of affairs, especially regarding social, political, or everyday conditions.",
-    "carpe diem": "Carpe diem is a Latin aphorism meaning 'seize the day,' encouraging you to make the most of the present moment.",
-    "empathy": "Empathy is the ability to understand and share another person's feelings or perspective.",
-    "osmosis": "Osmosis is the movement of water molecules across a selectively permeable membrane from a region of lower solute concentration to higher solute concentration.",
-    "diffusion": "Diffusion is the passive movement of molecules or ions from an area of higher concentration to an area of lower concentration until evenly spread.",
-    "gravity": "Gravity is the fundamental attractive force between objects that have mass, keeping planets in orbit and objects grounded on Earth.",
-    "dna": "DNA (deoxyribonucleic acid) is the molecule that carries the genetic instructions for the development, functioning, growth, and reproduction of living organisms.",
-    "rna": "RNA (ribonucleic acid) is a nucleic acid that translates genetic information from DNA to help cells synthesize proteins.",
-    "inflation": "Inflation is the general rise in prices across an economy over time, which reduces the purchasing power of a unit of currency.",
-    "artificial intelligence": "Artificial intelligence (AI) refers to computer systems designed to perform tasks that typically require human intelligence, such as reasoning, language understanding, and pattern recognition.",
-    "ai": "Artificial intelligence (AI) is technology that enables computers to understand language, recognize patterns, and solve problems alongside humans.",
+    "pro bono": "Pro bono comes from the Latin phrase 'pro bono publico,' meaning 'for the public good.' In everyday life, it describes skilled work—like a lawyer helping someone in court or a doctor volunteering at a free clinic—done completely free of charge to help people in need!",
+    "pro bono publico": "Pro bono publico is Latin for 'for the public good'—meaning professional services donated voluntarily for free to help the community.",
+    "quid pro quo": "Quid pro quo is a Latin expression meaning 'something for something'—basically a fair trade or favor exchanged for another favor!",
+    "status quo": "Status quo is a Latin term meaning 'the way things currently are right now'—keeping existing rules or habits unchanged.",
+    "carpe diem": "Carpe diem means 'seize the day' in Latin—a friendly reminder to make the most of today!",
+    "empathy": "Empathy means stepping into someone else's shoes—truly understanding and feeling what another person is experiencing.",
+    "osmosis": "Osmosis is just water molecules naturally moving from a watery area (lots of free water, less salt/sugar) across a cell membrane into a saltier or more crowded area until balanced!",
+    "diffusion": "Diffusion is molecules naturally spreading out on their own from a crowded spot into an open spot—just like perfume scent drifting across a whole room!",
+    "mitosis": "Mitosis is how one regular body cell copies its DNA and splits cleanly into two identical daughter cells so you can grow or heal a cut!",
+    "homeostasis": "Homeostasis is your body's built-in autopilot keeping internal conditions steady—like sweating when you're hot or shivering when you're cold to keep your body near 37 °C!",
+    "gravity": "Gravity is the invisible pulling force between objects with mass—Earth's huge mass keeps our feet on the ground and keeps the Moon orbiting safely above us.",
+    "dna": "DNA is like a cell's master instruction book written in chemical letters—it holds the recipe for how every living thing grows, looks, and functions.",
+    "rna": "RNA is the helpful messenger molecule that copies instructions out of DNA so your cell's factories know which proteins to build!",
+    "inflation": "Inflation is when everyday prices for food, fares, and goods gradually go up over time, meaning the same 100 pesos buys slightly less than before.",
+    "artificial intelligence": "Artificial intelligence—or AI—is computer software trained to understand human questions, spot patterns, reason through problems, and converse naturally like a helpful partner!",
+    "ai": "AI (Artificial Intelligence) is technology that lets computers understand language, analyze data patterns, and assist humans intelligently in real time.",
   };
 
   function buildFullSimulationSnapshot() {
@@ -2091,10 +2237,10 @@
       selectedPlant: state.selectedPlant,
       selectedDistance: state.selectedDistance,
       currentLux: state.isNightTime ? 0 : currentCond.lux,
-      dayNightMode: state.isNightTime ? "Night (Lamp OFF · Cold)" : "Day (Lamp ON)",
+      dayNightMode: state.isNightTime ? "Night (Lamp OFF · Cold)" : "Day (Lamp ON · Warm)",
       isNightTime: state.isNightTime,
       liveWaterTemp: Number((state.liveWaterTemp || 26.0).toFixed(1)),
-      chemicalBuffer: "0.2% NaHCO3 (Dissolved CO2 Source)",
+      chemicalBuffer: "0.2% NaHCO3 (Baking Soda / Dissolved CO2 Source)",
       tableMode: state.tableMode,
       recordedConditions,
       physicalConditions,
@@ -2105,9 +2251,50 @@
   }
 
   function hasBiologyOrLabKeywords(q) {
-    return /\b(photosynth|chloroplast|chlorophyll|thylakoid|granum|grana|stroma|calvin|rubisco|photolysis|atp|nadph|glucose|oxygen|o2|co2|carbon dioxide|h2o|water|light|photon|wavelength|lamp|bulb|lux|dark|night|day|cold|warm|temp|temperature|enzyme|nahco3|bicarbonate|buffer|bubble|bubbles|bula|hydrilla|elodea|hyacinth|eichhornia|plant|leaf|leaves|stomata|mitochondria|respiration|limiting|saturat|level off|plateau|trial|mean|average|table|graph|setup|apparatus|variable|fair test|control|distance|cm|beaker|thermometer|timer|60 second|ecosystem|food web|food chain|variegated|starch|iodine|cellular|microscopic|experiment|lab|biovoice|kahayag|liwanag|tubig|init|ngitngit|dilim|tanom|dahon|duol|layo|malapit|malayo|naglutaw|lutang|predict|hypothes|conclu)\b/i.test(
+    return /\b(photosynth|chloroplast|chlorophyll|thylakoid|granum|grana|stroma|calvin|rubisco|photolysis|atp|nadph|glucose|sugar|oxygen|o2|co2|carbon dioxide|h2o|water|light|photon|wavelength|lamp|bulb|lux|dark|night|day|cold|warm|temp|temperature|enzyme|nahco3|bicarbonate|baking soda|buffer|bubble|bubbles|bula|hydrilla|elodea|hyacinth|eichhornia|plant|leaf|leaves|stomata|mitochondria|respiration|limiting|saturat|level off|plateau|trial|mean|average|table|graph|setup|apparatus|variable|independent|dependent|constant|controlled|fair test|control|distance|cm|beaker|thermometer|timer|60 second|ecosystem|food web|food chain|variegated|starch|iodine|cellular|microscopic|experiment|lab|equation|formula|formula|reaction|biovoice|kahayag|liwanag|tubig|init|ngitngit|dilim|tanom|dahon|duol|layo|malapit|malayo|naglutaw|lutang|predict|hypothes|conclu|inverse|square)\b/i.test(
       q
     );
+  }
+
+  function detectVariableOrConceptTopic(low) {
+    // Specific variable questions
+    if (/\b(independent variable|manipulated variable)\b/i.test(low)) return "independent_variable";
+    if (/\b(dependent variable|responding variable)\b/i.test(low)) return "dependent_variable";
+    if (/\b(constant variable|controlled variable|control variable|variables.*constant|keep.*same|fair test)\b/i.test(low)) {
+      return "constant_variable";
+    }
+    if (/\b(variables|variable|what.*change.*measure|explain.*variable)\b/i.test(low)) return "variables_all";
+    if (/\b(nahco3|sodium bicarbonate|baking soda|bicarbonate|dissolved co2|co2 source|carbon dioxide source|why.*co2|need.*co2)\b/i.test(low)) {
+      return "nahco3_co2";
+    }
+    if (/\b(temperature|temp|warm|cold|cool|heat|heat waves|thermometer|enzyme|enzymes|26|18\.5|28)\b/i.test(low)) {
+      return "temperature_enzymes";
+    }
+    if (/\b(thylakoid|stroma|atp|nadph|calvin|rubisco|photolysis|two stages|light[- ]dependent|light[- ]independent|inside.*chloroplast|chloroplast.*work)\b/i.test(low)) {
+      return "chloroplast_parts";
+    }
+    if (/\b(green|wavelength|absorb|reflect|chlorophyll|pigment|variegated|white edge|white patch)\b/i.test(low)) {
+      return "chlorophyll_green";
+    }
+    if (/\b(inverse[- ]square|625|278|156|2,?500|lux|why.*quarter|half.*distance|illuminance)\b/i.test(low)) {
+      return "inverse_square_lux";
+    }
+    if (/\b(level off|plateau|limiting|saturat|bottleneck|why.*not.*quadruple|stop increasing|10 cm and 20 cm|10 cm vs 20 cm)\b/i.test(low)) {
+      return "limiting_factor_plateau";
+    }
+    if (/\b(mitochondria|respiration|breathe|night|dark control|0 lx|lamp off|night time|24[- ]hour)\b/i.test(low)) {
+      return "dark_night_respiration";
+    }
+    if (/\b(equation|formula|6\s*co2|reactant|product|raw material|inputs? and outputs?)\b/i.test(low)) {
+      return "equation_walkthrough";
+    }
+    if (/\b(hyacinth|water hyacinth|eichhornia|floating|elodea|compare plant|three plants|species)\b/i.test(low)) {
+      return "plant_comparison";
+    }
+    if (/\b(ecosystem|food web|food chain|important|humans?|animals?|fish|value of photosynthesis)\b/i.test(low)) {
+      return "ecosystem_value";
+    }
+    return null;
   }
 
   function classifyQuestionAndConversationalIntent(rawQuestion) {
@@ -2120,91 +2307,174 @@
         low
       )
     ) {
-      return { intent: "test_refusal", ideaCode: state.conversationMemory.lastIdeaCode || "I1" };
+      return { intent: "test_refusal", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
     }
 
-    // 2. Live Simulation Data & Quantitative Result Queries ("why is my mean in trial 1 30 bubble count", etc.)
-    const hasMetricNumber = /\b\d+(?:\.\d+)?\b/.test(low);
-    const asksOwnData =
-      /\b(my|our|i got|we got|did i|trial\s*[123]|in trial|bubble count|why is my|mean is|mean in|explain my|my table|my graph|my data|current temp|water temp)\b/i.test(
-        low
-      ) ||
-      (hasMetricNumber && /\b(bubble|bubbles|mean|average|trial|count|rate|temp|celsius|why)\b/i.test(low));
-    if (asksOwnData) {
-      return { intent: "sim_data_query", ideaCode: "I6" };
-    }
-
-    // 3. Friendly Smalltalk / Greetings / Acknowledgements
-    if (
-      /^(hi|hello|hey|yo|good morning|good afternoon|good evening|kumusta|kamusta|thank you|thanks|ty|salamat|ok|okay|got it|cool|awesome|who are you|what is your name|how are you)[!.?,\s]*$/i.test(
-        low
-      )
-    ) {
-      return { intent: "conversational_smalltalk", ideaCode: state.conversationMemory.lastIdeaCode || "I1" };
-    }
-
-    // 4. Aquatic Plant Comparison (Hydrilla vs Elodea vs Water Hyacinth)
-    if (/\b(hyacinth|water hyacinth|eichhornia|floating|lutang|naglutaw|elodea|compare plant|roots)\b/i.test(low)) {
-      return { intent: "plant_comparison", ideaCode: "I2" };
-    }
-
-    // 5. Cellular Structures, Chlorophyll Wavelength Reflection, Enzymes & Limiting Variables
-    if (/\b(green|wavelength|absorb|reflect|thylakoid|granum|grana|stroma|rubisco|stomata|mitochondria|respiration|variegated|white edge|green center|cellular|chloroplast)\b/i.test(low)) {
-      return { intent: "cellular_deep_dive", ideaCode: "I8" };
-    }
-
-    // 6. Short vague Conversational Follow-up ("Why?", "How come?", "Explain more", "Simpler please")
-    const isVagueFollowUp =
-      low.split(/\s+/).length <= 5 &&
-      /^(?:why|why is that|why does that happen|how come|explain more|tell me more|simpler|in simpler words|again|what do you mean|elaborate|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)[?!.\s]*$/i.test(
-        low
-      );
-    if (isVagueFollowUp && state.conversationMemory.turnCount > 0) {
+    // 2. Answering an active BioVoice practice quiz
+    if (state.conversationMemory.pendingQuiz && !/^(skip|stop|cancel|hint|new topic)/i.test(low)) {
       return {
-        intent: "follow_up_expand",
-        ideaCode: state.conversationMemory.lastIdeaCode || "I1",
+        intent: "quiz_grade",
+        ideaCode: state.conversationMemory.pendingQuiz.ideaCode || "I1",
+        topicKey: state.conversationMemory.lastTopicKey,
       };
     }
 
-    // 7. Off-topic / General Knowledge Query -> Answer accurately first, then redirect back to core!
+    // 3. Student asks BioVoice to check/review their draft or hypothesis
+    if (
+      /\b(check my|is my answer|am i right|review my|is my prediction|check if|tama ba|sakto ba|is this right|what do you think of my)\b/i.test(
+        low
+      )
+    ) {
+      return { intent: "check_my_work", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+    }
+
+    // 4. Student asks for a practice quiz question
+    if (/\b(quiz me|test me|ask me a question|practice question|tanungin mo ako|pangutan-a ko)\b/i.test(low)) {
+      return { intent: "quiz_request", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+    }
+
+    // 5. Simplification / Analogy / Beginner Follow-up ("make it simpler", "I don't understand", "give me an analogy")
+    const asksSimplerOrFollowUp =
+      /\b(simpler|simplify|simple words|easier to understand|easy words|hard to understand|confusing|don't get it|dont get it|don't understand|dont understand|didn't get|analogy|example|like i'm|beginner|layman|tagalog|bisaya|cebuano|in simpler|break it down|elaborate|tell me more|explain more)\b/i.test(
+        low
+      ) ||
+      (low.split(/\s+/).length <= 5 &&
+        /^(?:why|why is that|why does that happen|how come|again|what do you mean|ngano man|ngano diay|unsa pasabot|bakit ganun|bakit po|paano yun|mas simple|more detail)[?!.\s]*$/i.test(
+          low
+        ));
+    if (asksSimplerOrFollowUp && state.conversationMemory.turnCount > 0 && !detectVariableOrConceptTopic(low)) {
+      return {
+        intent: "simplify_follow_up",
+        ideaCode: state.conversationMemory.lastIdeaCode || "I1",
+        topicKey: state.conversationMemory.lastTopicKey || null,
+      };
+    }
+
+    // 6. Math calculations ("what is (30+32+31)/3", "average of 40, 42, 41", etc.)
+    if (
+      /\b(calculate|compute|what is|average of|mean of|plus|minus|times|divided by)\b/i.test(low) &&
+      /[0-9]+\s*(?:\+|\-|\*|\/|÷|x|\,|plus|minus|divided|times)/i.test(low) &&
+      !/\b(trial|bubble|cm|lux|dark)\b/i.test(low)
+    ) {
+      return { intent: "math_eval", ideaCode: state.conversationMemory.lastIdeaCode || "I6", topicKey: null };
+    }
+
+    // 7. Live Simulation Data & Quantitative Result Queries ("why is my mean in trial 1 30 bubble count", "compare my 10 cm and 40 cm")
+    const hasMetricNumber = /\b\d+(?:\.\d+)?\b/.test(low);
+    const asksOwnData =
+      /\b(my|our|i got|we got|did i|trial\s*[123]|in trial|bubble count|why is my|mean is|mean in|explain my|my table|my graph|my data|compare my|my results|my trend|current temp|water temp right now)\b/i.test(
+        low
+      ) ||
+      (hasMetricNumber && /\b(bubble|bubbles|mean|average|trial|count|rate|temp|celsius)\b/i.test(low) && !/\bwhy does 10 cm\b/i.test(low));
+    if (asksOwnData) {
+      return { intent: "sim_data_query", ideaCode: "I6", topicKey: "sim_data_query" };
+    }
+
+    // 8. Friendly Smalltalk / Greetings / Acknowledgements
+    if (
+      /^(hi|hello|hey|yo|good morning|good afternoon|good evening|kumusta|kamusta|thank you|thanks|ty|salamat|ok|okay|got it|cool|awesome|who are you|what is your name|how are you|hello biovoice|hi biovoice|hey nova)[!.?,\s]*$/i.test(
+        low
+      )
+    ) {
+      return { intent: "conversational_smalltalk", ideaCode: state.conversationMemory.lastIdeaCode || "I1", topicKey: null };
+    }
+
+    // 9. Explicit plain-language Concept & Variable deep-dive matching
+    const matchedTopic = detectVariableOrConceptTopic(low);
+    if (matchedTopic) {
+      const topicObj = CONCEPT_TUTOR_TOPICS[matchedTopic];
+      return {
+        intent: "concept_tutor",
+        topicKey: matchedTopic,
+        ideaCode: (topicObj && topicObj.ideaCode) || "I1",
+      };
+    }
+
+    // 10. General/Off-Topic Query OR unfamiliar biology lookup
     if (!hasBiologyOrLabKeywords(low)) {
       return {
         intent: "general_knowledge_redirect",
         ideaCode: state.conversationMemory.lastIdeaCode || "I1",
+        topicKey: null,
       };
     }
 
-    // 8. Map core Biology/Experiment keywords to Idea Codes I1–I9
+    // 11. Core Idea Mapping I1–I9
     if (/\b(dark|night|ngitngit|dilim|0 lx|lamp off|palong|patay ang ilaw|control setup)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I4" };
+      return { intent: "concept", ideaCode: "I4", topicKey: "dark_night_respiration" };
     }
-    if (/\b(level off|plateau|saturat|limiting|double|10 cm and 20 cm|stop increasing|limit)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I5" };
+    if (/\b(level off|plateau|saturat|limiting|double|stop increasing|limit)\b/i.test(low)) {
+      return { intent: "concept", ideaCode: "I5", topicKey: "limiting_factor_plateau" };
     }
     if (/\b(trial|3 trials|three trials|mean|average|vary|variation|magkaiba|lahi-lahi)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I6" };
+      return { intent: "concept", ideaCode: "I6", topicKey: null };
     }
     if (/\b(constant|fair test|temperature|temp|cold|warm|26|thermometer|heat|nahco3|bicarbonate|buffer|enzyme|init)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I7" };
+      return { intent: "concept", ideaCode: "I7", topicKey: "variables_all" };
     }
     if (/\b(calvin|stroma|atp|nadph|glucose|sugar|chemical energy|thylakoid)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I8" };
+      return { intent: "concept", ideaCode: "I8", topicKey: "chloroplast_parts" };
     }
     if (/\b(ecosystem|food web|food chain|environment|important|value|organisme|halaga|hinungdanon)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I9" };
+      return { intent: "concept", ideaCode: "I9", topicKey: "ecosystem_value" };
     }
     if (/\b(distance|10 cm|20 cm|30 cm|40 cm|farther|closer|duol|layo|malapit|malayo|lux)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I3" };
+      return { intent: "concept", ideaCode: "I3", topicKey: "inverse_square_lux" };
     }
     if (/\b(bubble|bula|oxygen|o2|gas|count|rate)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I2" };
+      return { intent: "concept", ideaCode: "I2", topicKey: "equation_walkthrough" };
     }
-    if (/\b(light|chlorophyll|photon|kahayag|liwanag|predict)\b/i.test(low)) {
-      return { intent: "concept", ideaCode: "I1" };
+    if (/\b(light|chlorophyll|photon|kahayag|liwanag|predict|photosynthesis)\b/i.test(low)) {
+      return { intent: "concept", ideaCode: "I1", topicKey: "chloroplast_parts" };
     }
 
     const spDefaultMap = { sp1: "I1", sp2: "I7", sp3: "I3", sp4: "I5", sp5: "I8", sp6: "I9" };
-    return { intent: "concept", ideaCode: spDefaultMap[state.supportPoint] || "I1" };
+    return { intent: "concept", ideaCode: spDefaultMap[state.supportPoint] || "I1", topicKey: null };
+  }
+
+  function isDirectExplanationRequest(rawQuestion) {
+    const low = String(rawQuestion || "").trim().toLowerCase();
+    // If the student clicked the explicit "Hint for Part X" button or literally asks for a hint -> keep H!
+    if (/\b(give me a hint|hint for part|just a hint|clue)\b/i.test(low)) {
+      return false;
+    }
+    return /\b(explain|what is|what are|what's|what does|how does|how do|how is|why does|why do|why is|why are|define|meaning of|break down|simpler|simple|analogy|compare|difference|variables?|ano ang|paano|bakit|unsa ang|ngano|giunsa)\b/i.test(
+      low
+    );
+  }
+
+  function tryEvaluateMathQuery(rawQuestion) {
+    const q = String(rawQuestion || "").trim();
+    const avgMatch = q.match(/(?:average|mean)\s+(?:of\s+)?([0-9.\s,]+(?:and\s+[0-9.]+)?)/i);
+    if (avgMatch) {
+      const nums = avgMatch[1].match(/\d+(?:\.\d+)?/g);
+      if (nums && nums.length >= 2) {
+        const vals = nums.map(Number);
+        const sum = vals.reduce((a, b) => a + b, 0);
+        const mean = (sum / vals.length).toFixed(2).replace(/\.00$/, "");
+        return `Sure thing! Adding ${vals.join(" + ")} gives ${sum}, and dividing by ${vals.length} gives a Mean of ${mean}.`;
+      }
+    }
+    // Extract safe arithmetic expression containing only numbers and + - * / ( )
+    let expr = q
+      .replace(/÷/g, "/")
+      .replace(/×/g, "*")
+      .replace(/\bplus\b/gi, "+")
+      .replace(/\bminus\b/gi, "-")
+      .replace(/\btimes\b/gi, "*")
+      .replace(/\bdivided by\b/gi, "/");
+    const match = expr.match(/([0-9().\s]+(?:[+\-*/][0-9().\s]+)+)/);
+    if (!match) return null;
+    const cleanExpr = match[1].replace(/\s+/g, "");
+    if (!/^[0-9+\-*/().]+$/.test(cleanExpr) || cleanExpr.length > 48) return null;
+    try {
+      const result = Function(`"use strict"; return (${cleanExpr});`)();
+      if (typeof result === "number" && Number.isFinite(result)) {
+        const formatted = Number.isInteger(result) ? String(result) : result.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+        return `Quick math check: ${cleanExpr} equals ${formatted}!`;
+      }
+    } catch (_) {}
+    return null;
   }
 
   function analyzeSimulationDataQuestion(rawQuestion, langKey, snapshot) {
@@ -2214,7 +2484,25 @@
     const distMatch = q.match(/\b(10|20|30|40)\s*cm\b|\b(dark)\b/i);
     let targetDist = distMatch ? (distMatch[1] || distMatch[2]).toLowerCase() : null;
 
-    // Extract any bubble count number mentioned (ignoring 10/20/30/40 cm if tied to cm, and ignoring trial 1/2/3)
+    // Summarize ALL completed conditions if the student asks about their overall table/results/trend
+    const filledEntries = Object.entries(snapshot.recordedConditions).filter(([, info]) => info.mean !== null);
+    if (/\b(my table|my data|my results|all my|my trend|compare my|check my data|what does my graph)\b/i.test(q)) {
+      if (!filledEntries.length) {
+        return `Hey! Looking at your ${snapshot.selectedPlant} table right now, no 60-second runs are saved yet! Pick a light distance like 10 cm, hit 'Start 60-Second Observation', and once your numbers appear, ask me again and I'll walk through your exact trend!`;
+      }
+      const summaryParts = filledEntries.map(([k, info]) => `${k === "dark" ? "Dark" : k + " cm"} (Mean ${info.mean.toFixed(1)})`);
+      const litMeans = filledEntries.filter(([k]) => k !== "dark").map(([k, info]) => ({ k: Number(k), mean: info.mean }));
+      let trendNote = "";
+      if (litMeans.length >= 2) {
+        litMeans.sort((a, b) => a.k - b.k);
+        const top = litMeans[0];
+        const bottom = litMeans[litMeans.length - 1];
+        trendNote = `Notice how moving the lamp closer—from ${bottom.k} cm (${bottom.mean.toFixed(1)} bubbles) to ${top.k} cm (${top.mean.toFixed(1)} bubbles)—pushes your bubble rate up! That's because closer light packs more energy onto every Hydrilla leaf.`;
+      }
+      return `Let's read your live ${snapshot.selectedPlant} table together! So far you've recorded: ${summaryParts.join(", ")}. ${trendNote} Want to run the remaining distances or talk about why the steepest drop happens as you pull the lamp back?`;
+    }
+
+    // Extract any bubble count number mentioned
     const cleanedForNum = q
       .replace(/\btrial\s*[123]\b/g, "")
       .replace(/\b(10|20|30|40)\s*cm\b/g, "")
@@ -2222,7 +2510,7 @@
     const numMatch = cleanedForNum.match(/\b(\d+(?:\.\d+)?)\b/);
     const mentionedVal = numMatch ? parseFloat(numMatch[1]) : null;
 
-    // Search recorded table for a matching condition if targetDist wasn't explicitly specified
+    // Match recorded condition closest to mentioned number
     if (!targetDist && mentionedVal !== null) {
       let bestKey = null;
       let bestDiff = Infinity;
@@ -2241,7 +2529,6 @@
       }
     }
 
-    // If still unrecorded, map typical value (e.g. 30 bubbles matches 20 cm for Hydrilla) or use active distance
     if (!targetDist) {
       if (mentionedVal !== null && snapshot.selectedPlant === "Hydrilla") {
         if (mentionedVal >= 36) targetDist = "10";
@@ -2255,7 +2542,7 @@
     }
 
     const condData = snapshot.recordedConditions[targetDist] || snapshot.recordedConditions[snapshot.selectedDistance];
-    const distLabel = targetDist === "dark" ? "Dark Control (0 lx)" : `${targetDist} cm (${condData.lux.toLocaleString()} lx)`;
+    const distLabel = targetDist === "dark" ? "Dark Control (0 lux)" : `${targetDist} cm (${condData.lux.toLocaleString()} lux)`;
     const recordedT1 = condData.trials[0];
     const recordedMean = condData.mean;
     const asksMeanAndTrial = trialNum !== null && /\b(mean|average)\b/i.test(q);
@@ -2267,53 +2554,154 @@
         .map((v, idx) => (typeof v === "number" ? `Trial ${idx + 1}: ${v}` : null))
         .filter(Boolean)
         .join(", ");
-      observedSummary = `Looking at your live table for ${snapshot.selectedPlant} at ${distLabel}, you have ${doneList} (current Mean: ${recordedMean.toFixed(1)} bubbles/60s). `;
+      observedSummary = `Ooh, let's check your live numbers! For ${snapshot.selectedPlant} at ${distLabel}, your table has ${doneList}, giving a Mean of ${recordedMean.toFixed(1)} bubbles in 60 seconds. `;
     } else if (mentionedVal !== null) {
-      observedSummary = `You haven't saved all runs for ${distLabel} yet, and a reading around ${mentionedVal} bubbles in 60s fits ${snapshot.selectedPlant} at ${distLabel}. `;
+      observedSummary = `Good catch! A count around ${mentionedVal} bubbles in 60 seconds matches ${snapshot.selectedPlant} right around ${distLabel}. `;
     } else {
-      observedSummary = `Right now your simulation is set to ${snapshot.selectedPlant} at ${distLabel} in ${snapshot.dayNightMode} mode at ${activeTemp} °C. `;
+      observedSummary = `Right now your beaker holds ${snapshot.selectedPlant} at ${distLabel} in ${snapshot.dayNightMode}, sitting at ${activeTemp} degrees Celsius. `;
     }
 
     const trialVsMeanNote = asksMeanAndTrial
-      ? `One quick note on terms: Trial ${trialNum} is a single 60-second run, whereas your Mean averages all recorded runs—so if only Trial ${trialNum} is filled in right now (for instance ${mentionedVal !== null ? mentionedVal : (recordedT1 !== null ? recordedT1 : "one run")}), the Mean equals that single value until Trials 2 and 3 are recorded. `
+      ? `Quick tip on those labels: Trial ${trialNum} is just one single 60-second run, while Mean averages all runs filled in that row—so if only Trial ${trialNum} (${mentionedVal !== null ? mentionedVal : recordedT1 !== null ? recordedT1 : "one run"}) is recorded so far, your Mean stays equal to that single number until Trials 2 and 3 finish! `
       : "";
 
     let mechanismReason = "";
     if (snapshot.isNightTime || targetDist === "dark") {
       mechanismReason = snapshot.isNightTime
-        ? `Because the simulation is in Night mode (Lamp OFF, 0 lx) and water cooled to ${activeTemp} °C, chlorophyll captures zero photons and colder temperatures slow active enzymes, so bubble count stays 0.`
-        : `In the Dark Control (0 lx), zero photons reach the thylakoids, so water photolysis stops (leaving only 0–1 trapped dissolved gas bubbles).`;
+        ? `Because we're in Night mode—lamp switched OFF (0 lux) and water chilled to ${activeTemp} °C—leaf chlorophyll gets zero light energy AND chilly helper enzymes slow down, so oxygen bubbles drop right to zero!`
+        : `In the Dark Control, zero light hits the leaves, so the water-splitting reaction pauses completely—leaving only 0 to 2 tiny trapped gas bubbles.`;
     } else if (targetDist === "10") {
-      mechanismReason = `At 10 cm (2,500 lx), high photon flux plus lamp warmth (${activeTemp} °C in the 0.2% NaHCO₃ buffer) drives active Calvin-cycle enzymes near capacity—so counts reach their highest range (~39–45 bubbles), leveling off slightly due to CO₂ and enzyme limits.`;
+      mechanismReason = `Why does it hit around 39 to 45 bubbles here? At 10 cm (2,500 lux), the light is super close and bright, AND the lamp's gentle warmth (${activeTemp} °C in your 0.2% baking soda water) keeps leaf enzymes moving briskly! It doesn't shoot infinitely higher because carbon dioxide uptake and leaf enzymes eventually reach top speed.`;
     } else if (targetDist === "20") {
-      mechanismReason = `At 20 cm (625 lx—four times less light intensity than 10 cm by the inverse-square law), your ${snapshot.selectedPlant} receives moderate-high light inside the 0.2% NaHCO₃ buffer at ${activeTemp} °C, which naturally yields around 30–35 bubbles in 60s instead of about 42 at 10 cm. Natural biological variations around 10% between trials explain why we average 3 trials!`;
+      mechanismReason = `Here's why ~30 bubbles makes total sense at 20 cm! When you move the lamp twice as far—from 10 cm back to 20 cm—brightness actually drops to one-fourth (625 lux instead of 2,500 lux), because light spreads wider AND taller. That medium-high light at ${activeTemp} °C inside 0.2% sodium bicarbonate gives steady ~30–35 bubbles per minute instead of ~42 at 10 cm!`;
     } else {
-      mechanismReason = `At ${distLabel} and ${activeTemp} °C in 0.2% NaHCO₃, fewer photons reach the thylakoid membranes per second (inverse-square law), so photolysis releases oxygen bubbles more slowly. Natural biological variations around 10% make repeated 3-trial averaging essential.`;
+      mechanismReason = `At ${distLabel} and ${activeTemp} °C inside 0.2% sodium bicarbonate water, the light beam has spread out thinner, so fewer light packets hit the green leaves every second—making oxygen bubbles pop off more slowly. Repeating 3 trials averages out natural plant fluctuations!`;
     }
 
     if (langKey === "fil") {
       const filNote = asksMeanAndTrial
-        ? `Tandaan na ang Trial ${trialNum} ay isang 60-second run pa lang, at ang Mean ay average ng 3 trials kapag kumpleto na. `
+        ? `Paalala lang: isang 60-second run pa lang ang Trial ${trialNum}, at average ng lahat ng trials ang Mean. `
         : "";
-      return `Magandang tanong! ${observedSummary}${filNote}Sa ${distLabel} at ${activeTemp} °C na may 0.2% NaHCO₃ buffer, nakasalalay ang dami ng bula sa lakas ng ilaw (inverse-square law) at bilis ng active enzymes sa chloroplast—kaya natural na ganito ang nakita mong bilang.`;
+      return `${observedSummary}${filNote}Sa ${distLabel} at ${activeTemp} °C na may 0.2% NaHCO₃ (pinagkukunan ng CO₂), humihina ang sikat ng ilaw habang lumalayo ang lamp kaya natural na ganyan ang bilang ng bula!`;
     }
     if (langKey === "ceb") {
       const cebNote = asksMeanAndTrial
-        ? `Timan-i nga ang Trial ${trialNum} usa pa ka 60-second run, ug ang Mean mao ang average sa tanang 3 ka trials. `
+        ? `Timan-i: usa pa ka 60-second run ang Trial ${trialNum}, ug average sa tanang trials ang Mean. `
         : "";
-      return `Maayong pagpangutana! ${observedSummary}${cebNote}Sa ${distLabel} ug ${activeTemp} °C sulod sa 0.2% NaHCO₃ buffer, ang kadaghanon sa bula nagdepende sa kusog sa kahayag sa lamp ug katulinon sa active enzymes sa chloroplast.`;
+      return `${observedSummary}${cebNote}Sa ${distLabel} ug ${activeTemp} °C sulod sa 0.2% NaHCO₃, nagdepende ang bula sa kakusgon sa kahayag ug kabaskog sa enzymes—mao nga sakto ra kaayo nang imong resulta!`;
     }
 
     return `${observedSummary}${trialVsMeanNote}${mechanismReason}`.trim();
+  }
+
+  function evaluateStudentWorkDraft(rawQuestion, langKey, snapshot) {
+    const inlineClaim = rawQuestion
+      .replace(/^(?:check my answer|check my|is my answer|am i right|review my|is this right|check if)[:,\s-]*/i, "")
+      .trim();
+    const draft = (inlineClaim.length >= 12 ? inlineClaim : "") || String(snapshot.studentStepNotes || "").trim();
+    const step = ACTIVITY_STEPS[state.currentStepIndex] || ACTIVITY_STEPS[0];
+
+    if (!draft) {
+      return `I'd love to check your answer! Type your idea for ${step.partTitle} inside the Student Activity box—or just write it right here to me—and I'll tell you what's already awesome and how to make it even stronger!`;
+    }
+
+    const low = draft.toLowerCase();
+    const strengths = [];
+    const tips = [];
+
+    if (/10\s*cm|closer|high light|bright/i.test(low)) strengths.push("correctly spotting that 10 cm / brighter light gives the fastest rate");
+    if (/oxygen|o2/i.test(low)) strengths.push("identifying the bubble gas correctly as oxygen (O₂)");
+    if (/independent|dependent|constant|fair|nahco3|26|60|3 trials|mean/i.test(low)) {
+      strengths.push("connecting the experimental variables or repeated trials for a fair test");
+    }
+    if (/level|plateau|limit|co2|enzyme|calvin|rubisco/i.test(low)) strengths.push("catching why the curve slows down (limiting factors)");
+    if (/glucose|food|respir|ecosystem|atp|nadph|thylakoid|stroma/i.test(low)) {
+      strengths.push("linking light reactions to glucose and living ecosystems");
+    }
+
+    if (step.sp === "sp1" && !/oxygen|o2/i.test(low)) tips.push("make sure you name the gas inside the bubbles—oxygen (O₂)!");
+    if (step.sp === "sp2" && !/3 trials|mean|average|constant|nahco3/i.test(low)) {
+      tips.push("mention keeping 0.2% sodium bicarbonate, temperature, plant shoot, and 60s constant—and averaging 3 trials to reduce random blips.");
+    }
+    if (step.sp === "sp4" && !/limit|co2|enzyme|level|saturat/i.test(low)) {
+      tips.push("add a line about why 10 cm levels off slightly—because helper enzymes or CO₂ reach max capacity!");
+    }
+    if (step.sp === "sp5" && !/glucose|sugar|food|respir|ecosystem/i.test(low)) {
+      tips.push("connect ATP and NADPH to building glucose sugar for ecosystems!");
+    }
+
+    const praiseText = strengths.length
+      ? `Nice job—you nailed ${strengths.join(", and ")}!`
+      : `Good effort putting your thinking in your own words!`;
+    const tipText = tips.length
+      ? `One quick polish to level it up: ${tips.join(" Also, ")}`
+      : `That explanation hits all the key Grade 11 science ideas cleanly! Ready for the next step?`;
+
+    return `Let's review what you wrote ("${draft.slice(0, 90)}${draft.length > 90 ? "..." : ""}")! ${praiseText} ${tipText}`;
+  }
+
+  function generateQuizQuestion(snapshot) {
+    const quizzes = {
+      sp1: {
+        q: "Quick check! If you slide the lamp closer from 40 cm to 10 cm, what happens to the oxygen bubble count in 60 seconds—and WHY?",
+        keywords: ["increase", "more", "higher", "faster", "more light", "stronger", "energy", "chlorophyll"],
+        ideal: "Bubble count shoots up because closer light gives chlorophyll much more light energy every second to split water and release oxygen!",
+      },
+      sp2: {
+        q: "Pop quiz on variables! In our Hydrilla setup, which one is the Independent Variable (what YOU change), and why do we run 3 trials instead of 1?",
+        keywords: ["distance", "lamp", "light", "average", "mean", "reliable", "accurate", "variation", "error"],
+        ideal: "Lamp distance is the Independent Variable we change, and 3 trials let us calculate a reliable Mean that smooths out small biological fluctuations!",
+      },
+      sp3: {
+        q: "Think like a scientist: Why did Water Hyacinth produce almost no underwater bubbles compared to Hydrilla even under the same 10 cm lamp?",
+        keywords: ["float", "air", "surface", "stomata", "above"],
+        ideal: "Because Water Hyacinth's leaves float above water in the air, so its oxygen escapes straight into the air through leaf stomata instead of forming underwater bubbles!",
+      },
+      sp4: {
+        q: "Brain teaser! 10 cm is 4× brighter than 20 cm—so why doesn't Hydrilla make 4× more bubbles at 10 cm?",
+        keywords: ["limit", "co2", "enzyme", "saturat", "fast", "bottleneck", "max", "full"],
+        ideal: "Because chlorophyll is already at max speed, so dissolved CO₂ or helper enzymes inside the leaf become the limiting factor bottleneck!",
+      },
+      sp5: {
+        q: "Chloroplast check! What are the two energy-carrying 'batteries' made in the thylakoids that power glucose-building in the Calvin cycle?",
+        keywords: ["atp", "nadph"],
+        ideal: "ATP and NADPH! They carry energy from Stage 1 (thylakoids) to Stage 2 (Calvin cycle in the stroma) to make glucose sugar.",
+      },
+      sp6: {
+        q: "Big-picture check! What happens to net oxygen bubbles if we flip to Night mode (lamp OFF, water ~18.5 °C), and why?",
+        keywords: ["0", "zero", "stop", "no light", "respir", "cold", "slow"],
+        ideal: "Bubbles drop to zero! Without light, photosynthesis pauses completely—while chilled mitochondria quietly keep doing cellular respiration 24/7.",
+      },
+    };
+    const pick = quizzes[state.supportPoint] || quizzes.sp1;
+    state.conversationMemory.pendingQuiz = {
+      ideaCode: (ACTIVITY_STEPS[state.currentStepIndex] && ACTIVITY_STEPS[state.currentStepIndex].sp === "sp2") ? "I7" : "I3",
+      keywords: pick.keywords,
+      ideal: pick.ideal,
+      askedAt: Date.now(),
+    };
+    return `${pick.q} Give me your best shot in a sentence—no pressure!`;
+  }
+
+  function gradeStudentQuizReply(rawQuestion) {
+    const pq = state.conversationMemory.pendingQuiz;
+    state.conversationMemory.pendingQuiz = null;
+    if (!pq) return "Awesome curiosity! Let's jump right back into the simulation—what would you like to explore?";
+    const low = String(rawQuestion || "").toLowerCase();
+    const hits = (pq.keywords || []).filter((kw) => low.includes(kw));
+    if (hits.length >= 2 || (hits.length === 1 && low.length >= 16)) {
+      return `Spot on!! You hit the core idea (${hits.slice(0, 3).join(", ")})! ${pq.ideal} Want another quick question, or shall we check your simulation?`;
+    }
+    return `Ooh, good try! Let's sharpen that thought together: ${pq.ideal} Makes more sense now?`;
   }
 
   function extractSearchTopicFromQuestion(rawQuestion) {
     let clean = String(rawQuestion || "").trim();
     clean = clean
       .replace(/[?!.]+$/g, "")
-      .replace(/^(?:hey\s+biovoice|biovoice|please|can\s+you|could\s+you|tell\s+me|explain\s+to\s+me)\s+/i, "")
-      .replace(/^(?:what\s+is\s+the\s+meaning\s+of|what\s+does\s+|what\s+is|what's|what\s+are|who\s+is|who\s+was|define|meaning\s+of|explain|ano\s+ang|ano\s+ibig\s+sabihin\s+ng|unsa\s+ang|unsay\s+pasabot\s+sa)\s+/i, "")
-      .replace(/\b(?:mean|means|meaning)\s*$/i, "")
+      .replace(/^(?:hey\s+biovoice|biovoice|nova|please|can\s+you|could\s+you|tell\s+me|explain\s+to\s+me|help\s+me\s+understand)\s+/i, "")
+      .replace(/^(?:what\s+is\s+the\s+meaning\s+of|what\s+does\s+|what\s+is|what's|what\s+are|who\s+is|who\s+was|how\s+does|how\s+do|why\s+is|define|meaning\s+of|explain|ano\s+ang|ano\s+ibig\s+sabihin\s+ng|unsa\s+ang|unsay\s+pasabot\s+sa)\s+/i, "")
+      .replace(/\b(?:mean|means|meaning|work|works)\s*$/i, "")
       .replace(/^(?:a|an|the)\s+/i, "")
       .trim();
     return clean;
@@ -2322,7 +2710,7 @@
   async function lookupWikipediaSummary(topic) {
     if (!topic || typeof fetch !== "function") return null;
     const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timer = ctrl ? setTimeout(() => ctrl.abort(), 3200) : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 3500) : null;
     try {
       const slug = encodeURIComponent(topic.replace(/\s+/g, "_"));
       const directRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`, {
@@ -2335,7 +2723,7 @@
           return sentences.slice(0, 2).join(" ").trim();
         }
       }
-      // Fallback opensearch title lookup
+      // Opensearch fallback
       const searchRes = await fetch(
         `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(topic)}&limit=1&namespace=0&format=json&origin=*`,
         { signal: ctrl ? ctrl.signal : undefined }
@@ -2357,8 +2745,21 @@
           }
         }
       }
+      // DuckDuckGo Instant Answer fallback (clean CORS JSON for definitions & quick facts)
+      const ddgRes = await fetch(
+        `https://api.duckduckgo.com/?q=${encodeURIComponent(topic)}&format=json&no_html=1&skip_disambig=1`,
+        { signal: ctrl ? ctrl.signal : undefined }
+      );
+      if (ddgRes.ok) {
+        const ddg = await ddgRes.json();
+        const abs = (ddg && (ddg.AbstractText || ddg.Definition || ddg.Answer)) || "";
+        if (abs) {
+          const sentences = abs.match(/[^.!?]+[.!?]+/g) || [abs];
+          return sentences.slice(0, 2).join(" ").trim();
+        }
+      }
     } catch (_) {
-      // Network offline or timeout -> clean fallback below
+      // Network offline or timeout
     } finally {
       if (timer) clearTimeout(timer);
     }
@@ -2371,7 +2772,6 @@
 
     let factAnswer = GENERAL_KNOWLEDGE_MINI_KB[topicLower] || "";
     if (!factAnswer) {
-      // Partial match in mini KB (e.g. "what is pro bono work")
       const matchedKey = Object.keys(GENERAL_KNOWLEDGE_MINI_KB).find((k) => topicLower.includes(k));
       if (matchedKey) factAnswer = GENERAL_KNOWLEDGE_MINI_KB[matchedKey];
     }
@@ -2381,19 +2781,19 @@
 
     const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
     const coreRedirect = {
-      en: `Now let's bring that back to our photosynthesis investigation! We're currently on ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel} (${snapshot.liveWaterTemp} °C)—what would you like to examine next about its bubble rate or variables?`,
-      fil: `Ngayon, balik tayo sa ating photosynthesis experiment! Nasa ${snapshot.currentStep} tayo gamit ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C)—ano ang gusto mong tuklasin tungkol sa bilang ng oxygen bubbles?`,
-      ceb: `Karon, balik ta sa atong photosynthesis investigation! Anaa ta karon sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C)—unsay gusto nimong susihon bahin sa bula sa oxygen?`,
+      en: `Now let's jump right back into our lab! We've got ${snapshot.selectedPlant} at ${distLabel} (${snapshot.liveWaterTemp} °C) on ${snapshot.currentStep}—want to check how your variables work or run a trial?`,
+      fil: `Ngayon, balik tayo sa ating lab experiment! Naka-setup ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C) para sa ${snapshot.currentStep}—ano ang gusto mong i-test o itanong sunod?`,
+      ceb: `Karon, balik ta sa atong photosynthesis lab! Naa ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C) sa ${snapshot.currentStep}—unsay gusto nimong sulayan o pangutan-on sunod?`,
     };
 
     if (factAnswer) {
-      return `Sure thing! ${factAnswer} ${coreRedirect[langKey] || coreRedirect.en}`;
+      return `Ooh, good question! ${factAnswer} ${coreRedirect[langKey] || coreRedirect.en}`;
     }
 
     const offlineBridges = {
-      en: `Good curiosity! Even outside our biology lab I love questions like that—though I don't have a live definition lookup for "${topic || rawQuestion}" right this second without a server/web connection. Let's channel that curiosity back to ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel}: what pattern are you noticing in the bubbles?`,
-      fil: `Magandang tanong! Bagamat nakapokus ang offline knowledge ko sa Biology at walang koneksyon para sa "${topic || rawQuestion}" ngayon, balik muna tayo sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant}—ano ang napapansin mong pagbabago sa bubbles?`,
-      ceb: `Maayong pangutana! Bisan og nakapokus ang akong offline mode sa Biology karon, balik ta sa ${snapshot.currentStep} gamit ang ${snapshot.selectedPlant}—unsay imong naobserbahan sa mga bula sa oxygen?`,
+      en: `Love the curiosity! I can't reach a live web dictionary for "${topic || rawQuestion}" right this moment without a Gemini key or internet connection—though if you check back online I'll grab that right away! Meanwhile, let's dive back into ${snapshot.currentStep} with ${snapshot.selectedPlant} at ${distLabel}—any variable or bubble count you'd like broken down simply?`,
+      fil: `Magandang tanong! Hindi ko maabot ang live lookup para sa "${topic || rawQuestion}" ngayon, pero habang nandito tayo sa lab—balikan natin ang ${snapshot.selectedPlant} sa ${distLabel}. Aling concept o variable ang gusto mong ipaliwanag ko nang mas simple?`,
+      ceb: `Nindot ang imong pagkamausisaon! Dili nako ma-access ang live dictionary alang sa "${topic || rawQuestion}" karon dayon, busa balik usa ta sa ${snapshot.selectedPlant} sa ${distLabel}—unsang variable o parte sa photosynthesis ang gusto nimong pasabton sa pinakasayon nga paagi?`,
     };
     return offlineBridges[langKey] || offlineBridges.en;
   }
@@ -2403,16 +2803,16 @@
     const curTrials = activeTable[state.selectedDistance] || [null, null, null];
     const mean = computeMean(curTrials);
     const distLabel =
-      state.selectedDistance === "dark" ? "Dark Control (0 lx)" : `${state.selectedDistance} cm`;
+      state.selectedDistance === "dark" ? "Dark Control (0 lux)" : `${state.selectedDistance} cm`;
 
     if (mean !== null) {
       if (langKey === "fil") {
-        return ` Sa iyong live data para sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang Mean mo ay ${mean.toFixed(1)} bubbles/60s.`;
+        return ` Sa live table mo ngayon para sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang Mean mo ay ${mean.toFixed(1)} bubbles/60s!`;
       }
       if (langKey === "ceb") {
-        return ` Sa imong live data alang sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang imong Mean kay ${mean.toFixed(1)} bubbles/60s.`;
+        return ` Sa imong live table karon alang sa ${state.selectedPlant} sa ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), ang imong Mean kay ${mean.toFixed(1)} bubbles/60s!`;
       }
-      return ` Looking at your live table for ${state.selectedPlant} at ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), your current Mean is ${mean.toFixed(1)} bubbles/60s.`;
+      return ` Looking at your live table right now for ${state.selectedPlant} at ${distLabel} (${state.liveWaterTemp.toFixed(1)} °C), your current Mean is ${mean.toFixed(1)} bubbles in 60 seconds!`;
     }
     return "";
   }
@@ -2423,100 +2823,140 @@
     const ideaCode = classification.ideaCode;
     const reqMap = { hint: "H", clarification: "C", explanation: "E" };
     let targetTier = reqMap[state.supportType] || "H";
+    if (isDirectExplanationRequest(questionText)) {
+      targetTier = "E";
+    }
     const snapshot = buildFullSimulationSnapshot();
     const distLabel = snapshot.selectedDistance === "dark" ? "Dark Control" : `${snapshot.selectedDistance} cm`;
+
+    const finishReply = (reply, usedIdeaCode, actualType, topicKey, hintFirst) => {
+      state.conversationMemory.turnCount += 1;
+      state.conversationMemory.lastIdeaCode = usedIdeaCode || ideaCode;
+      if (topicKey !== undefined) state.conversationMemory.lastTopicKey = topicKey;
+      state.conversationMemory.lastSupportPoint = state.supportPoint;
+      state.conversationMemory.lastSupportType = actualType;
+      state.conversationMemory.lastQuestion = questionText;
+      state.conversationMemory.lastReply = reply;
+      return { reply, ideaCode: usedIdeaCode || ideaCode, actualType, hintFirst: Boolean(hintFirst) };
+    };
 
     // 1. Guardrail: Direct test/quiz answer refusal
     if (classification.intent === "test_refusal") {
       const refusals = {
-        en: "I want you to shine on your own, so I can't give away direct test or worksheet answers—but let's think it through together! Which light condition or chloroplast variable are you comparing right now?",
-        fil: "Gusto kong matutunan mo ito nang totoo kaya hindi ako pwedeng magbigay ng sagot sa pagsusulit—pero pag-isipan natin nang magkasama! Aling light condition o bahagi ng chloroplast ang sinusuri mo?",
-        ceb: "Gusto nako nga makat-on ka mismo maong dili ko makahatag og tubag sa test—pero sabuton nato ni dungan! Unsang light condition o parte sa chloroplast ang imong gitan-aw karon?",
+        en: "I'm cheering for you to earn that score yourself, so I can't reveal Pretest or Posttest letters! Tell me which concept or variable from the question feels fuzzy, and I'll break it down super clearly with a quick example!",
+        fil: "Gusto kong makita na ikaw mismo ang nakakaintindi kaya hindi ako makapagbibigay ng sagot sa Pretest o Posttest! Sabihin mo na lang kung aling concept ang nakakalito at ipapaliwanag ko ito nang napakasimple!",
+        ceb: "Gusto nako nga makat-on ka mismo maong dili ko makahatag og tubag sa Pretest o Posttest! Ingna lang ko unsang konsepto ang lisod sabton, ug ako ning pasimplehon para nimo!",
       };
-      return { reply: refusals[langKey], ideaCode, actualType: "H", hintFirst: true };
+      return finishReply(refusals[langKey], ideaCode, "H", state.conversationMemory.lastTopicKey, true);
     }
 
-    // 2. Smalltalk / Greeting (warm Gemini Nova persona)
+    // 2. Smalltalk / Greeting (lively Nova personality)
     if (classification.intent === "conversational_smalltalk") {
-      const nameTag = state.isSandbox ? "there" : (state.participantCode || "friend");
+      const nameTag = state.isSandbox ? "friend" : (state.participantCode || "friend");
       const greetings = {
-        en: `Hey ${nameTag}! Always happy to help. Right now we've got ${snapshot.selectedPlant} set at ${distLabel} in ${snapshot.dayNightMode} (${snapshot.liveWaterTemp} °C). Want to test a distance or ask about what you're seeing?`,
-        fil: `Kumusta ${nameTag}! Lagi akong handang tumulong. Naka-setup ngayon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Ano ang gusto mong itanong o subukan?`,
-        ceb: `Kumusta ${nameTag}! Andam ko motabang kanimo. Naka-setup karon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Unsay gusto nimong pangutan-on o sulayan?`,
+        en: `Hey ${nameTag}! I'm BioVoice—ready when you are! Right now we've got ${snapshot.selectedPlant} set at ${distLabel} in ${snapshot.dayNightMode} (${snapshot.liveWaterTemp} °C). Want me to break down the variables simply, walk through your numbers, or tackle a tricky concept?`,
+        fil: `Kumusta ${nameTag}! Ako si BioVoice, handang tumulong anumang oras! Naka-setup ngayon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Gusto mo bang ipaliwanag ko nang simple ang mga variables o pag-usapan ang resulta mo?`,
+        ceb: `Kumusta ${nameTag}! Ako si BioVoice, andam kanunay motabang! Naa karon ang ${snapshot.selectedPlant} sa ${distLabel} (${snapshot.liveWaterTemp} °C). Gusto ka bang pasabton nako sa pinakasayon ang mga variables o tan-awon nato ang imong datos?`,
       };
-      return { reply: greetings[langKey], ideaCode, actualType: "C", hintFirst: false };
+      return finishReply(greetings[langKey], ideaCode, "C", state.conversationMemory.lastTopicKey, false);
     }
 
-    // 3. Simulation Data & Quantitative Result Explanation ("why is my mean in trial 1 30 bubble count")
+    // 3. Student Answer / Prediction Draft Checker
+    if (classification.intent === "check_my_work") {
+      const checkReply = evaluateStudentWorkDraft(questionText, langKey, snapshot);
+      return finishReply(checkReply, ideaCode, "C", state.conversationMemory.lastTopicKey, false);
+    }
+
+    // 4. Interactive Quiz Mode
+    if (classification.intent === "quiz_request") {
+      const qReply = generateQuizQuestion(snapshot);
+      return finishReply(qReply, ideaCode, "H", state.conversationMemory.lastTopicKey, true);
+    }
+    if (classification.intent === "quiz_grade") {
+      const gReply = gradeStudentQuizReply(questionText);
+      return finishReply(gReply, ideaCode, "E", state.conversationMemory.lastTopicKey, false);
+    }
+
+    // 5. Safe Arithmetic / Mean Calculator
+    if (classification.intent === "math_eval") {
+      const mathAns = tryEvaluateMathQuery(questionText);
+      if (mathAns) {
+        return finishReply(`${mathAns} Now let's hop back to your ${snapshot.selectedPlant} setup at ${distLabel}—any trial numbers you'd like to interpret?`, "I6", "E", "math_eval", false);
+      }
+    }
+
+    // 6. Live Simulation Data & Quantitative Result Analysis
     if (classification.intent === "sim_data_query") {
       const dataReply = analyzeSimulationDataQuestion(questionText, langKey, snapshot);
-      state.conversationMemory.turnCount += 1;
-      state.conversationMemory.lastIdeaCode = "I6";
-      state.conversationMemory.lastSupportType = "E";
-      state.conversationMemory.lastQuestion = questionText;
-      state.conversationMemory.lastReply = dataReply;
-      return { reply: dataReply, ideaCode: "I6", actualType: "E", hintFirst: false };
+      return finishReply(dataReply, "I6", "E", "sim_data_query", false);
     }
 
-    // 4. General / Off-Topic Knowledge -> Exact Answer + Warm Redirect Back to Core
+    // 7. Simplification / Everyday-Analogy Follow-up (builds dynamically on previous topic!)
+    if (classification.intent === "simplify_follow_up") {
+      const prevTopicKey = state.conversationMemory.lastTopicKey;
+      const prevTopic = prevTopicKey && CONCEPT_TUTOR_TOPICS[prevTopicKey];
+      state.conversationMemory.simplificationDepth = (state.conversationMemory.simplificationDepth || 0) + 1;
+      if (prevTopic && prevTopic[langKey] && prevTopic[langKey].analogy) {
+        return finishReply(
+          `Ooh, let's drop all the textbook words and make this crystal clear! ${prevTopic[langKey].analogy} Makes way more sense when you picture it like that, right?`,
+          prevTopic.ideaCode || ideaCode,
+          "E",
+          prevTopicKey,
+          false
+        );
+      }
+      if (prevTopic && prevTopic.en && prevTopic.en.analogy) {
+        return finishReply(
+          `Let's strip out the jargon and use an easy everyday picture! ${prevTopic.en.analogy} Pretty neat when you see it that way, right?`,
+          prevTopic.ideaCode || ideaCode,
+          "E",
+          prevTopicKey,
+          false
+        );
+      }
+      const simpleStory = SIMPLER_ANALOGY_BANK[ideaCode] || SIMPLER_ANALOGY_BANK.I1;
+      return finishReply(
+        `Let's make it super easy with zero complicated words! ${simpleStory} Want to try seeing that happen right in your beaker?`,
+        ideaCode,
+        "E",
+        prevTopicKey,
+        false
+      );
+    }
+
+    // 8. Dedicated Thorough & Plain-Language Concept & Variable Tutor
+    if (classification.intent === "concept_tutor" && classification.topicKey) {
+      state.conversationMemory.simplificationDepth = 0;
+      const topicObj = CONCEPT_TUTOR_TOPICS[classification.topicKey];
+      const localized = (topicObj && topicObj[langKey]) || (topicObj && topicObj.en);
+      if (localized) {
+        const asksForAnalogy = /\b(analogy|example|simple)\b/i.test(questionText);
+        const body = asksForAnalogy && localized.analogy
+          ? `${localized.summary} ${localized.analogy}`
+          : localized.summary;
+        const simAdd = classification.topicKey === "plant_comparison" ? "" : buildSimulationContextAddendum(langKey);
+        return finishReply(`${body}${simAdd}`.trim(), topicObj.ideaCode || ideaCode, "E", classification.topicKey, false);
+      }
+    }
+
+    // 9. Off-Topic / General Knowledge -> Accurate Answer + Warm Lab Redirect
     if (classification.intent === "general_knowledge_redirect") {
       const replyText = await answerGeneralQuestionWithRedirect(questionText, langKey, snapshot);
-      state.conversationMemory.turnCount += 1;
-      state.conversationMemory.lastQuestion = questionText;
-      state.conversationMemory.lastReply = replyText;
-      return { reply: replyText, ideaCode, actualType: "C", hintFirst: false };
+      return finishReply(replyText, ideaCode, "C", state.conversationMemory.lastTopicKey, false);
     }
 
-    // 5. Cellular, Pigment Wavelength & Enzymatic Deep-Dive
-    if (classification.intent === "cellular_deep_dive") {
-      const asksGreenOrWavelength = /\b(green|wavelength|absorb|reflect|color|variegated|white edge)\b/i.test(questionText);
-      const cellReplies = asksGreenOrWavelength
-        ? {
-            en: `Plants appear green because chlorophyll a and chlorophyll b strongly absorb blue-violet and red photons to drive photosynthesis, while reflecting green wavelengths (~500–550 nm) back to our eyes. White leaf edges lack chlorophyll altogether, which is why they can't capture light for photolysis even under a bright lamp!`,
-            fil: `Kulay berde ang mga dahon dahil masigasig na sinisipsip ng chlorophyll a at b ang blue-violet at red light para sa photosynthesis, habang nirereflect nila ang green light papunta sa ating mata. Ang puting bahagi ng dahon ay walang chlorophyll kaya hindi ito makakahuli ng sikat ng ilaw para sa photolysis!`,
-            ceb: `Berde tan-awon ang mga dahon tungod kay ang chlorophyll a ug b kusog mosuyop sa blue-violet ug red light para sa photosynthesis, samtang ilang gi-reflect ang green wavelengths balik sa atong mata. Ang puting kilid sa dahon walay chlorophyll maong dili kini makahimo og photolysis!`,
-          }
-        : {
-            en: `Inside the chloroplast, light hits the thylakoid grana first to split H₂O into oxygen bubbles, ATP, and NADPH. Then in the surrounding stroma fluid, active RuBisCO enzymes use dissolved CO₂ (from 0.2% NaHCO₃) to build glucose—which is why warmer lamp heat (~${snapshot.liveWaterTemp} °C) speeds reactions up while cold Night water (~18.5 °C) slows them down!`,
-            fil: `Sa loob ng chloroplast, unang tumatama ang liwanag sa thylakoid grana upang hatiin ang H₂O at maglabas ng oxygen bubbles, ATP, at NADPH. Pagkatapos, sa stroma, ginagamit ng active enzymes tulad ng RuBisCO ang dissolved CO₂ mula sa 0.2% NaHCO₃ para makabuo ng glucose—kaya mas mabilis ito sa mainit-init na tubig mula sa lamp kaysa sa malamig na gabi!`,
-            ceb: `Sulod sa chloroplast, una nga moigo ang kahayag sa thylakoid grana aron bahion ang H₂O ngadto sa oxygen bubbles, ATP, ug NADPH. Dayon sa stroma, mogamit ang active enzymes sama sa RuBisCO og dissolved CO₂ gikan sa 0.2% NaHCO₃ aron makahimo og glucose—mao nga mas paspas kini sa init-init nga tubig gikan sa suga kaysa bugnaw nga gabii!`,
-          };
-      state.conversationMemory.turnCount += 1;
-      state.conversationMemory.lastIdeaCode = "I8";
-      state.conversationMemory.lastSupportType = "E";
-      return { reply: cellReplies[langKey], ideaCode: "I8", actualType: "E", hintFirst: false };
-    }
-
-    // 6. Special Contextual Topic: Comparing Hydrilla, Elodea, and Floating Water Hyacinth
-    if (classification.intent === "plant_comparison") {
-      const plantReplies = {
-        en: "Great eye comparing the three plants! Hydrilla and Elodea grow fully submerged, so oxygen produced inside their leaves escapes right into the water as countable bubbles. Water Hyacinth floats on top with leaves in the air—so most of its oxygen diffuses straight out through aerial stomata rather than making underwater bubbles!",
-        fil: "Magandang obserbasyon! Ang Hydrilla at Elodea ay lubog sa tubig kaya lumalabas ang oxygen bilang bula. Ang Water Hyacinth naman ay nakalutang sa ibabaw at nasa hangin ang mga dahon, kaya sa stomata sa hangin lumalabas ang karamihan ng oxygen nito sa halip na maging bula sa ilalim ng tubig!",
-        ceb: "Nindot kaayo nga obserbasyon! Ang Hydrilla ug Elodea nakalubog sa tubig maong mogawas isip bula ang ilang oxygen. Apan ang Water Hyacinth naglutaw sa ibabaw ug naa sa hangin ang iyang dahon—mao nga sa aerial stomata mogawas ang kadaghanang oxygen niini imbes mahimong bula sa tubig!",
-      };
-      state.conversationMemory.turnCount += 1;
-      state.conversationMemory.lastIdeaCode = "I2";
-      state.conversationMemory.lastSupportType = targetTier;
-      return {
-        reply: plantReplies[langKey],
-        ideaCode: "I2",
-        actualType: targetTier,
-        hintFirst: targetTier === "H",
-      };
-    }
-
-    // 7. Multi-turn follow-up escalation: H -> C -> E
+    // 10. Multi-turn escalation on core Idea I1–I9 (Hint -> Clarification -> Thorough Simple Explanation)
     let followUpPrefix = "";
     if (
       classification.intent === "follow_up_expand" ||
-      (state.conversationMemory.turnCount > 0 && state.conversationMemory.lastIdeaCode === ideaCode)
+      (state.conversationMemory.turnCount > 0 && state.conversationMemory.lastIdeaCode === ideaCode && targetTier !== "E")
     ) {
       const prevTier = state.conversationMemory.lastSupportType || "H";
       targetTier = prevTier === "H" ? "C" : "E";
       const prefixes = {
-        en: "Building on that idea: ",
-        fil: "Karugtong ng pinag-usapan natin: ",
-        ceb: "Sumpay sa atong gihisgutan ganina: ",
+        en: "Let's dig a little deeper on that! ",
+        fil: "Palalimin natin nang simple iyon! ",
+        ceb: "Atong palawman og gamay pero sayon gihapon! ",
       };
       followUpPrefix = prefixes[langKey];
     }
@@ -2526,20 +2966,7 @@
     const simAddendum = targetTier !== "H" ? buildSimulationContextAddendum(langKey) : "";
 
     const finalReply = `${followUpPrefix}${baseText}${simAddendum}`.trim();
-
-    state.conversationMemory.turnCount += 1;
-    state.conversationMemory.lastIdeaCode = ideaCode;
-    state.conversationMemory.lastSupportPoint = state.supportPoint;
-    state.conversationMemory.lastSupportType = targetTier;
-    state.conversationMemory.lastQuestion = questionText;
-    state.conversationMemory.lastReply = finalReply;
-
-    return {
-      reply: finalReply,
-      ideaCode,
-      actualType: targetTier,
-      hintFirst: targetTier === "H",
-    };
+    return finishReply(finalReply, ideaCode, targetTier, classification.topicKey || state.conversationMemory.lastTopicKey, targetTier === "H");
   }
 
   function initBioVoiceGreeting() {
@@ -2549,8 +2976,11 @@
     state.conversationMemory = {
       turnCount: 0,
       lastIdeaCode: "I1",
+      lastTopicKey: "",
       lastSupportPoint: state.supportPoint,
       lastSupportType: "hint",
+      simplificationDepth: 0,
+      pendingQuiz: null,
       lastQuestion: "",
       lastReply: "",
       messages: [],
@@ -2558,11 +2988,21 @@
 
     const greeting =
       state.isSandbox
-        ? "Hey there! I'm BioVoice—your interactive lab partner in Sandbox Mode. Ask me anything about your photosynthesis setup, your trial counts, or even general questions in English, Filipino, or Cebuano, and I'll walk through it right alongside you!"
-        : `Hey ${state.participantCode}! I'm BioVoice, your Grade 11 Biology lab partner. Talk to me naturally about your bubble counts, temperature, or light distances in English, Filipino, or Cebuano—I can see your live simulation and guide you step by step!`;
+        ? "Hey there! I'm BioVoice—your friendly lab partner! Ask me anything in plain words—like breaking down our variables, explaining tough biology terms with simple analogies, checking your trial numbers, or even everyday questions—and I'll talk you right through it!"
+        : `Hey ${state.participantCode}! I'm BioVoice, your Grade 11 Biology lab partner! Ask me in English, Filipino, or Cebuano—whether you want variables explained simply, help understanding your bubble counts, or a quick check on your prediction, I've got your back!`;
 
-    appendChatBubble("assistant", greeting, "BioVoice · Nova Voice Ready (Live Sim Aware)");
+    appendChatBubble("assistant", greeting, "BioVoice · Nova Companion Ready (Live Sim Aware)");
     renderPromptChips();
+  }
+
+  /** Escape HTML special characters so dynamic text renders safely inside templates. */
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function appendChatBubble(role, text, metaLabel) {
@@ -2570,10 +3010,7 @@
     if (!stream) return;
     const div = document.createElement("div");
     div.className = `chat-bubble ${role}`;
-    const safeHtml = String(text)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
+    const safeHtml = escapeHtml(text)
       .replace(/\$\\text\{CO\}_2\$/g, "CO₂")
       .replace(/\$\\text\{H\}_2\\text\{O\}\$/g, "H₂O")
       .replace(/\$\\text\{O\}_2\$/g, "O₂")
@@ -2598,33 +3035,33 @@
 
     const chipsBySp = {
       sp1: [
-        "Which distance will make the most bubbles?",
+        "Explain photosynthesis in simple everyday words",
         "Why does the plant need light?",
         "Ngano man nga adunay bubbles ang Hydrilla?",
         "Bakit kailangan ng liwanag sa photosynthesis?",
       ],
       sp2: [
-        "What are our constant variables?",
+        "Explain all 3 variables simply (Independent, Dependent, Constant)",
+        "Why do we put 0.2% NaHCO₃ (baking soda) in the water?",
         "Why do we run 3 trials per distance?",
-        "Why is water temperature kept at 26.0 °C?",
       ],
       sp3: [
-        "Why did bubbles decrease at 40 cm?",
+        "Compare my results and explain my trend",
+        "Why did bubbles drop at 40 cm vs 10 cm?",
         "Why does Water Hyacinth make fewer underwater bubbles?",
-        "Unsa ang kalahian sa 10 cm ug 40 cm?",
       ],
       sp4: [
-        "Why do we include the Dark Control?",
-        "Why does the graph level off between 20 cm and 10 cm?",
-        "Why does that happen?",
+        "Why doesn't 10 cm make 4× more bubbles than 20 cm?",
+        "How does temperature affect enzymes in Day vs Night?",
+        "Quiz me on this step!",
       ],
       sp5: [
-        "How do ATP and NADPH help the Calvin cycle?",
+        "Explain thylakoids, stroma, ATP & NADPH like I'm a beginner",
         "Why is photosynthesis important to ecosystems?",
       ],
       sp6: [
-        "How should I summarize my trend using the mean?",
-        "Can you explain that in simpler words?",
+        "Check my answer for this step!",
+        "Can you explain that simpler with an analogy?",
       ],
     };
 
@@ -2680,8 +3117,9 @@
 
     state.conversationMemory.messages.push({ role: "user", text: question });
 
-    // 2. Query /api/chat with full live simulation snapshot (supports live Gemini + smart local engine)
+    // 2. Query /api/chat with full live simulation snapshot (supports live Gemini AI + Cognitive Tutor)
     let finalReplyObj = null;
+    let activeProviderTag = "Smart Tutor";
     const fullSnapshot = buildFullSimulationSnapshot();
     try {
       const res = await fetch(resolveApiUrl("/api/chat"), {
@@ -2710,15 +3148,22 @@
       }
       if (data.useCuratedEngine === false && data.reply) {
         const cls = classifyQuestionAndConversationalIntent(question);
+        activeProviderTag = data.provider && data.provider.includes("gemini") ? "Gemini AI" : "AI Tutor";
         finalReplyObj = {
           reply: data.reply,
           ideaCode: cls.ideaCode,
-          actualType: state.supportType === "explanation" ? "E" : state.supportType === "clarification" ? "C" : "H",
-          hintFirst: state.supportType === "hint",
+          actualType: isDirectExplanationRequest(question)
+            ? "E"
+            : state.supportType === "explanation"
+            ? "E"
+            : state.supportType === "clarification"
+            ? "C"
+            : "H",
+          hintFirst: state.supportType === "hint" && !isDirectExplanationRequest(question),
         };
       }
     } catch (_) {
-      // Offline / static host uses smart local simulation + knowledge engine
+      // Offline / static host uses Cognitive Tutor + Live Knowledge Lookup
     }
 
     if (!finalReplyObj) {
@@ -2731,10 +3176,10 @@
     appendChatBubble(
       "assistant",
       finalReplyObj.reply,
-      `BioVoice · ${stepObj.spCode} · ${typeLabels[finalReplyObj.actualType] || "Hint"} · ${finalReplyObj.ideaCode} (${IDEA_CATALOG[finalReplyObj.ideaCode] || ""}) · ${state.lastDetectedLanguageLabel}`
+      `BioVoice (${activeProviderTag}) · ${stepObj.spCode} · ${typeLabels[finalReplyObj.actualType] || "Explanation"} · ${finalReplyObj.ideaCode} · ${state.lastDetectedLanguageLabel}`
     );
 
-    // 3. Speak response out loud if voice is not muted
+    // 3. Speak response out loud with expressive intonation if voice is enabled
     speakBioVoiceResponse(finalReplyObj.reply, state.lastDetectedLanguage);
 
     // 4. Show student worksheet/teacher check bar
@@ -2807,7 +3252,7 @@
   // ==========================================================================
   function cleanTextForNaturalSpeech(rawText) {
     return String(rawText || "")
-      .replace(/6\s*CO₂\s*\+\s*6\s*H₂O[^→]*→[^\n]+/gi, "six molecules of carbon dioxide plus six molecules of water, in the presence of light and chlorophyll, produce glucose and six molecules of oxygen")
+      .replace(/6\s*CO₂\s*\+\s*6\s*H₂O[^→]*→[^\n]+/gi, "six carbon dioxide plus six water, with light and chlorophyll, make glucose and six oxygen")
       .replace(/CO₂|CO2/g, "carbon dioxide")
       .replace(/H₂O|H2O/g, "water")
       .replace(/O₂|O2/g, "oxygen")
@@ -2826,10 +3271,9 @@
       .replace(/\bi\.e\.,?/gi, "that is,")
       .replace(/\\text\{([^}]+)\}/g, "$1")
       .replace(/[\$\\*_`~•]/g, "")
-      .replace(/&rarr;|→/g, " yields ")
+      .replace(/&rarr;|→/g, " makes ")
       .replace(/&uarr;|↑/g, " gas ")
       .replace(/÷/g, " divided by ")
-      .replace(/—/g, ", ")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -2850,8 +3294,8 @@
     }
 
     // Warm Nova-like expressive voice preferences
-    if (/ava|emma|aria|jenny|nova|samantha|serena|zoe|nicky|allison|stephanie|joanna|salli|google uk english female|google us english/i.test(name)) {
-      score += persona === "nova" ? 95 : 70;
+    if (/ava|emma|aria|jenny|nova|samantha|serena|zoe|nicky|allison|stephanie|joanna|salli|karen|tessa|moira|google uk english female|google us english/i.test(name)) {
+      score += persona === "nova" ? 95 : 75;
     } else if (/google|microsoft|apple|daniel|arthur|oliver|guy|andrew/i.test(name)) {
       score += persona === "studio" ? 75 : 40;
     }
@@ -2874,7 +3318,7 @@
     }
 
     if (voice.localService === false) {
-      score += 20; // Cloud neural voices sound notably smoother
+      score += 20;
     }
     return score;
   }
@@ -2894,24 +3338,178 @@
         bestVoice = voices[i];
       }
     }
+    state.activeVoiceName = (bestVoice && bestVoice.name) || "";
     return bestVoice;
   }
 
   function splitIntoNaturalSentences(text) {
     const raw = String(text || "").trim();
     if (!raw) return [];
-    const parts = raw.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [raw];
-    const merged = [];
-    for (let i = 0; i < parts.length; i++) {
-      const cur = parts[i].trim();
-      if (!cur) continue;
-      if (merged.length > 0 && cur.length < 18) {
-        merged[merged.length - 1] += " " + cur;
-      } else {
-        merged.push(cur);
+    const masked = raw
+      .replace(/(\d)\.(?=\d)/g, "$1\uE000")
+      .replace(/\.\.\./g, "\uE001")
+      .replace(/\b(e\.g|i\.e|vs|etc|approx|dr|mr|ms)\./gi, (m) => m.replace(/\./g, "\uE000"));
+    return masked
+      .replace(/([.!?]+)(?=\s|$)/g, "$1\uE002")
+      .split("\uE002")
+      .map((p) => p.replace(/\uE000/g, ".").replace(/\uE001/g, "...").trim())
+      .filter(Boolean);
+  }
+
+  /**
+   * Segments cleaned text into lively 4-12 word breath phrases preserving expressive cues.
+   */
+  function segmentIntoIntonationPhrases(cleanText) {
+    const sentences = splitIntoNaturalSentences(cleanText);
+    const phrases = [];
+
+    for (let i = 0; i < sentences.length; i++) {
+      const s = sentences[i];
+      // Split question tag tails like ", right?" or ", makes sense?" for audible rising inflection
+      const qTag = s.match(/^(.{14,}?),\s*((?:right|okay|yeah|no|makes sense|pretty cool|cool)\?)$/i);
+      if (qTag) {
+        phrases.push({ text: qTag[1].trim(), cue: "pivot" });
+        phrases.push({ text: qTag[2].trim(), cue: "question_tag" });
+        continue;
+      }
+
+      // Split on expressive punctuation (em-dashes, ellipses, colons, semicolons)
+      const firstSplit = s
+        .replace(/\s*—\s*/g, "—| ")
+        .replace(/\.\.\.\s*/g, "...| ")
+        .replace(/:\s+/g, ":| ")
+        .replace(/;\s+/g, ";| ")
+        .split("|")
+        .map((c) => c.trim())
+        .filter(Boolean);
+
+      const expanded = [];
+      for (let j = 0; j < firstSplit.length; j++) {
+        let seg = firstSplit[j];
+        // Further split long segments cleanly on natural causal/contrast commas
+        if (seg.length >= 68) {
+          const commaParts = seg.split(/,\s+(?=(?:because|so|while|which|whereas|meaning|and\s+that|making|letting|giving|since|though)\b)/i);
+          if (commaParts.length > 1) {
+            commaParts.forEach((cp, ci) => {
+              expanded.push(ci < commaParts.length - 1 ? cp.trim() + "," : cp.trim());
+            });
+            continue;
+          }
+          // Generic mid-comma split if still very long
+          const midIdx = seg.indexOf(", ", Math.floor(seg.length * 0.35));
+          if (midIdx > 22 && midIdx < seg.length - 20) {
+            expanded.push(seg.slice(0, midIdx + 1).trim());
+            expanded.push(seg.slice(midIdx + 2).trim());
+            continue;
+          }
+        }
+        expanded.push(seg);
+      }
+
+      expanded.forEach((part, idxInSent) => {
+        const cleanSpoken = part.replace(/\s*—/g, ",").replace(/\.\.\./g, ",").replace(/\s+/g, " ").trim();
+        if (!cleanSpoken) return;
+        let cue = "body";
+        if (/[!]$/.test(part) || /^(ooh|aha|oh|hey|wow|spot on|nice|awesome|picture|imagine|let's|wait)\b/i.test(part)) {
+          cue = "hook";
+        } else if (/\?$/.test(part)) {
+          cue = "question";
+        } else if (/[—:]$|\.\.\.$/.test(part)) {
+          cue = "pivot";
+        } else if (/\(.*\)/.test(part) || /^(for example|like|basically|even|pretty|quick tip|actually)\b/i.test(part)) {
+          cue = "aside";
+        } else if (
+          /\b(independent variable|dependent variable|controlled variable|constant variable|limiting factor|light saturation|bottleneck|photolysis|chlorophyll|slows|stops|speeds|important|key|depends on|turns into|four times|one-fourth)\b/i.test(
+            part
+          )
+        ) {
+          cue = "emphasis";
+        } else if (i === sentences.length - 1 && idxInSent === expanded.length - 1 && sentences.length > 1) {
+          cue = "warm_close";
+        }
+
+        // Merge tiny < 10 char fragments except hooks/tags
+        if (
+          phrases.length > 0 &&
+          cleanSpoken.length < 11 &&
+          cue !== "hook" &&
+          cue !== "question_tag" &&
+          cue !== "question"
+        ) {
+          phrases[phrases.length - 1].text += " " + cleanSpoken;
+        } else {
+          phrases.push({ text: cleanSpoken, cue });
+        }
+      });
+    }
+    return phrases;
+  }
+
+  function computePhraseProsody(unit, idx, total, persona) {
+    const profile =
+      persona === "mentor"
+        ? { basePitch: 0.99, swing: 0.75, baseRate: 0.95 }
+        : persona === "studio"
+        ? { basePitch: 1.03, swing: 0.88, baseRate: 1.08 }
+        : { basePitch: 1.07, swing: 1.0, baseRate: 1.02 }; // nova expressive default
+
+    const sw = profile.swing;
+    let pitchOffset = 0;
+    let rateMult = 1.0;
+    let pauseMs = 55;
+
+    switch (unit.cue) {
+      case "hook":
+        pitchOffset = 0.16 * sw;
+        rateMult = 1.06;
+        pauseMs = 95;
+        break;
+      case "question_tag":
+        pitchOffset = 0.21 * sw;
+        rateMult = 0.93;
+        pauseMs = 155;
+        break;
+      case "question":
+        pitchOffset = 0.14 * sw;
+        rateMult = 0.96;
+        pauseMs = 150;
+        break;
+      case "pivot":
+        pitchOffset = 0.10 * sw;
+        rateMult = 1.02;
+        pauseMs = 85;
+        break;
+      case "aside":
+        pitchOffset = 0.11 * sw;
+        rateMult = 1.07;
+        pauseMs = 45;
+        break;
+      case "emphasis":
+        pitchOffset = -0.09 * sw;
+        rateMult = 0.90;
+        pauseMs = 85;
+        break;
+      case "warm_close":
+        pitchOffset = -0.06 * sw;
+        rateMult = 0.96;
+        pauseMs = 0;
+        break;
+      default: {
+        // Dynamic undulating conversational contour so body phrases never sound steady-state
+        const wavePitch = [0.07, -0.06, 0.09, -0.05][idx % 4];
+        const waveRate = [1.04, 0.94, 1.05, 0.97][idx % 4];
+        pitchOffset = wavePitch * sw;
+        rateMult = waveRate;
+        pauseMs = idx === total - 1 ? 0 : 40;
+        break;
       }
     }
-    return merged;
+
+    return {
+      pitch: Math.max(0.84, Math.min(1.34, profile.basePitch + pitchOffset)),
+      rateMult: profile.baseRate * rateMult,
+      pauseMs,
+    };
   }
 
   function speakBioVoiceResponse(text, langCode) {
@@ -2927,64 +3525,58 @@
     if (orb) orb.classList.add("is-speaking");
 
     const persona = state.voicePersona || "nova";
-    const baseRateMult = persona === "nova" ? 1.02 : persona === "mentor" ? 0.96 : 1.0;
-    const basePitch = persona === "nova" ? 1.06 : persona === "mentor" ? 1.01 : 0.99;
     const userRate = Number(state.voiceSpeed) || 1.0;
     const chosenVoice = selectBestVoice(state.lastSpokenLang);
-    const sentences = splitIntoNaturalSentences(clean);
+    const units = segmentIntoIntonationPhrases(clean);
     const resolvedLang = chosenVoice && chosenVoice.lang
       ? chosenVoice.lang
       : state.lastSpokenLang === "en-PH"
       ? "en-US"
       : "fil-PH";
 
-    function speakSentenceAt(idx) {
+    function speakUnitAt(idx) {
       if (seqId !== state.speechSequenceId || state.voiceMuted) return;
-      if (idx >= sentences.length) {
+      if (idx >= units.length) {
+        state.activeUtterance = null;
         if (orb) orb.classList.remove("is-speaking");
         return;
       }
 
-      const line = sentences[idx];
-      const utterance = new SpeechSynthesisUtterance(line);
+      const unit = units[idx];
+      const prosody = computePhraseProsody(unit, idx, units.length, persona);
+      const utterance = new SpeechSynthesisUtterance(unit.text);
+      state.activeUtterance = utterance; // Prevent Safari GC from dropping mid-speech callbacks
       if (chosenVoice) utterance.voice = chosenVoice;
       utterance.lang = resolvedLang;
+      utterance.rate = Math.max(0.76, Math.min(1.40, userRate * prosody.rateMult));
+      utterance.pitch = prosody.pitch;
+      utterance.volume = 1.0;
 
-      // Expressive Nova prosody contour across warm openings, questions, and closing thoughts
-      let pitchMod = 0;
-      let rateMod = 1.0;
-      if (/\?$/.test(line)) {
-        pitchMod += 0.04;
-        rateMod *= 0.98;
-      } else if (idx === 0 && /^(hey|hi|sure thing|great|good|maayong|magandang|kumusta)/i.test(line)) {
-        pitchMod += 0.03;
-      } else if (idx === sentences.length - 1 && sentences.length > 1) {
-        pitchMod -= 0.02;
-      }
-
-      utterance.rate = Math.max(0.7, Math.min(1.45, userRate * baseRateMult * rateMod));
-      utterance.pitch = Math.max(0.85, Math.min(1.25, basePitch + pitchMod));
-
-      utterance.onend = () => {
-        if (seqId !== state.speechSequenceId) return;
-        const pauseMs = /[,;:]$/.test(line) ? 75 : 105;
-        const tid = setTimeout(() => speakSentenceAt(idx + 1), pauseMs);
+      let finished = false;
+      const advance = () => {
+        if (finished || seqId !== state.speechSequenceId) return;
+        finished = true;
+        const tid = setTimeout(() => speakUnitAt(idx + 1), prosody.pauseMs);
         state.speechTimers.push(tid);
       };
+
+      utterance.onend = advance;
       utterance.onerror = () => {
         if (seqId === state.speechSequenceId && orb) {
           orb.classList.remove("is-speaking");
         }
+        state.activeUtterance = null;
       };
 
       window.speechSynthesis.speak(utterance);
     }
 
-    speakSentenceAt(0);
+    speakUnitAt(0);
   }
 
   function stopSpeechOutput() {
     state.speechSequenceId = (state.speechSequenceId || 0) + 1;
+    state.activeUtterance = null;
     if (Array.isArray(state.speechTimers)) {
       state.speechTimers.forEach((tid) => clearTimeout(tid));
       state.speechTimers = [];
@@ -3155,6 +3747,35 @@
     if ($("perm-teacher-obs")) $("perm-teacher-obs").checked = perms.recordObservations !== false;
     if ($("perm-teacher-fidelity")) $("perm-teacher-fidelity").checked = perms.reviewFidelity !== false;
     if ($("perm-teacher-logs")) $("perm-teacher-logs").checked = Boolean(perms.viewAnonymizedLogs);
+
+    const aiStatus = state.dashboardData && state.dashboardData.aiStatus ? state.dashboardData.aiStatus : null;
+    if (aiStatus) {
+      if ($("cfg-gemini-model") && aiStatus.model) $("cfg-gemini-model").value = aiStatus.model;
+      const badge = $("ai-status-badge");
+      if (badge) {
+        if (aiStatus.configured) {
+          badge.textContent = `Live Gemini Connected (${aiStatus.model || "gemini-2.5-flash"})`;
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#166534";
+        } else {
+          badge.textContent = "Smart Built-in Engine (No Key Saved)";
+          badge.style.background = "#fef3c7";
+          badge.style.color = "#92400e";
+        }
+      }
+      const aiMsg = $("ai-config-status");
+      if (aiMsg) {
+        if (aiStatus.configured || aiStatus.lastError) {
+          aiMsg.hidden = false;
+          aiMsg.textContent = aiStatus.configured
+            ? `Active provider: Google Gemini (${aiStatus.model || "gemini-2.5-flash"}) via ${aiStatus.source || "server"} (${aiStatus.maskedKey || "key saved"}).${aiStatus.lastError ? ` Last warning: ${aiStatus.lastError}` : ""}`
+            : `Fallback active: ${aiStatus.lastError || "No GEMINI_API_KEY configured on the server yet."}`;
+        } else {
+          aiMsg.hidden = true;
+          aiMsg.textContent = "";
+        }
+      }
+    }
 
     renderParticipantsTable();
     renderInteractionLogsTable();
@@ -3635,24 +4256,24 @@
   // --- Cellular Level Exploration: Clickable Structure Explanations ---
   const MICRO_STRUCTURE_DATA = {
     thylakoid: {
-      title: "Thylakoid Grana — Light-Dependent Reactions & Photolysis",
-      body: "Variables acting here: Light Intensity (Lux / Distance) excites chlorophyll electrons inside stacked thylakoid discs, splitting Water (H₂O) molecules into electrons, protons, and releasing Oxygen (O₂) bubbles. Closer Day lamp placement increases photon hits; at Night (Lamp OFF), photolysis stops immediately."
+      title: "Thylakoid Grana — The Solar Panels That Split Water",
+      body: "Think of the stacked green discs like tiny solar panels. What variables act here? Light Intensity (Lamp Distance) is the Independent Variable: moving the Day lamp closer (10 cm = 2,500 lx) sends more light energy into chlorophyll, splitting more water (H₂O) into Oxygen (O₂) bubbles—our Dependent Variable. At Night (Lamp OFF, 0 lx), the solar panels shut off and O₂ splitting stops immediately."
     },
     stroma: {
-      title: "Stroma Fluid Matrix — Calvin Cycle, CO₂ & Water Temperature",
-      body: "Variables acting here: Dissolved Carbon Dioxide (from 0.2% NaHCO₃) enters the Calvin cycle, where active RuBisCO enzymes fix carbon into glucose. Water Temperature strongly regulates enzyme activity here: warmer lamp-heated water (~26.0–28.6 °C) speeds catalysis, whereas cold Night water (~18.5 °C) slows enzyme reactions."
+      title: "Stroma Fluid — The Sugar Kitchen & Active Enzymes",
+      body: "Picture the clear fluid around the discs as the leaf's sugar kitchen, where active enzymes assemble CO₂ into glucose. Two Controlled Variables work together here: dissolved CO₂ from 0.2% NaHCO₃ provides the carbon ingredient, while Water Temperature controls kitchen speed—warm Day lamp water (~26.0–28.6 °C) keeps enzymes active and steady, whereas cold Night water (~18.5 °C) slows them down."
     },
     photons: {
-      title: "Light Photons & Chlorophyll Pigments — Wavelength Absorption",
-      body: "Variables acting here: Light Intensity & Chlorophyll Presence. Chlorophyll a & b strongly absorb blue and red photons while reflecting green light. White leaf edges without chlorophyll or Night darkness (Lamp OFF, 0 lx) capture zero photons and produce 0 O₂ bubbles."
+      title: "Light Photons & Chlorophyll — The Green Light Catchers",
+      body: "Imagine light as tiny energy packets hitting a green net (chlorophyll). Light Brightness (Lamp ON during Day vs. OFF at Night) and Pigment Presence decide how much energy gets caught. Green chlorophyll absorbs red and blue light best; white leaf patches without chlorophyll or Night darkness (0 lx) catch zero energy and produce 0 O₂ bubbles."
     },
     membrane: {
-      title: "Chloroplast Envelope & Aquatic Leaf Tissues — Gas & Ion Exchange",
-      body: "Variables acting here: Dissolved CO₂ Diffusion & Temperature. Submerged shoots like Hydrilla verticillata absorb dissolved bicarbonate ions (NaHCO₃) and water directly through thin leaf cells. Warmer water accelerates molecular diffusion across chloroplast membranes."
+      title: "Chloroplast Envelope & Aquatic Leaves — Underwater Doors",
+      body: "Unlike land leaves with thick wax, submerged Hydrilla leaves act like thin underwater sponges. Here, Dissolved CO₂ (kept constant with 0.2% NaHCO₃) and Water Temperature team up: bicarbonate slips straight through the thin cell and chloroplast doors, and warmer Day water lets molecules move inside faster than cold Night water."
     },
     oxygen: {
-      title: "Oxygen (O₂) Output & 24-Hour Mitochondrial Balance",
-      body: "Variables acting here: Net O₂ = Photosynthesis (Chloroplasts) minus Cellular Respiration (Mitochondria). In warm Day light (Lamp ON), chloroplast O₂ release far exceeds respiration so visible bubbles rise. At Night (Lamp OFF, cold ~18.5 °C), O₂ production is 0 while cooler mitochondria still respire slowly."
+      title: "Oxygen (O₂) Output — Chloroplasts Making vs. Mitochondria Using",
+      body: "Two organelles share a tug-of-war: Chloroplasts make O₂ when the Light is ON, while Mitochondria quietly use a tiny amount of O₂ all day and night for cellular respiration. The bubbles you count (our Dependent Variable) show NET Oxygen left over: in warm Day light, chloroplasts make far more O₂ than mitochondria use so bubbles stream up; at cold Night (Lamp OFF), net O₂ bubbles drop to zero."
     }
   };
 
@@ -4332,6 +4953,62 @@
           }
         } catch (_) {}
       });
+    }
+
+    const submitAiConfigAction = async (action) => {
+      const st = $("ai-config-status");
+      const keyInput = $("cfg-gemini-key");
+      const modelSelect = $("cfg-gemini-model");
+      const geminiApiKey = keyInput ? keyInput.value.trim() : "";
+      const geminiModel = modelSelect ? modelSelect.value : "gemini-2.5-flash";
+
+      if (st) {
+        st.hidden = false;
+        st.textContent = action === "clear" ? "Removing saved runtime Gemini key..." : "Saving Gemini AI configuration...";
+      }
+
+      try {
+        const res = await fetch(resolveApiUrl("/api/researcher/ai-config"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${state.staffToken}`
+          },
+          body: JSON.stringify({ action, geminiApiKey, geminiModel })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (st) {
+            st.hidden = false;
+            st.textContent = data.error || "Unable to update AI provider settings.";
+          }
+          return;
+        }
+        if (keyInput) keyInput.value = "";
+        if (data.aiStatus) {
+          if (!state.dashboardData) state.dashboardData = {};
+          state.dashboardData.aiStatus = data.aiStatus;
+          renderDashboardUI();
+        }
+        if (st) {
+          st.hidden = false;
+          st.textContent = action === "clear"
+            ? "Runtime Gemini key cleared. Built-in tutor engine is active unless an environment key is set."
+            : `Gemini AI connected (${(data.aiStatus && data.aiStatus.model) || geminiModel}). Live student queries will now use Gemini.`;
+        }
+      } catch (_) {
+        if (st) {
+          st.hidden = false;
+          st.textContent = "Could not reach the backend server to update AI settings.";
+        }
+      }
+    };
+
+    if ($("save-ai-config-btn")) {
+      $("save-ai-config-btn").addEventListener("click", () => submitAiConfigAction("save"));
+    }
+    if ($("clear-ai-config-btn")) {
+      $("clear-ai-config-btn").addEventListener("click", () => submitAiConfigAction("clear"));
     }
 
     if ($("validate-codes-btn")) {

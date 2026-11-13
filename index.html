@@ -585,9 +585,10 @@
 
                   <!-- High-Contrast Clickable Explanation Panel -->
                   <div id="micro-structure-detail" class="micro-structure-detail">
-                    <strong class="micro-detail-title">Thylakoid Grana — Light Reactions &amp; Water Splitting (Photolysis)</strong>
+                    <strong class="micro-detail-title">Thylakoid Grana — The "Solar Panels" That Split Water</strong>
                     <p class="micro-detail-body">
-                      <strong>Variables acting here:</strong> <strong>Light Intensity (Lux)</strong> excites chlorophyll electrons inside thylakoid discs, splitting <strong>Water (H₂O)</strong> and releasing <strong>Oxygen (O₂) bubbles</strong>. Turning the lamp closer increases photon hits; at Night (lamp OFF), photolysis stops immediately.
+                      <strong>Simple Idea:</strong> Inside chloroplasts, green coin-like stacks called thylakoids catch light energy and use it to snap water (H₂O) apart—releasing oxygen (O₂) bubbles and charging energy batteries (ATP &amp; NADPH).<br />
+                      <strong>Variables Controlled Here:</strong> Closer lamp light (Independent Variable) means more light hits these solar panels per second, so more oxygen bubbles appear. At Night (Lamp OFF), this stage stops!
                     </p>
                   </div>
                 </div>
@@ -1313,10 +1314,10 @@
                 <button id="voice-stop-btn" class="voice-ctrl-btn" type="button" title="Stop Speaking Immediately">
                   ■ Stop
                 </button>
-                <select id="voice-persona-select" class="voice-speed-select" aria-label="BioVoice Tone Persona" title="Voice Tone & Style">
+                <select id="voice-persona-select" class="voice-speed-select" aria-label="BioVoice Tone Persona" title="Voice Intonation &amp; Personality">
                   <option value="nova" selected>✨ Nova</option>
-                  <option value="mentor">🌿 Warm</option>
-                  <option value="studio">🎙️ Crisp</option>
+                  <option value="mentor">🌿 Calm</option>
+                  <option value="studio">⚡ Crisp</option>
                 </select>
                 <select id="voice-speed-select" class="voice-speed-select" aria-label="Voice Playback Speed" title="Voice Playback Speed">
                   <option value="0.85">0.85×</option>
@@ -1628,6 +1629,37 @@
             </label>
           </div>
         </div>
+
+        <!-- Optional Live Gemini AI Upgrade (Server-Side Private Storage) -->
+        <div class="teacher-perms-box" id="ai-config-box" style="margin-top: 1rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;margin-bottom:0.55rem;">
+            <h3 style="margin:0;">🤖 Live Cloud AI Engine (Optional Gemini API Upgrade)</h3>
+            <span id="ai-status-badge" class="status-pill">Built-In Cognitive Tutor Active</span>
+          </div>
+          <p style="font-size:0.84rem;color:var(--text-muted);margin:0 0 0.7rem;">
+            BioVoice works automatically with its built-in Cognitive Biology &amp; Knowledge Engine. To upgrade all students &amp; sandbox sessions to full live <strong>Google Gemini AI</strong>, paste a Gemini API key below (saved strictly on the private backend server, never exposed in browser code):
+          </p>
+          <div class="config-grid" style="margin-bottom:0.65rem;">
+            <label class="field-label">
+              <span>Gemini API Key (Optional)</span>
+              <input id="cfg-gemini-key" type="password" placeholder="AIza... (leave blank to keep existing)" autocomplete="off" />
+            </label>
+            <label class="field-label">
+              <span>Gemini Model</span>
+              <select id="cfg-gemini-model">
+                <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Recommended)</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+              </select>
+            </label>
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+            <button id="save-ai-config-btn" type="button" class="secondary-btn">Save &amp; Test Gemini Key</button>
+            <button id="clear-ai-config-btn" type="button" class="ghost-btn">Revert to Built-In AI</button>
+            <span id="ai-config-status" style="font-size:0.84rem;font-weight:600;color:#065f46;"></span>
+          </div>
+        </div>
+
         <div id="study-config-status" class="status-banner" role="status" aria-live="polite" hidden></div>
       </section>
 
